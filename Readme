@@ -1,4 +1,3 @@
-
 # Onboarding API Calendário
 
 API para gerenciamento de eventos
@@ -9,7 +8,7 @@ API para gerenciamento de eventos
 Primeiramente clone o projeto:
 
 ```bash
-  git clone https://git.campuscode.com.br/onboarding2021agosto/onboarding_guilherme.git
+  git clone https://git.campuscode.com.br/onboarding2021agosto/onboarding_joaopedro.git
 ```
 Entre na pasta do projeto, builde e rode o docker da aplicação:
 
