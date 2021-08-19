@@ -1,4 +1,3 @@
-
 # Onboarding API Calendário
 
 API para gerenciamento de eventos

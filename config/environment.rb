@@ -1,6 +1,10 @@
 ENV['SINATRA_ENV'] ||= 'development'
-
+require 'rubygems'
+require 'bundler'
 require 'bundler/setup'
+require 'rake'
+require 'sinatra/activerecord'
+require 'sinatra/activerecord/rake'
 Bundler.require(:default, ENV['SINATRA_ENV'])
 
 ActiveRecord::Base.establish_connection(
@@ -8,5 +12,5 @@ ActiveRecord::Base.establish_connection(
   database: "db/#{ENV['SINATRA_ENV']}.sqlite3"
 )
 
-# require './app/controllers/application_controller'
+require './server'
 # require_all 'app'

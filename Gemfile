@@ -2,7 +2,6 @@ source 'https://rubygems.org'
 
 gem 'activerecord', '~> 6.0', '>= 6.0.3.2', require: 'active_record'
 gem 'bcrypt'
-gem 'bigdecimal', '1.4.2'
 gem 'falcon'
 gem 'puma'
 gem 'rack-contrib'
