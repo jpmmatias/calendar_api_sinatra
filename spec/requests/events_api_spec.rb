@@ -66,7 +66,10 @@ describe 'Event API' do
       expect(parsed_body['local']).to eq(event.local)
       expect(parsed_body['description']).to eq(event.description)
     end
-    xit 'nonexistent event' do
+
+    it 'nonexistent event' do
+      get "/v1/events/#{rand(1...1000)}"
+      expect(last_response.status).to eq 404
     end
   end
 
@@ -86,6 +89,18 @@ describe 'Event API' do
       parsed_body = JSON.parse(last_response.body)
 
       expect(parsed_body['success']).to eq(true)
+    end
+
+    it 'error on create' do
+      new_event = {
+        'name': 'CCXP'
+      }
+      post '/v1/events', new_event.to_json, 'CONTENT_TYPE' => 'application/json'
+      expect(last_response.status).to eq 400
+      expect(last_response.content_type).to include('application/json')
+      parsed_body = JSON.parse(last_response.body)
+
+      expect(parsed_body['success']).to eq(false)
     end
   end
 end

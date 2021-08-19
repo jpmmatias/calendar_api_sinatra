@@ -5,7 +5,9 @@ get '/v1/events' do
 end
 
 get '/v1/events/:id' do
-  Event.where(id: params['id']).first.to_json
+  event = Event.where(id: params['id']).first
+  status 404 if event.nil?
+  event.to_json
 end
 
 post '/v1/events' do
@@ -24,7 +26,8 @@ post '/v1/events' do
     status 201
     { success: true }.to_json
   else
-    puts 'Erro'
+    status 400
+    { success: false }.to_json
   end
 end
 

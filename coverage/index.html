@@ -14,7 +14,7 @@
       <img src="./assets/0.12.3/loading.gif" alt="loading"/>
     </div>
     <div id="wrapper" class="hide">
-      <div class="timestamp">Generated <abbr class="timeago" title="2021-08-19T16:47:51-03:00">2021-08-19T16:47:51-03:00</abbr></div>
+      <div class="timestamp">Generated <abbr class="timeago" title="2021-08-19T17:20:12-03:00">2021-08-19T17:20:12-03:00</abbr></div>
       <ul class="group_tabs"></ul>
 
       <div id="content">
@@ -30,7 +30,7 @@
      covered at
      <span class="covered_strength">
        <span class="green">
-         1.06
+         1.08
        </span>
     </span> hits/line
     )
@@ -43,8 +43,8 @@
   </div>
 
   <div class="t-line-summary">
-    <b>50</b> relevant lines,
-    <span class="green"><b>50</b> lines covered</span> and
+    <b>59</b> relevant lines,
+    <span class="green"><b>59</b> lines covered</span> and
     <span class="red"><b>0</b> lines missed. </span>
     (<span class="green">
   100.0%
@@ -84,11 +84,11 @@
           <tr class="t-file">
             <td class="strong t-file__name"><a href="#aafc5e818d3198ba505adb10da911be5ed7cd3f4" class="src_link" title="spec/requests/events_api_spec.rb">spec/requests/events_api_spec.rb</a></td>
             <td class="green strong cell--number t-file__coverage">100.00 %</td>
-            <td class="cell--number">91</td>
-            <td class="cell--number">42</td>
-            <td class="cell--number">42</td>
+            <td class="cell--number">106</td>
+            <td class="cell--number">51</td>
+            <td class="cell--number">51</td>
             <td class="cell--number">0</td>
-            <td class="cell--number">1.07</td>
+            <td class="cell--number">1.10</td>
             
           </tr>
         
@@ -264,8 +264,8 @@
     
 
     <div class="t-line-summary">
-      <b>42</b> relevant lines.
-      <span class="green"><b>42</b> lines covered</span> and
+      <b>51</b> relevant lines.
+      <span class="green"><b>51</b> lines covered</span> and
       <span class="red"><b>0</b> lines missed.</span>
     </div>
 
@@ -321,8 +321,8 @@
         </div>
       
         <div>
-          <li class="covered" data-hits="4" data-linenumber="5">
-            <span class="hits">4</span>
+          <li class="covered" data-hits="6" data-linenumber="5">
+            <span class="hits">6</span>
             
 
             
@@ -1025,40 +1025,7 @@
         </div>
       
         <div>
-          <li class="covered" data-hits="1" data-linenumber="69">
-            <span class="hits">1</span>
-            
-
-            
-
-            <code class="ruby">    xit &#39;nonexistent event&#39; do</code>
-          </li>
-        </div>
-      
-        <div>
-          <li class="never" data-hits="" data-linenumber="70">
-            
-            
-
-            
-
-            <code class="ruby">    end</code>
-          </li>
-        </div>
-      
-        <div>
-          <li class="never" data-hits="" data-linenumber="71">
-            
-            
-
-            
-
-            <code class="ruby">  end</code>
-          </li>
-        </div>
-      
-        <div>
-          <li class="never" data-hits="" data-linenumber="72">
+          <li class="never" data-hits="" data-linenumber="69">
             
             
 
@@ -1069,24 +1036,57 @@
         </div>
       
         <div>
-          <li class="covered" data-hits="1" data-linenumber="73">
+          <li class="covered" data-hits="1" data-linenumber="70">
             <span class="hits">1</span>
             
 
             
 
-            <code class="ruby">  context &#39;POST /v1/events&#39; do</code>
+            <code class="ruby">    it &#39;nonexistent event&#39; do</code>
           </li>
         </div>
       
         <div>
-          <li class="covered" data-hits="1" data-linenumber="74">
+          <li class="covered" data-hits="1" data-linenumber="71">
             <span class="hits">1</span>
             
 
             
 
-            <code class="ruby">    it &#39;create an event&#39; do</code>
+            <code class="ruby">      get &quot;/v1/events/#{rand(1...1000)}&quot;</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="covered" data-hits="1" data-linenumber="72">
+            <span class="hits">1</span>
+            
+
+            
+
+            <code class="ruby">      expect(last_response.status).to eq 404</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="never" data-hits="" data-linenumber="73">
+            
+            
+
+            
+
+            <code class="ruby">    end</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="never" data-hits="" data-linenumber="74">
+            
+            
+
+            
+
+            <code class="ruby">  end</code>
           </li>
         </div>
       
@@ -1097,7 +1097,7 @@
 
             
 
-            <code class="ruby">      new_event = {</code>
+            <code class="ruby"></code>
           </li>
         </div>
       
@@ -1108,18 +1108,18 @@
 
             
 
-            <code class="ruby">        &#39;name&#39;: &#39;CCXP&#39;,</code>
+            <code class="ruby">  context &#39;POST /v1/events&#39; do</code>
           </li>
         </div>
       
         <div>
-          <li class="never" data-hits="" data-linenumber="77">
-            
-            
-
+          <li class="covered" data-hits="1" data-linenumber="77">
+            <span class="hits">1</span>
             
 
-            <code class="ruby">        &#39;local&#39;: &#39;São Paulo&#39;,</code>
+            
+
+            <code class="ruby">    it &#39;create an event&#39; do</code>
           </li>
         </div>
       
@@ -1130,18 +1130,18 @@
 
             
 
-            <code class="ruby">        &#39;description&#39;: &#39;A melhor descrição que existe&#39;,</code>
+            <code class="ruby">      new_event = {</code>
           </li>
         </div>
       
         <div>
-          <li class="never" data-hits="" data-linenumber="79">
-            
-            
-
+          <li class="covered" data-hits="1" data-linenumber="79">
+            <span class="hits">1</span>
             
 
-            <code class="ruby">        &#39;owner&#39;: &#39;John Cena&#39;,</code>
+            
+
+            <code class="ruby">        &#39;name&#39;: &#39;CCXP&#39;,</code>
           </li>
         </div>
       
@@ -1152,7 +1152,7 @@
 
             
 
-            <code class="ruby">        &#39;start_date&#39;: 15.days.from_now,</code>
+            <code class="ruby">        &#39;local&#39;: &#39;São Paulo&#39;,</code>
           </li>
         </div>
       
@@ -1163,7 +1163,7 @@
 
             
 
-            <code class="ruby">        &#39;end_date&#39;: 20.days.from_now</code>
+            <code class="ruby">        &#39;description&#39;: &#39;A melhor descrição que existe&#39;,</code>
           </li>
         </div>
       
@@ -1174,40 +1174,40 @@
 
             
 
+            <code class="ruby">        &#39;owner&#39;: &#39;John Cena&#39;,</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="never" data-hits="" data-linenumber="83">
+            
+            
+
+            
+
+            <code class="ruby">        &#39;start_date&#39;: 15.days.from_now,</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="never" data-hits="" data-linenumber="84">
+            
+            
+
+            
+
+            <code class="ruby">        &#39;end_date&#39;: 20.days.from_now</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="never" data-hits="" data-linenumber="85">
+            
+            
+
+            
+
             <code class="ruby">      }</code>
-          </li>
-        </div>
-      
-        <div>
-          <li class="covered" data-hits="1" data-linenumber="83">
-            <span class="hits">1</span>
-            
-
-            
-
-            <code class="ruby">      post &#39;/v1/events&#39;, new_event.to_json, &#39;CONTENT_TYPE&#39; =&gt; &#39;application/json&#39;</code>
-          </li>
-        </div>
-      
-        <div>
-          <li class="covered" data-hits="1" data-linenumber="84">
-            <span class="hits">1</span>
-            
-
-            
-
-            <code class="ruby">      expect(last_response.status).to eq 201</code>
-          </li>
-        </div>
-      
-        <div>
-          <li class="covered" data-hits="1" data-linenumber="85">
-            <span class="hits">1</span>
-            
-
-            
-
-            <code class="ruby">      expect(last_response.content_type).to include(&#39;application/json&#39;)</code>
           </li>
         </div>
       
@@ -1218,18 +1218,18 @@
 
             
 
-            <code class="ruby">      parsed_body = JSON.parse(last_response.body)</code>
+            <code class="ruby">      post &#39;/v1/events&#39;, new_event.to_json, &#39;CONTENT_TYPE&#39; =&gt; &#39;application/json&#39;</code>
           </li>
         </div>
       
         <div>
-          <li class="never" data-hits="" data-linenumber="87">
-            
-            
-
+          <li class="covered" data-hits="1" data-linenumber="87">
+            <span class="hits">1</span>
             
 
-            <code class="ruby"></code>
+            
+
+            <code class="ruby">      expect(last_response.status).to eq 201</code>
           </li>
         </div>
       
@@ -1240,18 +1240,18 @@
 
             
 
-            <code class="ruby">      expect(parsed_body[&#39;success&#39;]).to eq(true)</code>
+            <code class="ruby">      expect(last_response.content_type).to include(&#39;application/json&#39;)</code>
           </li>
         </div>
       
         <div>
-          <li class="never" data-hits="" data-linenumber="89">
-            
-            
-
+          <li class="covered" data-hits="1" data-linenumber="89">
+            <span class="hits">1</span>
             
 
-            <code class="ruby">    end</code>
+            
+
+            <code class="ruby">      parsed_body = JSON.parse(last_response.body)</code>
           </li>
         </div>
       
@@ -1262,12 +1262,177 @@
 
             
 
+            <code class="ruby"></code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="covered" data-hits="1" data-linenumber="91">
+            <span class="hits">1</span>
+            
+
+            
+
+            <code class="ruby">      expect(parsed_body[&#39;success&#39;]).to eq(true)</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="never" data-hits="" data-linenumber="92">
+            
+            
+
+            
+
+            <code class="ruby">    end</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="never" data-hits="" data-linenumber="93">
+            
+            
+
+            
+
+            <code class="ruby"></code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="covered" data-hits="1" data-linenumber="94">
+            <span class="hits">1</span>
+            
+
+            
+
+            <code class="ruby">    it &#39;error on create&#39; do</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="never" data-hits="" data-linenumber="95">
+            
+            
+
+            
+
+            <code class="ruby">      new_event = {</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="covered" data-hits="1" data-linenumber="96">
+            <span class="hits">1</span>
+            
+
+            
+
+            <code class="ruby">        &#39;name&#39;: &#39;CCXP&#39;</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="never" data-hits="" data-linenumber="97">
+            
+            
+
+            
+
+            <code class="ruby">      }</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="covered" data-hits="1" data-linenumber="98">
+            <span class="hits">1</span>
+            
+
+            
+
+            <code class="ruby">      post &#39;/v1/events&#39;, new_event.to_json, &#39;CONTENT_TYPE&#39; =&gt; &#39;application/json&#39;</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="covered" data-hits="1" data-linenumber="99">
+            <span class="hits">1</span>
+            
+
+            
+
+            <code class="ruby">      expect(last_response.status).to eq 400</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="covered" data-hits="1" data-linenumber="100">
+            <span class="hits">1</span>
+            
+
+            
+
+            <code class="ruby">      expect(last_response.content_type).to include(&#39;application/json&#39;)</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="covered" data-hits="1" data-linenumber="101">
+            <span class="hits">1</span>
+            
+
+            
+
+            <code class="ruby">      parsed_body = JSON.parse(last_response.body)</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="never" data-hits="" data-linenumber="102">
+            
+            
+
+            
+
+            <code class="ruby"></code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="covered" data-hits="1" data-linenumber="103">
+            <span class="hits">1</span>
+            
+
+            
+
+            <code class="ruby">      expect(parsed_body[&#39;success&#39;]).to eq(false)</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="never" data-hits="" data-linenumber="104">
+            
+            
+
+            
+
+            <code class="ruby">    end</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="never" data-hits="" data-linenumber="105">
+            
+            
+
+            
+
             <code class="ruby">  end</code>
           </li>
         </div>
       
         <div>
-          <li class="never" data-hits="" data-linenumber="91">
+          <li class="never" data-hits="" data-linenumber="106">
             
             
 
