@@ -14,16 +14,36 @@ Entre na pasta do projeto, builde e rode o docker da aplicação:
 
 ```bash
 cd onboarding_joaopedro
-docker-compose build
-docker-compose up
+docker build --tag onboarding_jp .
+docker run -p 80:4567 onboarding_jp
+
 ```
 
 Em seguida, clique no link a seguir:
-http://127.0.0.1:4567/
+http://localhost
 
 ## Ferramentas Usadas
 
 ## Como usar a API
+
+#### Acessar todos os eventos
+
+```
+GET '/v1/events'
+```
+
+#### Acessar um evento
+```
+GET '/v1/events/:id'
+```
+
+#### Criar um evento
+```
+POST '/v1/events/'
+```
+
+http://localhost/v1/events/
+
 
 
 
