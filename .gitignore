@@ -4,6 +4,8 @@
 /pkg
 /Gemfile.lock
 /coverage
+coverage
+/public/uploads
 .yardoc
 /doc
 .rvmrc
