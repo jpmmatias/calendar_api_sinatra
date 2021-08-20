@@ -12,6 +12,7 @@ gem 'sinatra-contrib', require: false
 gem 'sinatra-cross_origin'
 gem 'thin'
 gem 'webrick'
+gem "shrine", "~> 3.0"
 
 group :development do
   gem 'pry'
