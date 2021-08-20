@@ -42,7 +42,7 @@ GET '/v1/events/:id'
 POST '/v1/events/'
 ```
 
-http://localhost/v1/events/
+
 
 
 
