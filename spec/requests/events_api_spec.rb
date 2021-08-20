@@ -91,12 +91,22 @@ describe 'Event API' do
       expect(parsed_body['success']).to eq(true)
     end
 
-    it 'error on create' do
+    it 'error on event fields' do
       new_event = {
         'name': 'CCXP'
       }
       post '/v1/events', new_event.to_json, 'CONTENT_TYPE' => 'application/json'
       expect(last_response.status).to eq 400
+      expect(last_response.content_type).to include('application/json')
+      parsed_body = JSON.parse(last_response.body)
+
+      expect(parsed_body['success']).to eq(false)
+    end
+
+    it 'body is not an json' do
+      wrong_event_type = '<h2> Evento </h2>'
+      post '/v1/events', wrong_event_type, 'CONTENT_TYPE' => 'html/text'
+      expect(last_response.status).not_to eq 500
       expect(last_response.content_type).to include('application/json')
       parsed_body = JSON.parse(last_response.body)
 

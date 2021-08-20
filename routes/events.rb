@@ -29,6 +29,10 @@ post '/v1/events' do
     status 400
     { success: false }.to_json
   end
+
+rescue JSON::ParserError
+  status 400
+  { success: false }.to_json
 end
 
 private
