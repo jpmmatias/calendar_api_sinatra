@@ -1,1 +1,1 @@
-require_relative 'Event'
+require_relative 'event'

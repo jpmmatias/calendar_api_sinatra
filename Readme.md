@@ -26,6 +26,25 @@ http://localhost
 
 ## Como usar a API
 
+#### Acessar todos os eventos
+
+```
+GET '/v1/events'
+```
+
+#### Acessar um evento
+```
+GET '/v1/events/:id'
+```
+
+#### Criar um evento
+```
+POST '/v1/events/'
+```
+
+
+
+
 
 
 ## Authors
