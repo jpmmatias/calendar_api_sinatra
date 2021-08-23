@@ -9,7 +9,7 @@ configure do
   enable :cross_origin
   set :public_folder, 'public'
   set :database_file, 'config/database.yml'
-
+  set :port, 5000
   set :allow_origin, '*'
   set :allow_methods, %i[get post patch delete options]
   set :allow_credentials, true

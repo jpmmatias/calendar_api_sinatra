@@ -9,18 +9,41 @@ Primeiramente clone o projeto:
 
 ```bash
   git clone https://git.campuscode.com.br/onboarding2021agosto/onboarding_joaopedro.git
+  cd onboarding_joaopedro
 ```
+### Usando Docker Compose
+
+```bash
+docker-compose build
+docker compose up
+```
+Em seguida, clique no link a seguir:
+http://localhost:5000
+
+### Usando Docker
+
 Entre na pasta do projeto, builde e rode o docker da aplicação:
 
 ```bash
-cd onboarding_joaopedro
 docker build --tag onboarding_jp .
-docker run -p 80:4567 onboarding_jp
-
+docker run -p 80:5000 onboarding_jp
 ```
 
 Em seguida, clique no link a seguir:
 http://localhost
+
+Observação: as chamadas de API vão ser no 'http://localhost' e não no 'http://localhost:5000'
+
+### Sem Docker
+
+É necessário estar com o Ruby versão 3.0.1
+
+```bash
+bundle install
+ruby server.rb
+```
+Em seguida, clique no link a seguir:
+http://localhost:5000
 
 ## Ferramentas Usadas
 
