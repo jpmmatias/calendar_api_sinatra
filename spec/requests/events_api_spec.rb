@@ -7,13 +7,7 @@ describe 'Event API' do
 
   context 'GET /v1/events' do
     it 'should get all events' do
-      event1 = create(:event,
-                      name: 'Ruby Conf',
-                      local: 'Online',
-                      description: 'A maior descrição que existe',
-                      owner: 'Henrique Morato',
-                      start_date: 10.days.from_now,
-                      end_date: 15.days.from_now)
+      event1 = create(:event)
 
       event2 = create(:event,
                       name: 'CCXP',
@@ -49,13 +43,7 @@ describe 'Event API' do
 
   context 'GET /v1/events/:id' do
     it 'get specific event' do
-      event = create(:event,
-                     name: 'Ruby Conf',
-                     local: 'Online',
-                     description: 'A maior descrição que existe',
-                     owner: 'Henrique Morato',
-                     start_date: 10.days.from_now,
-                     end_date: 15.days.from_now)
+      event = create(:event)
 
       get "/v1/events/#{event.id}"
 
