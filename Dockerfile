@@ -2,7 +2,6 @@ FROM ruby:3.0.1
 LABEL org.opencontainers.image.authors="https://git.campuscode.com.br/joao.matias"
 
 RUN apt-get update
-RUN mkdir /onboarding_jp
 WORKDIR /onboarding_jp
 
 COPY Gemfile ./Gemfile

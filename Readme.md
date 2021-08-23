@@ -40,7 +40,7 @@ Observação: as chamadas de API vão ser no 'http://localhost' e não no 'http:
 
 ```bash
 bundle install
-ruby server.rb
+bundle exec rackup --host 0.0.0.0 -p 5000
 ```
 Em seguida, clique no link a seguir:
 http://localhost:5000
