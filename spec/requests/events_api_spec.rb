@@ -9,13 +9,7 @@ describe 'Event API' do
     it 'should get all events' do
       event1 = create(:event)
 
-      event2 = create(:event,
-                      name: 'CCXP',
-                      local: 'São Paulo',
-                      description: 'A melhor descrição que existe',
-                      owner: 'John Cena',
-                      start_date: 15.days.from_now,
-                      end_date: 20.days.from_now)
+      event2 = create(:event)
 
       get '/v1/events'
 
