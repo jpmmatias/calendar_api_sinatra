@@ -2,7 +2,6 @@
 *.swp
 *.rbc
 /pkg
-/Gemfile.lock
 /coverage
 coverage
 /public/uploads
