@@ -2,7 +2,6 @@
 
 API para gerenciamento de eventos
 
-
 ## Instalação
 
 Primeiramente clone o projeto:
@@ -11,12 +10,14 @@ Primeiramente clone o projeto:
   git clone https://git.campuscode.com.br/onboarding2021agosto/onboarding_joaopedro.git
   cd onboarding_joaopedro
 ```
+
 ### Usando Docker Compose
 
 ```bash
 docker-compose build
 docker compose up
 ```
+
 Em seguida, clique no link a seguir:
 http://localhost:5000
 
@@ -42,6 +43,7 @@ Observação: as chamadas de API vão ser no 'http://localhost' e não no 'http:
 bundle install
 bundle exec rackup --host 0.0.0.0 -p 5000
 ```
+
 Em seguida, clique no link a seguir:
 http://localhost:5000
 
@@ -56,19 +58,16 @@ GET '/v1/events'
 ```
 
 #### Acessar um evento
+
 ```
 GET '/v1/events/:id'
 ```
 
 #### Criar um evento
+
 ```
 POST '/v1/events/'
 ```
-
-
-
-
-
 
 ## Authors
 

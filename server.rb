@@ -1,15 +1,14 @@
 require 'sinatra'
-require 'sinatra/json'
+require 'sinatra/contrib'
 require 'sinatra/namespace'
+require 'sinatra/json'
+require 'sinatra/activerecord'
 require './config/environment'
-
-register Sinatra::CrossOrigin
 
 configure do
   enable :cross_origin
-  set :public_folder, 'public'
-  set :database_file, 'config/database.yml'
-  set :port, 5000
+  set :database_file, File.expand_path('config/database.yml', __dir__)
+  set :default_content_type, 'application/json'
   set :allow_origin, '*'
   set :allow_methods, %i[get post patch delete options]
   set :allow_credentials, true
@@ -24,9 +23,5 @@ options '*' do
   200
 end
 
-namespace '/v1' do
-  get '/events' do
-    events = Event.all
-    events.to_json
-  end
-end
+require_relative 'models/init'
+require_relative 'routes/init'

@@ -2,11 +2,11 @@ source 'https://rubygems.org'
 
 gem 'activerecord', '~> 6.0', '>= 6.0.3.2', require: 'active_record'
 gem 'bcrypt'
-gem 'bigdecimal', '1.4.2'
 gem 'falcon'
 gem 'puma'
 gem 'rack-contrib'
 gem 'rake'
+gem 'shrine', '~> 3.0'
 gem 'sinatra'
 gem 'sinatra-activerecord', require: 'sinatra/activerecord'
 gem 'sinatra-contrib', require: false
