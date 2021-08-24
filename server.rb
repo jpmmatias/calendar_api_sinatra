@@ -7,7 +7,7 @@ require './config/environment'
 
 configure do
   enable :cross_origin
-  set :database_file, './config/database.yml'
+  set :database_file, File.expand_path('config/database.yml', __dir__)
   set :default_content_type, 'application/json'
 
   set :allow_origin, '*'
