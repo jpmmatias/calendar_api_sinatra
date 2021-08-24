@@ -1,6 +1,7 @@
 get '/v1/events' do
   events = Event.all
   if events.empty?
+    status 204
     { success: true , message: 'No events created yet'}.to_json
   else
     events.to_json
