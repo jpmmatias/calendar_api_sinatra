@@ -11,8 +11,6 @@ RUN gem install bundler && bundle install
 
 EXPOSE 5000
 
-CMD ["bundle", "exec", "rackup", "--host", "0.0.0.0", "-p", "5000"]
+CMD [ "rake db:setup" ] && ["bundle", "exec", "rackup", "--host", "0.0.0.0", "-p", "5000"]
 
 COPY . /onboarding_jp
-
-
