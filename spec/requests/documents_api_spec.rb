@@ -56,7 +56,7 @@ describe 'Document API' do
       event = create(:event)
 
       post "/v1/events/#{event.id}/documents",:file => Rack::Test::UploadedFile.new('spec/fixtures/test_image.jpeg', 'image/jpeg'), 'CONTENT_TYPE' => 'image/jpeg'
-      
+
       expect(last_response.status).to eq 201
     end
 
@@ -100,5 +100,22 @@ describe 'Document API' do
         expect(last_response.status).to eq 201
     end
 
+    it "empty file" do
+        event = create(:event)
+
+        post "/v1/events/#{event.id}/documents"
+
+        expect(last_response.status).to eq 400
+    end
+
+    it "event don't exist" do
+        post "/v1/events/#{rand(1...1000)}/documents",:file => Rack::Test::UploadedFile.new('spec/fixtures/Desafio - Programa de OnBoarding.pdf', 'appplication/pdf'), 'CONTENT_TYPE' => 'appplication/pdf'
+
+        expect(last_response.status).to eq 404
+
+        parsed_body = JSON.parse(last_response.body)
+        
+        expect(parsed_body['succes']).to eq(false)
+    end
   end
 end

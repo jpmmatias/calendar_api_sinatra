@@ -8,7 +8,6 @@ get '/v1/events' do
   end
 end
 
-
 get '/v1/events/:id' do
   event = Event.where(id: params['id']).first
   status 404 if event.nil?
