@@ -19,9 +19,9 @@ describe 'Document API' do
 
       parsed_body = JSON.parse(last_response.body)
 
-      expect(parsed_body[0]['file_path']).to eq(document.file_path)
-      expect(parsed_body[1]['file_path']).to eq(document2.file_path)
-      expect(parsed_body[2]['file_path']).to eq(document3.file_path)
+      expect(parsed_body['documents'][0]['file_path']).to eq(document.file_path)
+      expect(parsed_body['documents'][1]['file_path']).to eq(document2.file_path)
+      expect(parsed_body['documents'][2]['file_path']).to eq(document3.file_path)
     end
 
     it 'event does not have documents created' do
@@ -45,7 +45,7 @@ describe 'Document API' do
 
       parsed_body = JSON.parse(last_response.body)
 
-      expect(parsed_body['file_path']).to eq(document.file_path)
+      expect(parsed_body['document']['file_path']).to eq(document.file_path)
     end
 
   end

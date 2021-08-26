@@ -48,9 +48,9 @@ describe 'Event API' do
 
       parsed_body = JSON.parse(last_response.body)
 
-      expect(parsed_body['name']).to eq(event.name)
-      expect(parsed_body['local']).to eq(event.local)
-      expect(parsed_body['description']).to eq(event.description)
+      expect(parsed_body['event']['name']).to eq(event.name)
+      expect(parsed_body['event']['local']).to eq(event.local)
+      expect(parsed_body['event']['description']).to eq(event.description)
     end
 
     it 'non existent event' do

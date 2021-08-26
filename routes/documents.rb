@@ -6,7 +6,7 @@ get '/v1/events/:event_id/documents' do
      {success: true , message: 'No documents created yet for this event'}.to_json
     else
       status 200
-      event.documents.to_json
+      {success: true , documents: event.documents }.to_json
     end
 end
 
@@ -17,7 +17,7 @@ get '/v1/events/:event_id/documents/:id' do
       json( { success: true , message: 'Non existed document' })
     else
       status 200
-      document.to_json
+      {success: true , document: document }.to_json
     end
 end
 
