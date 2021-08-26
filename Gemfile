@@ -6,7 +6,6 @@ gem 'falcon'
 gem 'puma'
 gem 'rack-contrib'
 gem 'rake'
-gem 'shrine', '~> 3.0'
 gem 'sinatra'
 gem 'sinatra-activerecord', require: 'sinatra/activerecord'
 gem 'sinatra-contrib', require: false

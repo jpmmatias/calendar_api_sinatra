@@ -9,7 +9,6 @@ require 'factory_bot'
 require 'rack/test'
 require 'database_cleaner/active_record'
 require 'shoulda-matchers'
-
 SimpleCov.start
 
 RSpec.configure do |config|

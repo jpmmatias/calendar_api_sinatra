@@ -10,7 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_19_122247) do
+ActiveRecord::Schema.define(version: 2021_08_25_175906) do
+
+  create_table "documents", force: :cascade do |t|
+    t.integer "event_id"
+    t.string "file_path", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["event_id"], name: "index_documents_on_event_id"
+  end
 
   create_table "events", force: :cascade do |t|
     t.string "name"
@@ -23,4 +31,5 @@ ActiveRecord::Schema.define(version: 2021_08_19_122247) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  add_foreign_key "documents", "events"
 end

@@ -12,3 +12,12 @@ class CreateEvents < ActiveRecord::Migration[6.1]
     end
   end
 end
+
+# class CreateDocs < ActiveRecord::Migration[6.1]
+#   def change
+#     create_table :docs do |t|
+#         t.references :event, index: true, foreign_key: true
+#         t.text :document_data
+#     end
+#   end
+# end

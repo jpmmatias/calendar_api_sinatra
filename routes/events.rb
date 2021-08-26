@@ -4,9 +4,10 @@ get '/v1/events' do
     status 204
     { success: true , message: 'No events created yet'}.to_json
   else
-    events.to_json
+    {success: true , events: events.to_json}.to_json
   end
 end
+
 
 get '/v1/events/:id' do
   event = Event.where(id: params['id']).first
@@ -25,10 +26,19 @@ post '/v1/events' do
                           start_date: body['start_date'],
                           end_date: body['end_date']
                         })
-
   if new_event.save
+    tempfile = StringIO.new(body['file']['tempfile'])
+    
+    filename = File.join("./public/uploads/", body['file']['original_filename'])
+    File.open(filename, 'wb') do |f| 
+      while chunk = tempfile.read(65536)
+        f.write(chunk)
+      end
+      tempfile.close
+    end
+    Document.create(file_path:"./public/uploads/#{body['file']['filename']}", event: new_event)
     status 201
-    { success: true }.to_json
+    { success: true, event: new_event.to_json }.to_json
   else
     status 400
     { success: false }.to_json

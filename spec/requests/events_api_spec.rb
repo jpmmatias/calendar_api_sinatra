@@ -8,7 +8,6 @@ describe 'Event API' do
   context 'GET /v1/events' do
     it 'should get all events' do
       event1 = create(:event)
-
       event2 = create(:event)
 
       get '/v1/events'
@@ -49,7 +48,7 @@ describe 'Event API' do
       expect(parsed_body['description']).to eq(event.description)
     end
 
-    it 'nonexistent event' do
+    it 'non existent event' do
       get "/v1/events/#{rand(1...1000)}"
       expect(last_response.status).to eq 404
     end
@@ -63,14 +62,23 @@ describe 'Event API' do
         'description': 'A melhor descrição que existe',
         'owner': 'John Cena',
         'start_date': 15.days.from_now,
-        'end_date': 20.days.from_now
+        'end_date': 20.days.from_now,
+        'file': Rack::Test::UploadedFile.new('spec/fixtures/test_image.jpeg', 'image/jpeg')
       }
+
       post '/v1/events', new_event.to_json, 'CONTENT_TYPE' => 'application/json'
       expect(last_response.status).to eq 201
       expect(last_response.content_type).to include('application/json')
+
       parsed_body = JSON.parse(last_response.body)
+      parsed_event = JSON.parse(parsed_body['event'])
+      parsed_document = JSON.parse(parsed_body['file'])
 
       expect(parsed_body['success']).to eq(true)
+      expect(parsed_event['name']).to eq('CCXP')
+      expect(parsed_event['description']).to eq('A melhor descrição que existe')
+      expect(parsed_event['owner']).to eq('John Cena')
+      expect(parsed_document['document_data']).to include('teste_pdf.pdf')
     end
 
     it 'error on event fields' do
