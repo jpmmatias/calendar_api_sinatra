@@ -11,10 +11,10 @@ get '/v1/events/:event_id/documents' do
 end
 
 get '/v1/events/:event_id/documents/:id' do 
-    document = Document.find(params[:id])
+    document =  Document.where(id: params['id']).first
     if document.nil?
       status 204
-     {success: true , message: 'Non existed document'}.to_json
+      json( { success: true , message: 'Non existed document' })
     else
       status 200
       document.to_json
