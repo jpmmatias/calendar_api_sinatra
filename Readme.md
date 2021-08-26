@@ -21,6 +21,12 @@ docker compose up
 Em seguida, clique no link a seguir:
 http://localhost:5000
 
+Caso precise subir um shell:
+
+```bash
+docker-compose run --rm api bash
+```
+
 ### Usando Docker
 
 Entre na pasta do projeto, builde e rode o docker da aplicação:
