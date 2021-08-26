@@ -87,6 +87,12 @@ GET '/v1/events/:event_id/documents/:id'
 POST '/v1/events/:event_id/documents'
 ```
 
+#### Download de documento de um evento
+
+```
+GET '/v1/events/:event_id/documents/:id/download'
+```
+
 ## Authors
 
 - [@joao.matias](https://git.campuscode.com.br/joao.matias)
