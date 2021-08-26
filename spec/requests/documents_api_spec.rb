@@ -118,4 +118,19 @@ describe 'Document API' do
         expect(parsed_body['succes']).to eq(false)
     end
   end
+
+  context "GET GET /v1/events/:event_id/documents/:id/download" do
+    it "successfully" do
+      event = create(:event)
+      document = create(:document, event:event)
+
+      get "/v1/events/#{event.id}/documents/#{document.id}/download"
+
+      expect(last_response.status).to eq(200)
+      expect(last_response.headers['Content-Type']).to eq("Application/octet-stream")
+    end
+    
+    
+  end
+  
 end

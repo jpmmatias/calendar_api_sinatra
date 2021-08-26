@@ -20,6 +20,12 @@ get '/v1/events/:event_id/documents/:id' do
       document.to_json
     end
 end
+
+get '/v1/events/:event_id/documents/:id/download' do
+    status 200
+    document = Document.find(params[:id])
+    send_file "./#{document.file_path}", :filename => 'Documento', :type => 'Application/octet-stream'
+end
   
 post '/v1/events/:event_id/documents' do
     if params[:file].nil?
