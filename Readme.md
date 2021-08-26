@@ -69,6 +69,24 @@ GET '/v1/events/:id'
 POST '/v1/events/'
 ```
 
+#### Acessar documentos de um evento
+
+```
+GET '/v1/events/:event_id/documents'
+```
+
+#### Acessar documento de um evento
+
+```
+GET '/v1/events/:event_id/documents/:id'
+```
+
+#### Criar documento para um evento
+
+```
+POST '/v1/events/:event_id/documents'
+```
+
 ## Authors
 
 - [@joao.matias](https://git.campuscode.com.br/joao.matias)
