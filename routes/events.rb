@@ -4,7 +4,7 @@ get '/v1/events' do
     status 204
     { success: true , message: 'No events created yet'}.to_json
   else
-    {success: true , events: events.to_json}.to_json
+    {success: true , events: events}.to_json
   end
 end
 

@@ -16,7 +16,7 @@ describe 'Event API' do
       expect(last_response.content_type).to include('application/json')
 
       parsed_body = JSON.parse(last_response.body)
-      parsed_events = JSON.parse(parsed_body['events'])
+      parsed_events = parsed_body['events']
       
       expect(parsed_events.count).to eq(Event.count)
 
