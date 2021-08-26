@@ -17,7 +17,6 @@ end
 
 post '/v1/events' do
   body = get_body(request)
-
   new_event = Event.new({
                           name: body['name'],
                           local: body['local'],
@@ -27,16 +26,7 @@ post '/v1/events' do
                           end_date: body['end_date']
                         })
   if new_event.save
-    tempfile = StringIO.new(body['file']['tempfile'])
-    
-    filename = File.join("./public/uploads/", body['file']['original_filename'])
-    File.open(filename, 'wb') do |f| 
-      while chunk = tempfile.read(65536)
-        f.write(chunk)
-      end
-      tempfile.close
-    end
-    Document.create(file_path:"./public/uploads/#{body['file']['filename']}", event: new_event)
+
     status 201
     { success: true, event: new_event.to_json }.to_json
   else

@@ -44,7 +44,7 @@ describe 'Document API' do
       expect(last_response.content_type).to include('application/json')
 
       parsed_body = JSON.parse(last_response.body)
-      
+
       expect(parsed_body['file_path']).to eq(document.file_path)
     end
 
@@ -54,8 +54,50 @@ describe 'Document API' do
 
     it 'create an document' do
       event = create(:event)
+
       post "/v1/events/#{event.id}/documents",:file => Rack::Test::UploadedFile.new('spec/fixtures/test_image.jpeg', 'image/jpeg'), 'CONTENT_TYPE' => 'image/jpeg'
+      
       expect(last_response.status).to eq 201
+    end
+
+    it "can upload PDF" do
+      event = create(:event)
+
+      post "/v1/events/#{event.id}/documents",:file => Rack::Test::UploadedFile.new('spec/fixtures/Desafio - Programa de OnBoarding.pdf', 'appplication/pdf'), 'CONTENT_TYPE' => 'appplication/pdf'
+
+      expect(last_response.status).to eq 201
+    end
+
+    it "can upload DOCX" do
+        event = create(:event)
+
+        post "/v1/events/#{event.id}/documents",:file => Rack::Test::UploadedFile.new('spec/fixtures/Teste.docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'), 'CONTENT_TYPE' => 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+
+        expect(last_response.status).to eq 201
+    end
+
+    it "can upload ODS" do
+        event = create(:event)
+
+        post "/v1/events/#{event.id}/documents",:file => Rack::Test::UploadedFile.new('spec/fixtures/teste.ods', 'application/vnd.oasis.opendocument.spreadsheet'), 'CONTENT_TYPE' => 'application/vnd.oasis.opendocument.spreadsheet'
+
+        expect(last_response.status).to eq 201
+    end
+
+    it "can upload XLSX" do
+        event = create(:event)
+
+        post "/v1/events/#{event.id}/documents",:file => Rack::Test::UploadedFile.new('spec/fixtures/teste.xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'), 'CONTENT_TYPE' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+
+        expect(last_response.status).to eq 201
+    end
+
+    it "can upload PPTX" do
+        event = create(:event)
+
+        post "/v1/events/#{event.id}/documents",:file => Rack::Test::UploadedFile.new('spec/fixtures/teste.pptx', 'application/vnd.openxmlformats-officedocument.presentationml.presentation'), 'CONTENT_TYPE' => 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+
+        expect(last_response.status).to eq 201
     end
 
   end

@@ -1,8 +1,3 @@
-set(:method) do |method|
-    method = method.to_s.upcase
-    condition { request.request_method == method }
-  end
-
 get '/v1/events/:event_id/documents' do 
     event = Event.find(params[:event_id])
     if event.documents.empty?
@@ -28,10 +23,20 @@ end
 post '/v1/events/:event_id/documents' do
     file_name = params[:file][:filename]
     file = params[:file][:tempfile]
+    type = params[:file][:type]
+
+   
     document = Document.new(event:Event.find(params[:event_id]), file_path: "./public/uploads/#{file_name}")
+
     if document.save
-        File.open("./public/uploads/#{file_name}", 'wb') do |f|
-            f.write(file.read)
+        if type == 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+            File.open("./public/uploads/#{file_name}", 'wb') do |f|
+                f.write(file.read.force_encoding("UTF-8"))
+            end
+        else
+            File.open("./public/uploads/#{file_name}", 'wb') do |f|
+                f.write(file.read)
+            end
         end
         status 201
         return {success: true}.to_json
