@@ -11,12 +11,23 @@ require 'faker'
     ) 
 
     Document.create!(
-        file_path: ['spec/fixtures/teste.xlsx', 'spec/fixtures/teste.pptx', 'spec/fixtures/test_image.jpeg'].sample,
+        file_path: 'spec/fixtures/teste.xlsx',
+        file_type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        file_name: 'teste',
         event: event
     )
 
     Document.create!(
-        file_path: ['spec/fixtures/teste.xlsx', 'spec/fixtures/teste.pptx', 'spec/fixtures/test_image.jpeg'].sample,
+        file_path: 'spec/fixtures/test_image.jpeg',
+        file_type: 'imagem/jpeg',
+        file_name: 'teste_imagem',
+        event: event
+    )
+
+    Document.create!(
+        file_path: 'spec/fixtures/teste.pptx',
+        file_type: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+        file_name: 'teste_apresentacao',
         event: event
     )
 end

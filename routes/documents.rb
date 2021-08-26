@@ -17,14 +17,14 @@ get '/v1/events/:event_id/documents/:id' do
       json( { success: true , message: 'Non existed document' })
     else
       status 200
-      {success: true , document: document }.to_json
+      send_file open(document.file_path, type: document.file_type, disposition: 'inline')
     end
 end
 
 get '/v1/events/:event_id/documents/:id/download' do
     status 200
     document = Document.find(params[:id])
-    send_file "./#{document.file_path}", :filename => 'Documento', :type => 'Application/octet-stream'
+    send_file "./#{document.file_path}", :filename => document.file_name, :type => 'Application/octet-stream'
 end
   
 post '/v1/events/:event_id/documents' do
@@ -44,7 +44,7 @@ post '/v1/events/:event_id/documents' do
     file = params[:file][:tempfile]
     type = params[:file][:type]
    
-    document = Document.new(event: event, file_path: "./public/uploads/#{file_name}")
+    document = Document.new(event: event, file_path: "./public/uploads/#{file_name}", file_type: type, file_name: file_name)
 
     if document.save and !file_name.nil?
         if type == 'application/vnd.openxmlformats-officedocument.presentationml.presentation'

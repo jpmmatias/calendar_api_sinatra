@@ -36,16 +36,12 @@ describe 'Document API' do
   context 'GET /v1/events/:event_id/documents/:id' do
     it 'get specifc document from event' do
       event = create(:event)
-      document = create(:document, event: event)
+      document = create(:document, :image, event: event)
 
       get "/v1/events/#{event.id}/documents/#{document.id}"
 
       expect(last_response.status).to eq 200
-      expect(last_response.content_type).to include('application/json')
-
-      parsed_body = JSON.parse(last_response.body)
-
-      expect(parsed_body['document']['file_path']).to eq(document.file_path)
+      expect(last_response.content_type).to include(document.file_type)
     end
 
   end

@@ -7,6 +7,8 @@ require './config/environment'
 
 configure do
   enable :cross_origin
+  set :public_folder, Proc.new {File.join(root,"../public")}
+  set :static, true
   set :database_file, File.expand_path('config/database.yml', __dir__)
   set :default_content_type, 'application/json'
   set :allow_origin, '*'
