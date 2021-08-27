@@ -22,11 +22,11 @@ end
 group :test do
   gem 'database_cleaner', git: 'https://github.com/bmabey/database_cleaner.git'
   gem 'factory_bot'
+  gem 'faker', git: 'https://github.com/faker-ruby/faker.git', branch: 'master'
   gem 'rack-test'
   gem 'rspec'
   gem 'shoulda-matchers', '~> 5.0'
   gem 'simplecov', require: false
-  gem 'faker', :git => 'https://github.com/faker-ruby/faker.git', :branch => 'master'
 end
 
 group :development, :test do

@@ -25,11 +25,11 @@ describe 'Document API' do
     end
 
     it 'event does not have documents created' do
-        event = create(:event)
+      event = create(:event)
 
-        get "/v1/events/#{event.id}/documents"
-        
-        expect(last_response.status).to eq 204
+      get "/v1/events/#{event.id}/documents"
+
+      expect(last_response.status).to eq 204
     end
   end
 
@@ -43,90 +43,113 @@ describe 'Document API' do
       expect(last_response.status).to eq 200
       expect(last_response.content_type).to include(document.file_type)
     end
-
   end
 
   context 'POST /v1/events/:event_id/documents' do
-
     it 'create an document' do
       event = create(:event)
 
-      post "/v1/events/#{event.id}/documents",:file => Rack::Test::UploadedFile.new('spec/fixtures/test_image.jpeg', 'image/jpeg'), 'CONTENT_TYPE' => 'image/jpeg'
+      post "/v1/events/#{event.id}/documents",
+           :file => Rack::Test::UploadedFile.new(
+             'spec/fixtures/test_image.jpeg',
+             'image/jpeg'
+           ), 'CONTENT_TYPE' => 'image/jpeg'
 
       expect(last_response.status).to eq 201
     end
 
-    it "can upload PDF" do
+    it 'can upload PDF' do
       event = create(:event)
 
-      post "/v1/events/#{event.id}/documents",:file => Rack::Test::UploadedFile.new('spec/fixtures/Desafio - Programa de OnBoarding.pdf', 'appplication/pdf'), 'CONTENT_TYPE' => 'appplication/pdf'
+      post "/v1/events/#{event.id}/documents",
+           :file => Rack::Test::UploadedFile.new(
+             'spec/fixtures/Desafio - Programa de OnBoarding.pdf',
+             'appplication/pdf'
+           ),
+           'CONTENT_TYPE' => 'appplication/pdf'
 
       expect(last_response.status).to eq 201
     end
 
-    it "can upload DOCX" do
-        event = create(:event)
+    it 'can upload DOCX' do
+      event = create(:event)
+      mime_type_docx = 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
 
-        post "/v1/events/#{event.id}/documents",:file => Rack::Test::UploadedFile.new('spec/fixtures/Teste.docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'), 'CONTENT_TYPE' => 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+      post "/v1/events/#{event.id}/documents",
+           :file => Rack::Test::UploadedFile.new(
+             'spec/fixtures/Teste.docx', mime_type_docx
+           ), 'CONTENT_TYPE' => mime_type_docx
 
-        expect(last_response.status).to eq 201
+      expect(last_response.status).to eq 201
     end
 
-    it "can upload ODS" do
-        event = create(:event)
+    it 'can upload ODS' do
+      event = create(:event)
 
-        post "/v1/events/#{event.id}/documents",:file => Rack::Test::UploadedFile.new('spec/fixtures/teste.ods', 'application/vnd.oasis.opendocument.spreadsheet'), 'CONTENT_TYPE' => 'application/vnd.oasis.opendocument.spreadsheet'
+      post "/v1/events/#{event.id}/documents",
+           :file => Rack::Test::UploadedFile.new('spec/fixtures/teste.ods',
+                                                 'application/vnd.oasis.opendocument.spreadsheet'),
+           'CONTENT_TYPE' => 'application/vnd.oasis.opendocument.spreadsheet'
 
-        expect(last_response.status).to eq 201
+      expect(last_response.status).to eq 201
     end
 
-    it "can upload XLSX" do
-        event = create(:event)
+    it 'can upload XLSX' do
+      event = create(:event)
 
-        post "/v1/events/#{event.id}/documents",:file => Rack::Test::UploadedFile.new('spec/fixtures/teste.xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'), 'CONTENT_TYPE' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      post "/v1/events/#{event.id}/documents",
+           :file => Rack::Test::UploadedFile.new(
+             'spec/fixtures/teste.xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+           ),
+           'CONTENT_TYPE' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 
-        expect(last_response.status).to eq 201
+      expect(last_response.status).to eq 201
     end
 
-    it "can upload PPTX" do
-        event = create(:event)
+    it 'can upload PPTX' do
+      event = create(:event)
+      mime_type_pptx = 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
 
-        post "/v1/events/#{event.id}/documents",:file => Rack::Test::UploadedFile.new('spec/fixtures/teste.pptx', 'application/vnd.openxmlformats-officedocument.presentationml.presentation'), 'CONTENT_TYPE' => 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+      post "/v1/events/#{event.id}/documents",
+           :file => Rack::Test::UploadedFile.new('spec/fixtures/teste.pptx', mime_type_pptx),
+           'CONTENT_TYPE' => mime_type_pptx
 
-        expect(last_response.status).to eq 201
+      expect(last_response.status).to eq 201
     end
 
-    it "empty file" do
-        event = create(:event)
+    it 'empty file' do
+      event = create(:event)
 
-        post "/v1/events/#{event.id}/documents"
+      post "/v1/events/#{event.id}/documents"
 
-        expect(last_response.status).to eq 400
+      expect(last_response.status).to eq 400
     end
 
     it "event don't exist" do
-        post "/v1/events/#{rand(1...1000)}/documents",:file => Rack::Test::UploadedFile.new('spec/fixtures/Desafio - Programa de OnBoarding.pdf', 'appplication/pdf'), 'CONTENT_TYPE' => 'appplication/pdf'
+      post "/v1/events/#{rand(1...1000)}/documents",
+           :file => Rack::Test::UploadedFile.new(
+             'spec/fixtures/Desafio - Programa de OnBoarding.pdf',
+             'appplication/pdf'
+           ),
+           'CONTENT_TYPE' => 'appplication/pdf'
 
-        expect(last_response.status).to eq 404
+      expect(last_response.status).to eq 404
 
-        parsed_body = JSON.parse(last_response.body)
-        
-        expect(parsed_body['succes']).to eq(false)
+      parsed_body = JSON.parse(last_response.body)
+
+      expect(parsed_body['succes']).to eq(false)
     end
   end
 
-  context "GET GET /v1/events/:event_id/documents/:id/download" do
-    it "successfully" do
+  context 'GET GET /v1/events/:event_id/documents/:id/download' do
+    it 'successfully' do
       event = create(:event)
-      document = create(:document, event:event)
+      document = create(:document, event: event)
 
       get "/v1/events/#{event.id}/documents/#{document.id}/download"
 
       expect(last_response.status).to eq(200)
-      expect(last_response.headers['Content-Type']).to eq("Application/octet-stream")
+      expect(last_response.headers['Content-Type']).to eq('Application/octet-stream')
     end
-    
-    
   end
-  
 end

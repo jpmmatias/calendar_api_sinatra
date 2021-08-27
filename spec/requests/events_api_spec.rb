@@ -17,7 +17,7 @@ describe 'Event API' do
 
       parsed_body = JSON.parse(last_response.body)
       parsed_events = parsed_body['events']
-      
+
       expect(parsed_events.count).to eq(Event.count)
 
       expect(parsed_events[0]['name']).to eq(event1.name)
@@ -82,7 +82,6 @@ describe 'Event API' do
       expect(parsed_event['name']).to eq('CCXP')
       expect(parsed_event['description']).to eq('A melhor descrição que existe')
       expect(parsed_event['owner']).to eq('John Cena')
-     
     end
 
     it 'error on event fields' do

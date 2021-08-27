@@ -7,7 +7,7 @@ require './config/environment'
 
 configure do
   enable :cross_origin
-  set :public_folder, Proc.new {File.join(root,"../public")}
+  set :public_folder, (proc { File.join(root, '../public') })
   set :static, true
   set :database_file, File.expand_path('config/database.yml', __dir__)
   set :default_content_type, 'application/json'
@@ -25,7 +25,5 @@ options '*' do
   200
 end
 
-
 require_relative 'models/init'
 require_relative 'routes/init'
-
