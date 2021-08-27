@@ -10,27 +10,36 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20_210_826_203_320) do
-  create_table 'documents', force: :cascade do |t|
-    t.integer 'event_id'
-    t.string 'file_path', null: false
-    t.datetime 'created_at', precision: 6, null: false
-    t.datetime 'updated_at', precision: 6, null: false
-    t.string 'file_type'
-    t.string 'file_name'
-    t.index ['event_id'], name: 'index_documents_on_event_id'
+ActiveRecord::Schema.define(version: 2021_08_27_134747) do
+
+  create_table "documents", force: :cascade do |t|
+    t.integer "event_id"
+    t.string "file_path", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.string "file_type"
+    t.string "file_name"
+    t.index ["event_id"], name: "index_documents_on_event_id"
   end
 
-  create_table 'events', force: :cascade do |t|
-    t.string 'name'
-    t.string 'local'
-    t.text 'description'
-    t.string 'owner'
-    t.datetime 'start_date'
-    t.datetime 'end_date'
-    t.datetime 'created_at', precision: 6, null: false
-    t.datetime 'updated_at', precision: 6, null: false
+  create_table "events", force: :cascade do |t|
+    t.string "name"
+    t.string "local"
+    t.text "description"
+    t.string "owner"
+    t.datetime "start_date"
+    t.datetime "end_date"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
-  add_foreign_key 'documents', 'events'
+  create_table "users", force: :cascade do |t|
+    t.string "name"
+    t.string "email"
+    t.string "password_digest"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  add_foreign_key "documents", "events"
 end

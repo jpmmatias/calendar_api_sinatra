@@ -4,6 +4,7 @@ require 'sinatra/namespace'
 require 'sinatra/json'
 require 'sinatra/activerecord'
 require './config/environment'
+require 'bcrypt'
 
 configure do
   enable :cross_origin
