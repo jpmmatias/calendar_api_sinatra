@@ -24,7 +24,7 @@ post '/v1/users/login' do
 
   if user&.authenticate(body['password'])
     status 200
-    { success: true, message: 'User logged successfully' }.to_json
+    { token: token(user) }.to_json
   else
     status 400
     { success: false }.to_json
@@ -40,4 +40,20 @@ private
 def get_body(req)
   req.body.rewind
   JSON.parse(req.body.read)
+end
+
+def token(user)
+  JWT.encode payload(user), ENV['JWT_SECRET'], 'HS256'
+end
+
+def payload(username)
+  {
+    exp: Time.now.to_i + 60 * 60,
+    iat: Time.now.to_i,
+    iss: ENV['JWT_ISSUER'],
+    scopes: %w[documents events],
+    user: {
+      username: username
+    }
+  }
 end
