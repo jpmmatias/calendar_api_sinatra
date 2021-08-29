@@ -4,12 +4,14 @@ class JwtAuth
   end
 
   def call(env)
-    options = { algorithm: 'HS256', iss: ENV['JWT_ISSUER'] }
-    bearer = env.fetch('HTTP_AUTHORIZATION', '').slice(7..-1)
-    payload, header = JWT.decode bearer, ENV['JWT_SECRET'], true, options
+    unless ['/v1/users/login', '/v1/users/new_account'].include?(env['PATH_INFO'])
+      options = { algorithm: 'HS256', iss: ENV['JWT_ISSUER'] }
+      bearer = env.fetch('HTTP_AUTHORIZATION', '').slice(7..-1)
+      payload, header = JWT.decode bearer, ENV['JWT_SECRET'], true, options
 
-    env[:scopes] = payload['scopes']
-    env[:user] = payload['user']
+      env[:scopes] = payload['scopes']
+      env[:user] = payload['user']
+    end
 
     @app.call env
   rescue JWT::DecodeError

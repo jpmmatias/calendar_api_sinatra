@@ -1,4 +1,5 @@
 get '/v1/events' do
+  puts request.env['HTTP_AUTHORIZATION']
   events = Event.all
   if events.empty?
     status 204

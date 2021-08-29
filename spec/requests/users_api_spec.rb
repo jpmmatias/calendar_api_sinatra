@@ -41,8 +41,7 @@ describe 'User API' do
 
       parsed_body = JSON.parse(last_response.body)
 
-      expect(parsed_body['success']).to eq(true)
-      expect(parsed_body['message']).to eq('User logged successfully')
+      expect(parsed_body).to include('token')
     end
   end
 end
