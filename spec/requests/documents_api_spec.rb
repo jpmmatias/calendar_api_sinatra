@@ -29,7 +29,10 @@ describe 'Document API' do
 
       get "/v1/events/#{event.id}/documents"
 
-      expect(last_response.status).to eq 204
+      expect(last_response.status).to eq 200
+      parsed_body = JSON.parse(last_response.body)
+      expect(parsed_body['documents']).to eq([])
+
     end
   end
 
@@ -137,7 +140,7 @@ describe 'Document API' do
 
       parsed_body = JSON.parse(last_response.body)
 
-      expect(parsed_body['succes']).to eq(false)
+      expect(parsed_body['success']).to eq(false)
     end
   end
 

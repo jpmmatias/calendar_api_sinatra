@@ -15,7 +15,7 @@ describe 'Event API' do
       expect(last_response.status).to eq 200
       expect(last_response.content_type).to include('application/json')
 
-      parsed_body = JSON.parse(last_response.body)
+      parsed_body = JSON.parse(last_response.body) 
       parsed_events = parsed_body['events']
 
       expect(parsed_events.count).to eq(Event.count)
@@ -32,8 +32,9 @@ describe 'Event API' do
     it 'does not have any events' do
       get '/v1/events'
 
-      expect(last_response.status).to eq 204
-      expect(last_response.body).to eq('')
+      expect(last_response.status).to eq 200
+      parsed_body = JSON.parse(last_response.body)
+      expect(parsed_body['events']).to eq([])
     end
   end
 
