@@ -10,5 +10,6 @@ describe Event, type: :model do
 
   context 'associations' do
     it { should have_many(:documents) }
+    it { should belong_to(:user) }
   end
 end

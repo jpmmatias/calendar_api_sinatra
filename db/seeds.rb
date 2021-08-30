@@ -1,10 +1,19 @@
 require 'faker'
 
 User.create!(
-  name: 'Jose',
+  name: Faker::Name.unique.name,
   email: 'email@gmail.com',
   password: 'senha1234'
 )
+
+5.times do
+  name = Faker::Name.unique.name
+  User.create!(
+    name: name,
+    email: Faker::Internet.email(name: name),
+    password: 'senha1234'
+  )
+end
 
 5.times do
   event = Event.create!(

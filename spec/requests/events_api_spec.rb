@@ -5,11 +5,6 @@ describe 'Event API' do
     Sinatra::Application
   end
 
-  before do
-    user = create(:user)
-    header 'Authorization', "Bearer #{token(user)}"
-  end
-
   def token(user)
     JWT.encode payload(user), ENV['JWT_SECRET'], 'HS256'
   end
@@ -26,9 +21,10 @@ describe 'Event API' do
 
   context 'GET /v1/events' do
     it 'should get all events' do
-      event1 = create(:event)
-      event2 = create(:event)
+      event1 = create(:event, owner: user)
+      event2 = create(:event, owner: user)
 
+      header 'Authorization', "Bearer #{token(create(:user))}"
       get '/v1/events'
 
       expect(last_response.status).to eq 200
@@ -40,15 +36,18 @@ describe 'Event API' do
       expect(parsed_events.count).to eq(Event.count)
 
       expect(parsed_events[0]['name']).to eq(event1.name)
+      expect(parsed_events[0]['owner']['name']).to eq(event1.owner.name)
       expect(parsed_events[0]['local']).to eq(event1.local)
       expect(parsed_events[0]['description']).to eq(event1.description)
 
       expect(parsed_events[1]['name']).to eq(event2.name)
+      expect(parsed_events[1]['owner']['name']).to eq(event2.owner.name)
       expect(parsed_events[1]['local']).to eq(event2.local)
       expect(parsed_events[1]['description']).to eq(event2.description)
     end
 
     it 'does not have any events' do
+      header 'Authorization', "Bearer #{token(create(:user))}"
       get '/v1/events'
 
       expect(last_response.status).to eq 204
@@ -59,7 +58,7 @@ describe 'Event API' do
   context 'GET /v1/events/:id' do
     it 'get specific event' do
       event = create(:event)
-
+      header 'Authorization', "Bearer #{token(create(:user))}"
       get "/v1/events/#{event.id}"
 
       expect(last_response.status).to eq 200
@@ -73,6 +72,7 @@ describe 'Event API' do
     end
 
     it 'non existent event' do
+      header 'Authorization', "Bearer #{token(create(:user))}"
       get "/v1/events/#{rand(1...1000)}"
       expect(last_response.status).to eq 404
     end
@@ -80,15 +80,17 @@ describe 'Event API' do
 
   context 'POST /v1/events' do
     it 'create an event' do
+      user = create(:user)
       new_event = {
         'name': 'CCXP',
         'local': 'São Paulo',
         'description': 'A melhor descrição que existe',
-        'owner': 'John Cena',
+        'owner': user.to_s,
         'start_date': 15.days.from_now,
         'end_date': 20.days.from_now
       }
 
+      header 'Authorization', "Bearer #{token(user)}"
       post '/v1/events', new_event.to_json, 'CONTENT_TYPE' => 'application/json'
 
       expect(last_response.status).to eq 201
@@ -108,9 +110,12 @@ describe 'Event API' do
         'name': 'CCXP'
       }
 
+      header 'Authorization', "Bearer #{token(user)}"
       post '/v1/events', new_event.to_json, 'CONTENT_TYPE' => 'application/json'
+
       expect(last_response.status).to eq 400
       expect(last_response.content_type).to include('application/json')
+
       parsed_body = JSON.parse(last_response.body)
 
       expect(parsed_body['success']).to eq(false)
@@ -118,7 +123,10 @@ describe 'Event API' do
 
     it 'body is not an json' do
       wrong_event_type = '<h2> Evento </h2>'
+
+      header 'Authorization', "Bearer #{token(user)}"
       post '/v1/events', wrong_event_type, 'CONTENT_TYPE' => 'html/text'
+
       expect(last_response.status).to eq 400
       expect(last_response.content_type).to include('application/json')
       parsed_body = JSON.parse(last_response.body)
