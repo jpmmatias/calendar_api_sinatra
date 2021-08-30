@@ -1,4 +1,5 @@
-ENV['RACK_ENV'] = 'test'
+ENV['JWT_SECRET'] = 'someawesomesecret'
+ENV['JWT_ISSUER'] = 'onboarding'
 
 require File.join(File.dirname(__FILE__), '..', 'server.rb')
 
@@ -10,8 +11,6 @@ require 'rack/test'
 require 'database_cleaner/active_record'
 require 'shoulda-matchers'
 SimpleCov.start
-JWT_SECRET = 'someawesomesecret'
-JWT_ISSUER = 'onboarding'
 
 RSpec.configure do |config|
   config.include Rack::Test::Methods

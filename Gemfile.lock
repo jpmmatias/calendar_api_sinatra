@@ -62,6 +62,7 @@ GEM
       database_cleaner-core (~> 2.0.0)
     diff-lcs (1.4.4)
     docile (1.4.0)
+    dotenv (2.7.6)
     eventmachine (1.2.7)
     factory_bot (6.2.0)
       activesupport (>= 5.0.0)
@@ -212,6 +213,7 @@ DEPENDENCIES
   activerecord (~> 6.0, >= 6.0.3.2)
   bcrypt
   database_cleaner!
+  dotenv
   factory_bot
   faker!
   falcon

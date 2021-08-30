@@ -5,21 +5,33 @@ describe 'Event API' do
     Sinatra::Application
   end
 
+  def authenticated_header(user)
+    token = token(user)
+    { 'Authorization': "Bearer #{token}" }
+  end
+
+  def token(user)
+    JWT.encode payload(user), ENV['JWT_SECRET'], 'HS256'
+  end
+
+  def payload(user)
+    {
+      exp: Time.now.to_i + 60 * 60,
+      iat: Time.now.to_i,
+      iss: ENV['JWT_ISSUER'],
+      scopes: %w[events documents],
+      user: user
+    }
+  end
+
   context 'GET /v1/events' do
     it 'should get all events' do
       user = create(:user)
 
-      token = JWT.encode payload({
-                                   exp: Time.now.to_i + 60 * 60,
-                                   iat: Time.now.to_i,
-                                   iss: ENV['JWT_ISSUER'],
-                                   user: user
-                                 }), ENV['JWT_SECRET'], 'HS256'
       event1 = create(:event)
       event2 = create(:event)
-      puts token
-      request.env['HTTP_AUTHORIZATION'] = token
-      get '/v1/events'
+
+      get '/v1/events', headers: authenticated_header(user)
 
       expect(last_response.status).to eq 200
       expect(last_response.content_type).to include('application/json')

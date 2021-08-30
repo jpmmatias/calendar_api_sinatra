@@ -1,4 +1,5 @@
 ENV['SINATRA_ENV'] ||= 'development'
+require 'dotenv/load'
 require 'rubygems'
 require 'bundler'
 require 'bundler/setup'
