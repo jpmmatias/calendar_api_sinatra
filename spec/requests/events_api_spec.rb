@@ -5,9 +5,9 @@ describe 'Event API' do
     Sinatra::Application
   end
 
-  def authenticated_header(user)
-    token = token(user)
-    { 'Authorization': "Bearer #{token}" }
+  before do
+    user = create(:user)
+    header 'Authorization', "Bearer #{token(user)}"
   end
 
   def token(user)
@@ -26,12 +26,10 @@ describe 'Event API' do
 
   context 'GET /v1/events' do
     it 'should get all events' do
-      user = create(:user)
-
       event1 = create(:event)
       event2 = create(:event)
 
-      get '/v1/events', headers: authenticated_header(user)
+      get '/v1/events'
 
       expect(last_response.status).to eq 200
       expect(last_response.content_type).to include('application/json')
@@ -121,7 +119,7 @@ describe 'Event API' do
     it 'body is not an json' do
       wrong_event_type = '<h2> Evento </h2>'
       post '/v1/events', wrong_event_type, 'CONTENT_TYPE' => 'html/text'
-      expect(last_response.status).not_to eq 500
+      expect(last_response.status).to eq 400
       expect(last_response.content_type).to include('application/json')
       parsed_body = JSON.parse(last_response.body)
 

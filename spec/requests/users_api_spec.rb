@@ -56,19 +56,18 @@ describe 'User API' do
 
       token = JSON.parse(last_response.body)['token']
 
-      expect { JWT.decode(token, key) }.to_not raise_error(JWT::DecodeError)
+      expect { JWT.decode(token, ENV['JWT_SECRET']) }.to_not raise_error
     end
+
     it 'returns error when user does not exist' do
       post '/v1/users/login', { email: 'ac@email.com', password: 'password' }.to_json
-      puts last_response.to_json
-      expect(last_response.status).not_to eq(200)
+      expect(last_response.status).to eq(400)
     end
-    xit 'returns error when password is incorrect' do
-      post '/v1/users/login', params: { username: user.username, password: 'incorrect' }
-      expect(response).to have_http_status(:unauthorized)
-      expect(json).to eq({
-                           'error' => 'Incorrect password '
-                         })
+
+    it 'returns error when user password is wrong' do
+      user = create(:user)
+      post '/v1/users/login', { email: user.email, password: 'pass' }.to_json
+      expect(last_response.status).to eq(400)
     end
   end
 end

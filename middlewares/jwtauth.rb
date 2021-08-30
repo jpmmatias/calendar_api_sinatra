@@ -7,7 +7,7 @@ class JwtAuth
     unless ['/v1/users/login', '/v1/users/new_account'].include?(env['PATH_INFO'])
       options = { algorithm: 'HS256', iss: ENV['JWT_ISSUER'] }
       bearer = env.fetch('HTTP_AUTHORIZATION', '').slice(7..-1)
-      payload, header = JWT.decode bearer, ENV['JWT_SECRET'], true, options
+      payload, header = JWT.decode bearer, ENV['JWT_SECRET'], false
 
       env[:scopes] = payload['scopes']
       env[:user] = payload['user']

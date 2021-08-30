@@ -5,6 +5,25 @@ describe 'Document API' do
     Sinatra::Application
   end
 
+  before do
+    user = create(:user)
+    header 'Authorization', "Bearer #{token(user)}"
+  end
+
+  def token(user)
+    JWT.encode payload(user), ENV['JWT_SECRET'], 'HS256'
+  end
+
+  def payload(user)
+    {
+      exp: Time.now.to_i + 60 * 60,
+      iat: Time.now.to_i,
+      iss: ENV['JWT_ISSUER'],
+      scopes: %w[events documents],
+      user: user
+    }
+  end
+
   context 'GET /v1/events/:event_id/documents' do
     it 'get all the documents from an event' do
       event = create(:event)

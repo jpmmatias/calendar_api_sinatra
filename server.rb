@@ -21,12 +21,12 @@ configure do
   set :expose_headers, ['Content-Type']
 end
 
-options '*' do
-  response.headers['Allow'] = 'HEAD,GET,POST,DELETE,OPTIONS'
-  response.headers['Access-Control-Allow-Headers'] =
-    'X-Requested-With, X-HTTP-Method-Override, Content-Type, Cache-Control, Accept'
-  200
-end
+# options '*' do
+#   response.headers['Allow'] = 'HEAD,GET,POST,DELETE,OPTIONS'
+#   response.headers['Access-Control-Allow-Headers'] =
+#     'X-Requested-With, X-HTTP-Method-Override, Content-Type, Cache-Control, Accept'
+#   200
+# end
 
 require_relative 'models/init'
 require_relative 'routes/init'
