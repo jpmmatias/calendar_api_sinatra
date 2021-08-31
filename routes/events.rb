@@ -1,17 +1,23 @@
 get '/v1/events' do
   events = Event.all
   if events.empty?
-    status 204
-    { success: true, message: 'No events created yet' }.to_json
+    status 200
+    { success: true, events: [] }.to_json
   else
-    { success: true, events: events.as_json(include: [:documents]) }.to_json
+    events = events.map { |event| event.response_json }
+    { success: true, events: events }.to_json
   end
 end
 
 get '/v1/events/:id' do
   event = Event.where(id: params['id']).first
-  status 404 if event.nil?
-  { success: true, event: event.as_json(include: [:documents]) }.to_json
+  # binding.pry
+  if event.nil?
+    status 404
+  else
+    status 200
+    { success: true, event: event.response_json }.to_json
+  end
 end
 
 post '/v1/events' do
@@ -20,14 +26,13 @@ post '/v1/events' do
                           name: body['name'],
                           local: body['local'],
                           description: body['description'],
-                          owner: body['owner'],
+                          owner_id: body['owner_id'].to_i,
                           start_date: body['start_date'],
                           end_date: body['end_date']
                         })
   if new_event.save
-
     status 201
-    { success: true, event: new_event.to_json }.to_json
+    { success: true, event: new_event.response_json }.to_json
   else
     status 400
     { success: false }.to_json

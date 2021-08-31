@@ -1,25 +1,22 @@
 require 'faker'
 
-User.create!(
-  name: Faker::Name.unique.name,
-  email: 'email@gmail.com',
-  password: 'senha1234'
-)
+# User.create!(
+#   name: Faker::Name.unique.name,
+#   email: 'email@gmail.com',
+#   password: 'senha1234'
+# )
 
 5.times do
   name = Faker::Name.unique.name
-  User.create!(
+  user = User.create!(
     name: name,
-    email: Faker::Internet.email(name: name),
+    email: Faker::Internet.free_email(name: name),
     password: 'senha1234'
   )
-end
-
-5.times do
   event = Event.create!(
     name: Faker::Hipster.sentence(word_count: 2),
     local: Faker::University.name,
-    owner: Faker::Name.unique.name,
+    owner_id: user.id,
     description: Faker::Lorem.paragraph,
     start_date: Faker::Time.forward(days: 5, period: :morning),
     end_date: Faker::Time.forward(days: 23, period: :morning)

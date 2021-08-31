@@ -19,12 +19,14 @@ describe 'Event API' do
     }
   end
 
+  let(:user) { create(:user) }
+
   context 'GET /v1/events' do
     it 'should get all events' do
-      event1 = create(:event, owner: user)
-      event2 = create(:event, owner: user)
+      event1 = create(:event, owner_id: user.id)
+      event2 = create(:event, owner_id: user.id)
 
-      header 'Authorization', "Bearer #{token(create(:user))}"
+      header 'Authorization', "Bearer #{token(user)}"
       get '/v1/events'
 
       expect(last_response.status).to eq 200
@@ -36,29 +38,31 @@ describe 'Event API' do
       expect(parsed_events.count).to eq(Event.count)
 
       expect(parsed_events[0]['name']).to eq(event1.name)
-      expect(parsed_events[0]['owner']['name']).to eq(event1.owner.name)
+      expect(parsed_events[0]['owner']['name']).to eq(user.name)
       expect(parsed_events[0]['local']).to eq(event1.local)
       expect(parsed_events[0]['description']).to eq(event1.description)
 
       expect(parsed_events[1]['name']).to eq(event2.name)
-      expect(parsed_events[1]['owner']['name']).to eq(event2.owner.name)
+      expect(parsed_events[1]['owner']['name']).to eq(user.name)
       expect(parsed_events[1]['local']).to eq(event2.local)
       expect(parsed_events[1]['description']).to eq(event2.description)
     end
 
     it 'does not have any events' do
-      header 'Authorization', "Bearer #{token(create(:user))}"
+      header 'Authorization', "Bearer #{token(user)}"
       get '/v1/events'
 
-      expect(last_response.status).to eq 204
-      expect(last_response.body).to eq('')
+      expect(last_response.status).to eq 200
+      parsed_body = JSON.parse(last_response.body)
+      expect(parsed_body['events']).to eq([])
     end
   end
 
   context 'GET /v1/events/:id' do
     it 'get specific event' do
-      event = create(:event)
-      header 'Authorization', "Bearer #{token(create(:user))}"
+      owner = create(:user)
+      event = create(:event, owner_id: owner.id)
+      header 'Authorization', "Bearer #{token(user)}"
       get "/v1/events/#{event.id}"
 
       expect(last_response.status).to eq 200
@@ -67,6 +71,7 @@ describe 'Event API' do
       parsed_body = JSON.parse(last_response.body)
 
       expect(parsed_body['event']['name']).to eq(event.name)
+      expect(parsed_body['event']['owner']['name']).to eq(owner.name)
       expect(parsed_body['event']['local']).to eq(event.local)
       expect(parsed_body['event']['description']).to eq(event.description)
     end
@@ -85,7 +90,7 @@ describe 'Event API' do
         'name': 'CCXP',
         'local': 'São Paulo',
         'description': 'A melhor descrição que existe',
-        'owner': user.to_s,
+        'owner_id': user.id,
         'start_date': 15.days.from_now,
         'end_date': 20.days.from_now
       }
@@ -97,12 +102,11 @@ describe 'Event API' do
       expect(last_response.content_type).to include('application/json')
 
       parsed_body = JSON.parse(last_response.body)
-      parsed_event = JSON.parse(parsed_body['event'])
 
       expect(parsed_body['success']).to eq(true)
-      expect(parsed_event['name']).to eq('CCXP')
-      expect(parsed_event['description']).to eq('A melhor descrição que existe')
-      expect(parsed_event['owner']).to eq('John Cena')
+      expect(parsed_body['event']['name']).to eq('CCXP')
+      expect(parsed_body['event']['description']).to eq('A melhor descrição que existe')
+      expect(parsed_body['event']['owner']['name']).to eq(user.name)
     end
 
     it 'error on event fields' do

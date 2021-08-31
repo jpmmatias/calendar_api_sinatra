@@ -10,6 +10,6 @@ describe Event, type: :model do
 
   context 'associations' do
     it { should have_many(:documents) }
-    it { should belong_to(:user) }
+    it { should belong_to(:user).with_foreign_key('owner_id') }
   end
 end

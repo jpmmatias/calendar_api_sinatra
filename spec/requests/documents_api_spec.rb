@@ -5,11 +5,6 @@ describe 'Document API' do
     Sinatra::Application
   end
 
-  before do
-    user = create(:user)
-    header 'Authorization', "Bearer #{token(user)}"
-  end
-
   def token(user)
     JWT.encode payload(user), ENV['JWT_SECRET'], 'HS256'
   end
@@ -24,13 +19,17 @@ describe 'Document API' do
     }
   end
 
-  context 'GET /v1/events/:event_id/documents' do
+  let(:user) { create(:user) }
+
+  context 'GET /v1/events/:e
+  dvent_id/documents' do
     it 'get all the documents from an event' do
-      event = create(:event)
+      event = create(:event, owner_id: user.id)
       document = create(:document, event: event)
       document2 = create(:document, event: event)
       document3 = create(:document, event: event)
 
+      header 'Authorization', "Bearer #{token(user)}"
       get "/v1/events/#{event.id}/documents"
 
       expect(last_response.status).to eq 200
@@ -44,8 +43,9 @@ describe 'Document API' do
     end
 
     it 'event does not have documents created' do
-      event = create(:event)
+      event = create(:event, owner_id: user.id)
 
+      header 'Authorization', "Bearer #{token(user)}"
       get "/v1/events/#{event.id}/documents"
 
       expect(last_response.status).to eq 204
@@ -54,9 +54,10 @@ describe 'Document API' do
 
   context 'GET /v1/events/:event_id/documents/:id' do
     it 'get specifc document from event' do
-      event = create(:event)
+      event = create(:event, owner_id: user.id)
       document = create(:document, :image, event: event)
 
+      header 'Authorization', "Bearer #{token(user)}"
       get "/v1/events/#{event.id}/documents/#{document.id}"
 
       expect(last_response.status).to eq 200
@@ -66,8 +67,9 @@ describe 'Document API' do
 
   context 'POST /v1/events/:event_id/documents' do
     it 'create an document' do
-      event = create(:event)
+      event = create(:event, owner_id: user.id)
 
+      header 'Authorization', "Bearer #{token(user)}"
       post "/v1/events/#{event.id}/documents",
            :file => Rack::Test::UploadedFile.new(
              'spec/fixtures/test_image.jpeg',
@@ -78,8 +80,9 @@ describe 'Document API' do
     end
 
     it 'can upload PDF' do
-      event = create(:event)
+      event = create(:event, owner_id: user.id)
 
+      header 'Authorization', "Bearer #{token(user)}"
       post "/v1/events/#{event.id}/documents",
            :file => Rack::Test::UploadedFile.new(
              'spec/fixtures/Desafio - Programa de OnBoarding.pdf',
@@ -91,9 +94,10 @@ describe 'Document API' do
     end
 
     it 'can upload DOCX' do
-      event = create(:event)
+      event = create(:event, owner_id: user.id)
       mime_type_docx = 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
 
+      header 'Authorization', "Bearer #{token(user)}"
       post "/v1/events/#{event.id}/documents",
            :file => Rack::Test::UploadedFile.new(
              'spec/fixtures/Teste.docx', mime_type_docx
@@ -103,8 +107,9 @@ describe 'Document API' do
     end
 
     it 'can upload ODS' do
-      event = create(:event)
+      event = create(:event, owner_id: user.id)
 
+      header 'Authorization', "Bearer #{token(user)}"
       post "/v1/events/#{event.id}/documents",
            :file => Rack::Test::UploadedFile.new('spec/fixtures/teste.ods',
                                                  'application/vnd.oasis.opendocument.spreadsheet'),
@@ -114,8 +119,9 @@ describe 'Document API' do
     end
 
     it 'can upload XLSX' do
-      event = create(:event)
+      event = create(:event, owner_id: user.id)
 
+      header 'Authorization', "Bearer #{token(user)}"
       post "/v1/events/#{event.id}/documents",
            :file => Rack::Test::UploadedFile.new(
              'spec/fixtures/teste.xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
@@ -126,9 +132,10 @@ describe 'Document API' do
     end
 
     it 'can upload PPTX' do
-      event = create(:event)
+      event = create(:event, owner_id: user.id)
       mime_type_pptx = 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
 
+      header 'Authorization', "Bearer #{token(user)}"
       post "/v1/events/#{event.id}/documents",
            :file => Rack::Test::UploadedFile.new('spec/fixtures/teste.pptx', mime_type_pptx),
            'CONTENT_TYPE' => mime_type_pptx
@@ -137,14 +144,16 @@ describe 'Document API' do
     end
 
     it 'empty file' do
-      event = create(:event)
+      event = create(:event, owner_id: user.id)
 
+      header 'Authorization', "Bearer #{token(user)}"
       post "/v1/events/#{event.id}/documents"
 
       expect(last_response.status).to eq 400
     end
 
     it "event don't exist" do
+      header 'Authorization', "Bearer #{token(user)}"
       post "/v1/events/#{rand(1...1000)}/documents",
            :file => Rack::Test::UploadedFile.new(
              'spec/fixtures/Desafio - Programa de OnBoarding.pdf',
@@ -162,9 +171,10 @@ describe 'Document API' do
 
   context 'GET GET /v1/events/:event_id/documents/:id/download' do
     it 'successfully' do
-      event = create(:event)
+      event = create(:event, owner_id: user.id)
       document = create(:document, event: event)
 
+      header 'Authorization', "Bearer #{token(user)}"
       get "/v1/events/#{event.id}/documents/#{document.id}/download"
 
       expect(last_response.status).to eq(200)
