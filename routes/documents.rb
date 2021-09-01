@@ -5,7 +5,7 @@ get '/v1/events/:event_id/documents' do
 end
 
 get '/v1/events/:event_id/documents/:id' do
-  document = Document.where(id: params['id']).first
+  document = Document.find_by(id: params['id'])
   if document.nil?
     status 404
     json({ success: false, message: 'Nonexistent document' })
