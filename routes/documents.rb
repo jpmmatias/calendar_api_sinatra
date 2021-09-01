@@ -11,7 +11,7 @@ get '/v1/events/:event_id/documents/:id' do
     json({ success: false, message: 'Nonexistent document' })
   else
     status 200
-    send_file open(document.file_path, type: document.file_type, disposition: 'inline')
+    { success: true, document: document }.to_json
   end
 end
 

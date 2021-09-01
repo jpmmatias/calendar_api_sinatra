@@ -81,7 +81,7 @@ POST '/v1/events/'
 GET '/v1/events/:event_id/documents'
 ```
 
-#### Acessar documento de um evento (Acesso pelo browser, ainda alguns documentos não são suportados, então ira fazer download)
+#### Acessar documento de um evento
 
 ```
 GET '/v1/events/:event_id/documents/:id'
