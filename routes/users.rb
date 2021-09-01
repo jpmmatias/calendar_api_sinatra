@@ -42,8 +42,8 @@ def get_body(req)
   JSON.parse(req.body.read)
 end
 
-def token(username)
-  JWT.encode payload(username), ENV['JWT_SECRET'], 'HS256'
+def token(user)
+  JWT.encode payload(user), ENV['JWT_SECRET'], 'HS256'
 end
 
 def payload(user)
@@ -52,6 +52,6 @@ def payload(user)
     iat: Time.now.to_i,
     iss: ENV['JWT_ISSUER'],
     scopes: %w[events documents],
-    user: user
+    user: { email: user.email, name: user.name, id: user.id }
   }
 end

@@ -15,7 +15,7 @@ describe 'Event API' do
       iat: Time.now.to_i,
       iss: ENV['JWT_ISSUER'],
       scopes: %w[events documents],
-      user: user
+      user: { email: user.email, name: user.name, id: user.id }
     }
   end
 
@@ -35,7 +35,7 @@ describe 'Event API' do
       parsed_body = JSON.parse(last_response.body)
       parsed_events = parsed_body['events']
 
-      expect(parsed_events.count).to eq(Event.count)
+      expect(parsed_events.count).to eq(Event.where(owner_id: user.id).count)
 
       expect(parsed_events[0]['name']).to eq(event1.name)
       expect(parsed_events[0]['owner']['name']).to eq(user.name)
@@ -60,8 +60,7 @@ describe 'Event API' do
 
   context 'GET /v1/events/:id' do
     it 'get specific event' do
-      owner = create(:user)
-      event = create(:event, owner_id: owner.id)
+      event = create(:event, owner_id: user.id)
       header 'Authorization', "Bearer #{token(user)}"
       get "/v1/events/#{event.id}"
 
@@ -71,13 +70,13 @@ describe 'Event API' do
       parsed_body = JSON.parse(last_response.body)
 
       expect(parsed_body['event']['name']).to eq(event.name)
-      expect(parsed_body['event']['owner']['name']).to eq(owner.name)
+      expect(parsed_body['event']['owner']['name']).to eq(user.name)
       expect(parsed_body['event']['local']).to eq(event.local)
       expect(parsed_body['event']['description']).to eq(event.description)
     end
 
     it 'non existent event' do
-      header 'Authorization', "Bearer #{token(create(:user))}"
+      header 'Authorization', "Bearer #{token(user)}"
       get "/v1/events/#{rand(1...1000)}"
       expect(last_response.status).to eq 404
     end
@@ -90,7 +89,6 @@ describe 'Event API' do
         'name': 'CCXP',
         'local': 'São Paulo',
         'description': 'A melhor descrição que existe',
-        'owner_id': user.id,
         'start_date': 15.days.from_now,
         'end_date': 20.days.from_now
       }

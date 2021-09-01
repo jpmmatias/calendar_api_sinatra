@@ -1,5 +1,6 @@
 get '/v1/events' do
-  events = Event.all
+  user = request.env[:user]
+  events = Event.where(owner_id: user['id'])
   if events.empty?
     status 200
     { success: true, events: [] }.to_json
@@ -10,8 +11,8 @@ get '/v1/events' do
 end
 
 get '/v1/events/:id' do
-  event = Event.where(id: params['id']).first
-  # binding.pry
+  user = request.env[:user]
+  event = Event.where(['id = ? and owner_id = ?', params['id'].to_s, user['id'].to_s]).first
   if event.nil?
     status 404
   else
@@ -21,12 +22,13 @@ get '/v1/events/:id' do
 end
 
 post '/v1/events' do
+  user = request.env[:user]
   body = get_body(request)
   new_event = Event.new({
                           name: body['name'],
                           local: body['local'],
                           description: body['description'],
-                          owner_id: body['owner_id'].to_i,
+                          owner_id: user['id'],
                           start_date: body['start_date'],
                           end_date: body['end_date']
                         })

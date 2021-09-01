@@ -1,6 +1,6 @@
 get '/v1/events/:event_id/documents' do
-  event = Event.find(params[:event_id])
-
+  user = request.env[:user]
+  event = Event.where(['id = ? and owner_id=?', params['event_id'].to_s, user['id'].to_s]).first
   if event.documents.empty?
     status 204
     { success: true, message: 'No documents created yet for this event' }.to_json
@@ -11,7 +11,9 @@ get '/v1/events/:event_id/documents' do
 end
 
 get '/v1/events/:event_id/documents/:id' do
-  document = Document.where(id: params['id']).first
+  user = request.env[:user]
+  event = Event.where(['id = ? and owner_id=?', params['event_id'].to_s, user['id'].to_s]).first
+  document = Document.where(['id = ? and event_id = ?', params['id'].to_s, event.id.to_s]).first
   if document.nil?
     status 204
     json({ success: true, message: 'Non existed document' })

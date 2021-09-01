@@ -15,14 +15,12 @@ describe 'Document API' do
       iat: Time.now.to_i,
       iss: ENV['JWT_ISSUER'],
       scopes: %w[events documents],
-      user: user
+      user: { email: user.email, name: user.name, id: user.id }
     }
   end
-
   let(:user) { create(:user) }
 
-  context 'GET /v1/events/:e
-  dvent_id/documents' do
+  context 'GET /v1/events/:event_id/documents' do
     it 'get all the documents from an event' do
       event = create(:event, owner_id: user.id)
       document = create(:document, event: event)
