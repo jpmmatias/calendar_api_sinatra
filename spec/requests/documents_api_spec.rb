@@ -46,7 +46,9 @@ describe 'Document API' do
       header 'Authorization', "Bearer #{token(user)}"
       get "/v1/events/#{event.id}/documents"
 
-      expect(last_response.status).to eq 204
+      expect(last_response.status).to eq 200
+      parsed_body = JSON.parse(last_response.body)
+      expect(parsed_body['documents']).to eq([])
     end
   end
 
@@ -59,7 +61,11 @@ describe 'Document API' do
       get "/v1/events/#{event.id}/documents/#{document.id}"
 
       expect(last_response.status).to eq 200
-      expect(last_response.content_type).to include(document.file_type)
+      expect(last_response.content_type).to include('application/json')
+      parsed_body = JSON.parse(last_response.body)
+      expect(parsed_body['document']['file_path']).to eq(document.file_path)
+      expect(parsed_body['document']['file_type']).to eq(document.file_type)
+      expect(parsed_body['document']['file_name']).to eq(document.file_name)
     end
   end
 
@@ -163,7 +169,7 @@ describe 'Document API' do
 
       parsed_body = JSON.parse(last_response.body)
 
-      expect(parsed_body['succes']).to eq(false)
+      expect(parsed_body['success']).to eq(false)
     end
   end
 
