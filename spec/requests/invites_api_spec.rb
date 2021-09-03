@@ -91,6 +91,23 @@ describe 'Invite API' do
       expect(Invite.last.sender_id).to eq(user.id)
       expect(Invite.last.event_id).to eq(event.id)
     end
+
+    it "can't create invite if event day already passed" do
+      reciver = create(:user)
+      event = create(:event, owner_id: user.id, start_date: 2.days.ago, end_date: 1.day.ago)
+
+      header 'Authorization', "Bearer #{token(user)}"
+      post "/v1/events/#{event.id}/invite", { reciver_email: reciver.email }.to_json,
+           'CONTENT_TYPE' => 'application/json'
+
+      expect(last_response.status).to eq 400
+      expect(last_response.content_type).to include('application/json')
+
+      parsed_body = JSON.parse(last_response.body)
+
+      expect(parsed_body['message']).to eq("Can't create invite because the day of the event already passed")
+      expect(Invite.all).to eq([])
+    end
   end
 
   context 'PUT /v1/invites/:id/accept' do
@@ -144,6 +161,22 @@ describe 'Invite API' do
       expect(parsed_body['event']['participants'][3]['id']).to eq(reciver3.id)
       expect(parsed_body['event']['participants'][3]['email']).to eq(reciver3.email)
     end
+    it "can't accept invite if event day already passed" do
+      sender = create(:user)
+      event = create(:event, owner_id: sender.id, start_date: 2.days.ago, end_date: 1.day.ago)
+      invite = create(:invite, event_id: event.id, sender_id: sender.id, reciver_id: user.id)
+
+      header 'Authorization', "Bearer #{token(user)}"
+      put "/v1/invites/#{invite.id}/accept"
+
+      expect(last_response.status).to eq 400
+      expect(last_response.content_type).to include('application/json')
+
+      parsed_body = JSON.parse(last_response.body)
+
+      expect(parsed_body['message']).to eq("Can't accept invite because the day of the event already passed")
+      expect(Invite.last.status).to eq('unanswered')
+    end
   end
 
   context 'PUT /v1/invites/:id/refuse' do
@@ -163,6 +196,22 @@ describe 'Invite API' do
       expect(parsed_body['message']).to eq('Invitation was successfully refused')
       expect(Invite.find(invite.id).status).to eq('refused')
     end
+    it "can't refuse invite if event day already passed" do
+      sender = create(:user)
+      event = create(:event, owner_id: sender.id, start_date: 2.days.ago, end_date: 1.day.ago)
+      invite = create(:invite, event_id: event.id, sender_id: sender.id, reciver_id: user.id)
+
+      header 'Authorization', "Bearer #{token(user)}"
+      put "/v1/invites/#{invite.id}/refuse"
+
+      expect(last_response.status).to eq 400
+      expect(last_response.content_type).to include('application/json')
+
+      parsed_body = JSON.parse(last_response.body)
+
+      expect(parsed_body['message']).to eq("Can't refuse invite because the day of the event already passed")
+      expect(Invite.last.status).to eq('unanswered')
+    end
   end
 
   context 'PUT /v1/invites/:id/perhaps' do
@@ -181,6 +230,22 @@ describe 'Invite API' do
       expect(parsed_body['success']).to eq(true)
       expect(parsed_body['message']).to eq('Invitation status was successfully changed to perhaps')
       expect(Invite.find(invite.id).status).to eq('perhaps')
+    end
+    it "can't put perhaps on invite if event day already passed" do
+      sender = create(:user)
+      event = create(:event, owner_id: sender.id, start_date: 2.days.ago, end_date: 1.day.ago)
+      invite = create(:invite, event_id: event.id, sender_id: sender.id, reciver_id: user.id)
+
+      header 'Authorization', "Bearer #{token(user)}"
+      put "/v1/invites/#{invite.id}/perhaps"
+
+      expect(last_response.status).to eq 400
+      expect(last_response.content_type).to include('application/json')
+
+      parsed_body = JSON.parse(last_response.body)
+
+      expect(parsed_body['message']).to eq("Can't change invite status to perhaps because the day of the event already passed")
+      expect(Invite.last.status).to eq('unanswered')
     end
   end
 end

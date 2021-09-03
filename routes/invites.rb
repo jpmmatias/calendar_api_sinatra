@@ -12,6 +12,10 @@ post '/v1/events/:event_id/invite' do
   reciver = User.find_by(email: body['reciver_email'])
 
   invite = Invite.new({ event_id: params['event_id'], sender_id: user['id'], reciver_id: reciver.id })
+  if invite.event.start_date < DateTime.now
+    status 400
+    return { success: false, message: "Can't create invite because the day of the event already passed" }.to_json
+  end
 
   if invite.save
     status 201
@@ -24,7 +28,12 @@ end
 
 put '/v1/invites/:id/accept' do
   invite = Invite.find(params[:id])
-  invite.status = 1
+  if invite.event.start_date < DateTime.now
+    status 400
+    return { success: false, message: "Can't accept invite because the day of the event already passed" }.to_json
+  else
+    invite.status = 1
+  end
   if invite.save
     status 200
     { success: true,
@@ -34,7 +43,12 @@ end
 
 put '/v1/invites/:id/refuse' do
   invite = Invite.find(params[:id])
-  invite.status = 2
+  if invite.event.start_date < DateTime.now
+    status 400
+    return { success: false, message: "Can't refuse invite because the day of the event already passed" }.to_json
+  else
+    invite.status = 2
+  end
   if invite.save
     status 200
     { success: true,
@@ -44,7 +58,13 @@ end
 
 put '/v1/invites/:id/perhaps' do
   invite = Invite.find(params[:id])
-  invite.status = 3
+  if invite.event.start_date < DateTime.now
+    status 400
+    return { success: false,
+             message: "Can't change invite status to perhaps because the day of the event already passed" }.to_json
+  else
+    invite.status = 3
+  end
   if invite.save
     status 200
     { success: true,
