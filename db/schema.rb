@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_31_010515) do
+ActiveRecord::Schema.define(version: 2021_09_02_125855) do
 
   create_table "documents", force: :cascade do |t|
     t.integer "event_id"
@@ -34,6 +34,18 @@ ActiveRecord::Schema.define(version: 2021_08_31_010515) do
     t.index ["owner_id"], name: "index_events_on_owner_id"
   end
 
+  create_table "invites", force: :cascade do |t|
+    t.integer "status", default: 0, null: false
+    t.integer "sender_id", null: false
+    t.integer "reciver_id", null: false
+    t.integer "event_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["event_id"], name: "index_invites_on_event_id"
+    t.index ["reciver_id"], name: "index_invites_on_reciver_id"
+    t.index ["sender_id"], name: "index_invites_on_sender_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "name"
     t.string "email"
@@ -44,4 +56,7 @@ ActiveRecord::Schema.define(version: 2021_08_31_010515) do
 
   add_foreign_key "documents", "events"
   add_foreign_key "events", "users", column: "owner_id"
+  add_foreign_key "invites", "events", on_delete: :cascade
+  add_foreign_key "invites", "users", column: "reciver_id", on_delete: :cascade
+  add_foreign_key "invites", "users", column: "sender_id", on_delete: :cascade
 end

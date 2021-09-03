@@ -32,7 +32,7 @@ describe 'Event API' do
       expect(last_response.status).to eq 200
       expect(last_response.content_type).to include('application/json')
 
-      parsed_body = JSON.parse(last_response.body) 
+      parsed_body = JSON.parse(last_response.body)
       parsed_events = parsed_body['events']
 
       expect(parsed_events.count).to eq(Event.where(owner_id: user.id).count)

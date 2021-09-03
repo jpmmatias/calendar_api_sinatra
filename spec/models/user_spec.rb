@@ -8,5 +8,6 @@ describe User, type: :model do
 
   context 'associations' do
     it { should have_many(:events).with_foreign_key('owner_id') }
+    it { should have_many(:invites) }
   end
 end

@@ -5,7 +5,10 @@ class Event < ActiveRecord::Base
 
   def response_json
     documents = Document.where(event_id: id)
+    invites = Invite.where(event_id: id)
+    participants = invites.map { |invite| invite.user }
+    participants.unshift(User.find(owner_id))
     { name: name, local: local, owner: user, description: description, start_date: start_date,
-      end_date: end_date, documents: documents }.as_json
+      end_date: end_date, documents: documents, participants: participants }.as_json
   end
 end
