@@ -106,6 +106,18 @@ POST '/v1/events/:event_id/documents'
 GET '/v1/events/:event_id/documents/:id/download'
 ```
 
+#### Criação de usuário
+
+```
+POST '/v1/users/new_account'
+```
+
+#### Login de usuário
+
+```
+POST '/v1/users/login'
+```
+
 ## Authors
 
 - [@joao.matias](https://git.campuscode.com.br/joao.matias)

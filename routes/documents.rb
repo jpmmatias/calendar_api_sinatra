@@ -49,10 +49,6 @@ end
 
 private
 
-def error(message)
-  { error: message }.to_json
-end
-
 def response_body(status, body)
   [status(status), body.to_json]
 end

@@ -42,10 +42,6 @@ def get_body(req)
   JSON.parse(req.body.read)
 end
 
-def error(message)
-  { error: message }.to_json
-end
-
 def response_body(status, body, include = nil)
   return [status(status), body.to_json] if include.nil?
 

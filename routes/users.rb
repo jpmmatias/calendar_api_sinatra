@@ -7,32 +7,30 @@ post '/v1/users/new_account' do
                       })
   if new_user.save
     status 201
-    { success: true, message: 'User created successfully' }.to_json
   else
     status 400
-    { success: false }.to_json
   end
 
 rescue JSON::ParserError
   status 400
-  { success: false }.to_json
 end
 
 post '/v1/users/login' do
   body = get_body(request)
   user = User.find_by(email: body['email'])
 
-  if user&.authenticate(body['password'])
-    status 200
-    { token: token(user) }.to_json
-  else
-    status 400
-    { success: false }.to_json
+  if body['email'].nil? || body['password'].nil?
+    response_body(400, { error: 'Email or password cannot be blank. please try again' })
   end
+
+  return response_body(400, { error: 'Wrong email please try again' }) if user.nil?
+
+  return response_body(200, token(user)) if user&.authenticate(body['password'])
+
+  response_body(400, { error: 'Wrong password, please try again' })
 
 rescue JSON::ParserError
   status 400
-  { success: false }.to_json
 end
 
 private
@@ -54,4 +52,10 @@ def payload(user)
     scopes: %w[events documents],
     user: { email: user.email, name: user.name, id: user.id }
   }
+end
+
+def response_body(status, body, include = nil)
+  return [status(status), body.to_json] if include.nil?
+
+  [status(status), body.as_json(include: include).to_json]
 end
