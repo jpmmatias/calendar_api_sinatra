@@ -71,12 +71,12 @@ describe 'Invite API' do
   end
 
   context 'POST /v1/events/:event_id/invite' do
-    it 'create an invite' do
+    it 'create an invite with email' do
       reciver = create(:user)
       event = create(:event, owner_id: user.id)
 
       header 'Authorization', "Bearer #{token(user)}"
-      post "/v1/events/#{event.id}/invite", { reciver_email: reciver.email }.to_json,
+      post "/v1/events/#{event.id}/invite", { user_email: reciver.email }.to_json,
            'CONTENT_TYPE' => 'application/json'
 
       expect(last_response.status).to eq 201
@@ -92,12 +92,71 @@ describe 'Invite API' do
       expect(Invite.last.event_id).to eq(event.id)
     end
 
+    it 'create an invite with user id' do
+      reciver = create(:user)
+      event = create(:event, owner_id: user.id)
+
+      header 'Authorization', "Bearer #{token(user)}"
+      post "/v1/events/#{event.id}/invite", { user_id: reciver.id }.to_json,
+           'CONTENT_TYPE' => 'application/json'
+
+      expect(last_response.status).to eq 201
+      expect(last_response.content_type).to include('application/json')
+
+      parsed_body = JSON.parse(last_response.body)
+
+      expect(parsed_body['success']).to eq(true)
+      expect(parsed_body['invite']['event_name']).to eq(event.name)
+      expect(parsed_body['invite']['sender_name']).to eq(user.name)
+      expect(Invite.last.reciver_id).to eq(reciver.id)
+      expect(Invite.last.sender_id).to eq(user.id)
+      expect(Invite.last.event_id).to eq(event.id)
+    end
+
+    it 'create multiples invites with an array of emails' do
+      reciver = create(:user)
+      reciver2 = create(:user)
+      reciver3 = create(:user)
+      event = create(:event, owner_id: user.id)
+
+      header 'Authorization', "Bearer #{token(user)}"
+      post "/v1/events/#{event.id}/invite", { users_emails: [reciver.email, reciver2.email, reciver3.email] }.to_json,
+           'CONTENT_TYPE' => 'application/json'
+
+      expect(last_response.status).to eq 201
+      expect(last_response.content_type).to include('application/json')
+
+      parsed_body = JSON.parse(last_response.body)
+
+      expect(parsed_body['success']).to eq(true)
+      expect(parsed_body['message']).to eq('Users were successfully invited')
+
+      expect(Invite.find_by(reciver_id: reciver.id).event).to eq(event)
+      expect(Invite.find_by(reciver_id: reciver2.id).event).to eq(event)
+      expect(Invite.find_by(reciver_id: reciver3.id).event).to eq(event)
+    end
+
+    it 'not json body' do
+      event = create(:event, owner_id: user.id)
+      header 'Authorization', "Bearer #{token(user)}"
+      post "/v1/events/#{event.id}/invite", {},
+           'CONTENT_TYPE' => 'application/json'
+
+      expect(last_response.status).to eq 400
+      expect(last_response.content_type).to include('application/json')
+
+      parsed_body = JSON.parse(last_response.body)
+
+      expect(parsed_body['success']).to eq(false)
+      expect(parsed_body['message']).to eq('Please send JSON for the API')
+    end
+
     it "can't create invite if event day already passed" do
       reciver = create(:user)
       event = create(:event, owner_id: user.id, start_date: 2.days.ago, end_date: 1.day.ago)
 
       header 'Authorization', "Bearer #{token(user)}"
-      post "/v1/events/#{event.id}/invite", { reciver_email: reciver.email }.to_json,
+      post "/v1/events/#{event.id}/invite", { user_email: reciver.email }.to_json,
            'CONTENT_TYPE' => 'application/json'
 
       expect(last_response.status).to eq 400
