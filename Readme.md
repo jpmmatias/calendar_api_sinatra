@@ -27,6 +27,13 @@ Caso precise subir um shell:
 docker-compose run --rm api bash
 ```
 
+E talvez tenha que rodar rake tasks
+
+```bash
+rake db:setup
+rake db:schema:load
+```
+
 ### Usando Docker
 
 Entre na pasta do projeto, builde e rode o docker da aplicação:
