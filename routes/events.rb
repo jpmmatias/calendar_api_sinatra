@@ -11,7 +11,7 @@ get '/v1/events/:id' do
   event = Event.where(['id = ? and owner_id = ?', params['id'].to_s, user['id'].to_s]).first
   return status 404 if event.nil?
 
-  response_body(200, event, :documents)
+  response_body(200, event.response_json, :documents)
 end
 
 post '/v1/events' do
@@ -26,7 +26,7 @@ post '/v1/events' do
                           end_date: body['end_date']
                         })
   if new_event.save
-    response_body(201, new_event.rsponse_json)
+    response_body(201, new_event.response_json)
   else
     status 400
   end

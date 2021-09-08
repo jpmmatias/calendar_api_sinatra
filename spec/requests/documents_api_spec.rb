@@ -33,7 +33,7 @@ describe 'Document API' do
 
   context 'GET /v1/events/:event_id/documents' do
     it 'get all the documents from an event' do
-      event = event_with_documents
+      event = event_with_documents(3, user.id)
       documents = event.documents
 
       header 'Authorization', "Bearer #{token(user)}"
