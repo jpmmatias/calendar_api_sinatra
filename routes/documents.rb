@@ -1,26 +1,16 @@
 get '/v1/events/:event_id/documents' do
   user = request.env[:user]
   event = Event.where(['id = ? and owner_id=?', params['event_id'].to_s, user['id'].to_s]).first
-  if event.documents.empty?
-    status 204
-    { success: true, message: 'No documents created yet for this event' }.to_json
-  else
-    status 200
-    { success: true, documents: event.documents }.to_json
-  end
+  response_body(200, event.documents)
 end
 
 get '/v1/events/:event_id/documents/:id' do
   user = request.env[:user]
   event = Event.where(['id = ? and owner_id=?', params['event_id'].to_s, user['id'].to_s]).first
   document = Document.where(['id = ? and event_id = ?', params['id'].to_s, event.id.to_s]).first
-  if document.nil?
-    status 204
-    json({ success: true, message: 'Non existed document' })
-  else
-    status 200
-    send_file open(document.file_path, type: document.file_type, disposition: 'inline')
-  end
+  return response_body(200, document) if document
+
+  [status(404), error('Nonexistent document')]
 end
 
 get '/v1/events/:event_id/documents/:id/download' do
@@ -30,17 +20,11 @@ get '/v1/events/:event_id/documents/:id/download' do
 end
 
 post '/v1/events/:event_id/documents' do
-  if params[:file].nil?
-    status 400
-    return { succes: false, message: 'File param error' }.to_json
-  end
+  return response_body(400, { error: 'File param error' }) if params[:file].nil?
 
   event = Event.where(id: params['event_id']).first
 
-  if event.nil?
-    status 404
-    return { succes: false, message: "Can't upload document because event don't exist" }.to_json
-  end
+  return response_body(404, { error: "Can't upload document because event don't exist" }) if event.nil?
 
   file_name = params[:file][:filename]
   file = params[:file][:tempfile]
@@ -60,6 +44,15 @@ post '/v1/events/:event_id/documents' do
       end
     end
     status 201
-    return { success: true }.to_json
   end
+end
+
+private
+
+def error(message)
+  { error: message }.to_json
+end
+
+def response_body(status, body)
+  [status(status), body.to_json]
 end
