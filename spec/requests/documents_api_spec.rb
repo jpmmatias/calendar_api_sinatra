@@ -1,16 +1,21 @@
 require 'spec_helper'
+require 'fileutils'
 
 describe 'Document API' do
   def app
     Sinatra::Application
   end
-
+  before(:all) do
+    Dir.mkdir("#{Dir.pwd}/public") unless Dir.exist?("#{Dir.pwd}/public")
+    Dir.mkdir("#{Dir.pwd}/public/uploads") unless Dir.exist?("#{Dir.pwd}/public/uploads")
+  end
+  after(:all) do
+    FileUtils.rm_rf('public/uploads', secure: true)
+  end
   context 'GET /v1/events/:event_id/documents' do
     it 'get all the documents from an event' do
-      event = create(:event)
-      document = create(:document, event: event)
-      document2 = create(:document, event: event)
-      document3 = create(:document, event: event)
+      event = event_with_documents
+      documents = event.documents
 
       get "/v1/events/#{event.id}/documents"
 
@@ -19,9 +24,9 @@ describe 'Document API' do
 
       parsed_body = JSON.parse(last_response.body)
 
-      expect(parsed_body['documents'][0]['file_path']).to eq(document.file_path)
-      expect(parsed_body['documents'][1]['file_path']).to eq(document2.file_path)
-      expect(parsed_body['documents'][2]['file_path']).to eq(document3.file_path)
+      expect(parsed_body[0]['file_path']).to eq(documents[0].file_path)
+      expect(parsed_body[1]['file_path']).to eq(documents[1].file_path)
+      expect(parsed_body[2]['file_path']).to eq(documents[2].file_path)
     end
 
     it 'event does not have documents created' do
@@ -31,7 +36,7 @@ describe 'Document API' do
 
       expect(last_response.status).to eq 200
       parsed_body = JSON.parse(last_response.body)
-      expect(parsed_body['documents']).to eq([])
+      expect(parsed_body).to eq([])
     end
   end
 
@@ -45,9 +50,9 @@ describe 'Document API' do
       expect(last_response.status).to eq 200
       expect(last_response.content_type).to include('application/json')
       parsed_body = JSON.parse(last_response.body)
-      expect(parsed_body['document']['file_path']).to eq(document.file_path)
-      expect(parsed_body['document']['file_type']).to eq(document.file_type)
-      expect(parsed_body['document']['file_name']).to eq(document.file_name)
+      expect(parsed_body['file_path']).to eq(document.file_path)
+      expect(parsed_body['file_type']).to eq(document.file_type)
+      expect(parsed_body['file_name']).to eq(document.file_name)
     end
   end
 
@@ -96,7 +101,6 @@ describe 'Document API' do
            :file => Rack::Test::UploadedFile.new('spec/fixtures/teste.ods',
                                                  'application/vnd.oasis.opendocument.spreadsheet'),
            'CONTENT_TYPE' => 'application/vnd.oasis.opendocument.spreadsheet'
-
       expect(last_response.status).to eq 201
     end
 
@@ -140,10 +144,6 @@ describe 'Document API' do
            'CONTENT_TYPE' => 'appplication/pdf'
 
       expect(last_response.status).to eq 404
-
-      parsed_body = JSON.parse(last_response.body)
-
-      expect(parsed_body['success']).to eq(false)
     end
   end
 

@@ -15,18 +15,17 @@ describe 'Event API' do
       expect(last_response.status).to eq 200
       expect(last_response.content_type).to include('application/json')
 
-      parsed_body = JSON.parse(last_response.body) 
-      parsed_events = parsed_body['events']
+      parsed_body = JSON.parse(last_response.body)
 
-      expect(parsed_events.count).to eq(Event.count)
+      expect(parsed_body.count).to eq(Event.count)
 
-      expect(parsed_events[0]['name']).to eq(event1.name)
-      expect(parsed_events[0]['local']).to eq(event1.local)
-      expect(parsed_events[0]['description']).to eq(event1.description)
+      expect(parsed_body[0]['name']).to eq(event1.name)
+      expect(parsed_body[0]['local']).to eq(event1.local)
+      expect(parsed_body[0]['description']).to eq(event1.description)
 
-      expect(parsed_events[1]['name']).to eq(event2.name)
-      expect(parsed_events[1]['local']).to eq(event2.local)
-      expect(parsed_events[1]['description']).to eq(event2.description)
+      expect(parsed_body[1]['name']).to eq(event2.name)
+      expect(parsed_body[1]['local']).to eq(event2.local)
+      expect(parsed_body[1]['description']).to eq(event2.description)
     end
 
     it 'does not have any events' do
@@ -34,7 +33,7 @@ describe 'Event API' do
 
       expect(last_response.status).to eq 200
       parsed_body = JSON.parse(last_response.body)
-      expect(parsed_body['events']).to eq([])
+      expect(parsed_body).to eq([])
     end
   end
 
@@ -49,9 +48,9 @@ describe 'Event API' do
 
       parsed_body = JSON.parse(last_response.body)
 
-      expect(parsed_body['event']['name']).to eq(event.name)
-      expect(parsed_body['event']['local']).to eq(event.local)
-      expect(parsed_body['event']['description']).to eq(event.description)
+      expect(parsed_body['name']).to eq(event.name)
+      expect(parsed_body['local']).to eq(event.local)
+      expect(parsed_body['description']).to eq(event.description)
     end
 
     it 'non existent event' do
@@ -77,12 +76,10 @@ describe 'Event API' do
       expect(last_response.content_type).to include('application/json')
 
       parsed_body = JSON.parse(last_response.body)
-      parsed_event = JSON.parse(parsed_body['event'])
 
-      expect(parsed_body['success']).to eq(true)
-      expect(parsed_event['name']).to eq('CCXP')
-      expect(parsed_event['description']).to eq('A melhor descrição que existe')
-      expect(parsed_event['owner']).to eq('John Cena')
+      expect(parsed_body['name']).to eq('CCXP')
+      expect(parsed_body['description']).to eq('A melhor descrição que existe')
+      expect(parsed_body['owner']).to eq('John Cena')
     end
 
     it 'error on event fields' do
@@ -93,19 +90,12 @@ describe 'Event API' do
       post '/v1/events', new_event.to_json, 'CONTENT_TYPE' => 'application/json'
       expect(last_response.status).to eq 400
       expect(last_response.content_type).to include('application/json')
-      parsed_body = JSON.parse(last_response.body)
-
-      expect(parsed_body['success']).to eq(false)
     end
 
     it 'body is not an json' do
       wrong_event_type = '<h2> Evento </h2>'
       post '/v1/events', wrong_event_type, 'CONTENT_TYPE' => 'html/text'
       expect(last_response.status).not_to eq 500
-      expect(last_response.content_type).to include('application/json')
-      parsed_body = JSON.parse(last_response.body)
-
-      expect(parsed_body['success']).to eq(false)
     end
   end
 end
