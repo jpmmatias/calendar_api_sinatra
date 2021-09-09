@@ -2,8 +2,8 @@ get '/v1/events' do
   user = request.env[:user]
 
   events = Event.where(owner_id: user['id'])
-  events = events.map { |event| event.response_json }
-  response_body(200, events, :documents)
+  events = events.map { |event| EventSerializer.new(event).response }
+  response_body(200, events)
 end
 
 get '/v1/events/:id' do
@@ -11,7 +11,8 @@ get '/v1/events/:id' do
   event = Event.where(['id = ? and owner_id = ?', params['id'].to_s, user['id'].to_s]).first
   return status 404 if event.nil?
 
-  response_body(200, event.response_json, :documents)
+  event = EventSerializer.new(event).response
+  response_body(200, event)
 end
 
 post '/v1/events' do
@@ -26,7 +27,8 @@ post '/v1/events' do
                           end_date: body['end_date']
                         })
   if new_event.save
-    response_body(201, new_event.response_json)
+    event = EventSerializer.new(new_event).response
+    response_body(201, event)
   else
     status 400
   end
@@ -42,8 +44,6 @@ def get_body(req)
   JSON.parse(req.body.read)
 end
 
-def response_body(status, body, include = nil)
-  return [status(status), body.to_json] if include.nil?
-
-  [status(status), body.as_json(include: include).to_json]
+def response_body(status, body)
+  [status(status), body.to_json]
 end
