@@ -204,21 +204,21 @@ describe 'Invite API' do
 
       parsed_body = JSON.parse(last_response.body)
 
-      expect(parsed_body['event']['participants'][0]['name']).to eq(user.name)
-      expect(parsed_body['event']['participants'][0]['id']).to eq(user.id)
-      expect(parsed_body['event']['participants'][0]['email']).to eq(user.email)
+      expect(parsed_body['participants'][0]['name']).to eq(user.name)
+      expect(parsed_body['participants'][0]['id']).to eq(user.id)
+      expect(parsed_body['participants'][0]['email']).to eq(user.email)
 
-      expect(parsed_body['event']['participants'][1]['name']).to eq(reciver.name)
-      expect(parsed_body['event']['participants'][1]['id']).to eq(reciver.id)
-      expect(parsed_body['event']['participants'][1]['email']).to eq(reciver.email)
+      expect(parsed_body['participants'][1]['name']).to eq(reciver.name)
+      expect(parsed_body['participants'][1]['id']).to eq(reciver.id)
+      expect(parsed_body['participants'][1]['email']).to eq(reciver.email)
 
-      expect(parsed_body['event']['participants'][2]['name']).to eq(reciver2.name)
-      expect(parsed_body['event']['participants'][2]['id']).to eq(reciver2.id)
-      expect(parsed_body['event']['participants'][2]['email']).to eq(reciver2.email)
+      expect(parsed_body['participants'][2]['name']).to eq(reciver2.name)
+      expect(parsed_body['participants'][2]['id']).to eq(reciver2.id)
+      expect(parsed_body['participants'][2]['email']).to eq(reciver2.email)
 
-      expect(parsed_body['event']['participants'][3]['name']).to eq(reciver3.name)
-      expect(parsed_body['event']['participants'][3]['id']).to eq(reciver3.id)
-      expect(parsed_body['event']['participants'][3]['email']).to eq(reciver3.email)
+      expect(parsed_body['participants'][3]['name']).to eq(reciver3.name)
+      expect(parsed_body['participants'][3]['id']).to eq(reciver3.id)
+      expect(parsed_body['participants'][3]['email']).to eq(reciver3.email)
     end
     it "can't accept invite if event day already passed" do
       sender = create(:user)

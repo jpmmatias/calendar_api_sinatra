@@ -1,24 +1,18 @@
 get '/v1/events' do
   user = request.env[:user]
+
   events = Event.where(owner_id: user['id'])
-  if events.empty?
-    status 200
-    { success: true, events: [] }.to_json
-  else
-    events = events.map { |event| event.response_json }
-    { success: true, events: events }.to_json
-  end
+  events = events.map { |event| EventSerializer.new(event).response }
+  response_body(200, events)
 end
 
 get '/v1/events/:id' do
   user = request.env[:user]
   event = Event.where(['id = ? and owner_id = ?', params['id'].to_s, user['id'].to_s]).first
-  if event.nil?
-    status 404
-  else
-    status 200
-    { success: true, event: event.response_json }.to_json
-  end
+  return status 404 if event.nil?
+
+  event = EventSerializer.new(event).response
+  response_body(200, event)
 end
 
 post '/v1/events' do
@@ -33,16 +27,14 @@ post '/v1/events' do
                           end_date: body['end_date']
                         })
   if new_event.save
-    status 201
-    { success: true, event: new_event.response_json }.to_json
+    event = EventSerializer.new(new_event).response
+    response_body(201, event)
   else
     status 400
-    { success: false }.to_json
   end
 
 rescue JSON::ParserError
   status 400
-  { success: false }.to_json
 end
 
 private
@@ -50,4 +42,8 @@ private
 def get_body(req)
   req.body.rewind
   JSON.parse(req.body.read)
+end
+
+def response_body(status, body)
+  [status(status), body.to_json]
 end

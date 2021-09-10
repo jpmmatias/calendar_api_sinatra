@@ -1,21 +1,16 @@
 get '/v1/events/:event_id/documents' do
   user = request.env[:user]
   event = Event.where(['id = ? and owner_id=?', params['event_id'].to_s, user['id'].to_s]).first
-  status 200
-  { success: true, documents: event.documents }.to_json
+  response_body(200, event.documents)
 end
 
 get '/v1/events/:event_id/documents/:id' do
   user = request.env[:user]
   event = Event.where(['id = ? and owner_id=?', params['event_id'].to_s, user['id'].to_s]).first
   document = Document.where(['id = ? and event_id = ?', params['id'].to_s, event.id.to_s]).first
-  if document.nil?
-    status 404
-    json({ success: false, message: 'Nonexistent document' })
-  else
-    status 200
-    { success: true, document: document }.to_json
-  end
+  return response_body(200, document) if document
+
+  [status(404), error('Nonexistent document')]
 end
 
 get '/v1/events/:event_id/documents/:id/download' do
@@ -25,17 +20,11 @@ get '/v1/events/:event_id/documents/:id/download' do
 end
 
 post '/v1/events/:event_id/documents' do
-  if params[:file].nil?
-    status 400
-    return { success: false, message: 'File param error' }.to_json
-  end
+  return response_body(400, { error: 'File param error' }) if params[:file].nil?
 
   event = Event.where(id: params['event_id']).first
 
-  if event.nil?
-    status 404
-    return { success: false, message: "Can't upload document because event don't exist" }.to_json
-  end
+  return response_body(404, { error: "Can't upload document because event don't exist" }) if event.nil?
 
   file_name = params[:file][:filename]
   file = params[:file][:tempfile]
@@ -55,6 +44,11 @@ post '/v1/events/:event_id/documents' do
       end
     end
     status 201
-    return { success: true }.to_json
   end
+end
+
+private
+
+def response_body(status, body)
+  [status(status), body.to_json]
 end

@@ -27,3 +27,9 @@ FactoryBot.define do
     end
   end
 end
+
+def event_with_documents(documents_count = 3, owner_id = create(:user).id)
+  FactoryBot.create(:event, owner_id: owner_id) do |event|
+    FactoryBot.create_list(:document, documents_count, event: event)
+  end
+end

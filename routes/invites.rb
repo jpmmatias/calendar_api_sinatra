@@ -1,7 +1,7 @@
 get '/v1/invites' do
   user = request.env[:user]
   invites = Invite.where('reciver_id = ? and status = ?', user['id'].to_s, '0')
-  invites = invites.map { |invite| invite.response_json }
+  invites = invites.map { |invite| InviteSerializer.new(invite).response }
 
   { success: true, invites: invites }.to_json
 end
@@ -34,7 +34,7 @@ post '/v1/events/:event_id/invite' do
 
   if invite.save
     status 201
-    { success: true, invite: invite.response_json }.to_json
+    { success: true, invite: InviteSerializer.new(invite).response }.to_json
   else
     status 401
     { success: false, message: 'Error on creating invite' }

@@ -17,11 +17,6 @@ describe 'User API' do
 
       expect(last_response.status).to eq 201
       expect(last_response.content_type).to include('application/json')
-
-      parsed_body = JSON.parse(last_response.body)
-
-      expect(parsed_body['success']).to eq(true)
-      expect(parsed_body['message']).to eq('User created successfully')
     end
   end
 
@@ -38,10 +33,6 @@ describe 'User API' do
 
       expect(last_response.status).to eq 200
       expect(last_response.content_type).to include('application/json')
-
-      parsed_body = JSON.parse(last_response.body)
-
-      expect(parsed_body).to include('token')
     end
 
     it 'responds with a valid JWT' do
@@ -54,13 +45,13 @@ describe 'User API' do
 
       post '/v1/users/login', body_user.to_json, 'CONTENT_TYPE' => 'application/json'
 
-      token = JSON.parse(last_response.body)['token']
+      token = JSON.parse(last_response.body)
 
       expect { JWT.decode(token, ENV['JWT_SECRET']) }.to_not raise_error
     end
 
     it 'returns error when user does not exist' do
-      post '/v1/users/login', { email: 'ac@email.com', password: 'password' }.to_json
+      post '/v1/users/login', { email: 'asdfasf4werf342gaf@email.com', password: 'password' }.to_json
       expect(last_response.status).to eq(400)
     end
 
