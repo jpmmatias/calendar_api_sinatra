@@ -39,21 +39,20 @@ describe 'Invite API' do
 
       parsed_body = JSON.parse(last_response.body)
 
-      expect(parsed_body['success']).to eq(true)
-      expect(parsed_body['invites'][0]['event_name']).to eq(event1.name)
-      expect(parsed_body['invites'][0]['event_start_date']).to eq(event1.start_date.to_s)
-      expect(parsed_body['invites'][0]['event_end_date']).to eq(event1.end_date.to_s)
-      expect(parsed_body['invites'][0]['sender_name']).to eq(sender.name)
+      expect(parsed_body[0]['event_name']).to eq(event1.name)
+      expect(parsed_body[0]['event_start_date']).to eq(event1.start_date.to_s)
+      expect(parsed_body[0]['event_end_date']).to eq(event1.end_date.to_s)
+      expect(parsed_body[0]['sender_name']).to eq(sender.name)
 
-      expect(parsed_body['invites'][1]['event_name']).to eq(event2.name)
-      expect(parsed_body['invites'][1]['event_start_date']).to eq(event2.start_date.to_s)
-      expect(parsed_body['invites'][1]['event_end_date']).to eq(event2.end_date.to_s)
-      expect(parsed_body['invites'][1]['sender_name']).to eq(sender.name)
+      expect(parsed_body[1]['event_name']).to eq(event2.name)
+      expect(parsed_body[1]['event_start_date']).to eq(event2.start_date.to_s)
+      expect(parsed_body[1]['event_end_date']).to eq(event2.end_date.to_s)
+      expect(parsed_body[1]['sender_name']).to eq(sender.name)
 
-      expect(parsed_body['invites'][2]['event_name']).to eq(event3.name)
-      expect(parsed_body['invites'][2]['event_start_date']).to eq(event3.start_date.to_s)
-      expect(parsed_body['invites'][2]['event_end_date']).to eq(event3.end_date.to_s)
-      expect(parsed_body['invites'][2]['sender_name']).to eq(sender.name)
+      expect(parsed_body[2]['event_name']).to eq(event3.name)
+      expect(parsed_body[2]['event_start_date']).to eq(event3.start_date.to_s)
+      expect(parsed_body[2]['event_end_date']).to eq(event3.end_date.to_s)
+      expect(parsed_body[2]['sender_name']).to eq(sender.name)
     end
 
     it "Get empty array if don't have any invite" do
@@ -65,8 +64,7 @@ describe 'Invite API' do
 
       parsed_body = JSON.parse(last_response.body)
 
-      expect(parsed_body['success']).to eq(true)
-      expect(parsed_body['invites']).to eq([])
+      expect(parsed_body).to eq([])
     end
   end
 
@@ -84,9 +82,8 @@ describe 'Invite API' do
 
       parsed_body = JSON.parse(last_response.body)
 
-      expect(parsed_body['success']).to eq(true)
-      expect(parsed_body['invite']['event_name']).to eq(event.name)
-      expect(parsed_body['invite']['sender_name']).to eq(user.name)
+      expect(parsed_body['event_name']).to eq(event.name)
+      expect(parsed_body['sender_name']).to eq(user.name)
       expect(Invite.last.reciver_id).to eq(reciver.id)
       expect(Invite.last.sender_id).to eq(user.id)
       expect(Invite.last.event_id).to eq(event.id)
@@ -105,9 +102,8 @@ describe 'Invite API' do
 
       parsed_body = JSON.parse(last_response.body)
 
-      expect(parsed_body['success']).to eq(true)
-      expect(parsed_body['invite']['event_name']).to eq(event.name)
-      expect(parsed_body['invite']['sender_name']).to eq(user.name)
+      expect(parsed_body['event_name']).to eq(event.name)
+      expect(parsed_body['sender_name']).to eq(user.name)
       expect(Invite.last.reciver_id).to eq(reciver.id)
       expect(Invite.last.sender_id).to eq(user.id)
       expect(Invite.last.event_id).to eq(event.id)
@@ -126,12 +122,6 @@ describe 'Invite API' do
       expect(last_response.status).to eq 201
       expect(last_response.content_type).to include('application/json')
 
-      parsed_body = JSON.parse(last_response.body)
-
-      expect(parsed_body['success']).to eq(true)
-      expect(parsed_body['message']).to eq('Users were successfully invited')
-
-      expect(Invite.find_by(reciver_id: reciver.id).event).to eq(event)
       expect(Invite.find_by(reciver_id: reciver2.id).event).to eq(event)
       expect(Invite.find_by(reciver_id: reciver3.id).event).to eq(event)
     end
@@ -147,8 +137,7 @@ describe 'Invite API' do
 
       parsed_body = JSON.parse(last_response.body)
 
-      expect(parsed_body['success']).to eq(false)
-      expect(parsed_body['message']).to eq('Please send JSON for the API')
+      expect(parsed_body['error']).to eq('Please send JSON for the API')
     end
 
     it "can't create invite if event day already passed" do
@@ -164,7 +153,7 @@ describe 'Invite API' do
 
       parsed_body = JSON.parse(last_response.body)
 
-      expect(parsed_body['message']).to eq("Can't create invite because the day of the event already passed")
+      expect(parsed_body['error']).to eq("Can't create invite because the day of the event already passed")
       expect(Invite.all).to eq([])
     end
   end
@@ -180,10 +169,6 @@ describe 'Invite API' do
       expect(last_response.status).to eq 200
       expect(last_response.content_type).to include('application/json')
 
-      parsed_body = JSON.parse(last_response.body)
-
-      expect(parsed_body['success']).to eq(true)
-      expect(parsed_body['message']).to eq('Invitation was successfully accepted')
       expect(Invite.find(invite.id).status).to eq('accepted')
     end
 
@@ -233,7 +218,7 @@ describe 'Invite API' do
 
       parsed_body = JSON.parse(last_response.body)
 
-      expect(parsed_body['message']).to eq("Can't accept invite because the day of the event already passed")
+      expect(parsed_body['error']).to eq("Can't accept invite because the day of the event already passed")
       expect(Invite.last.status).to eq('unanswered')
     end
   end
@@ -249,10 +234,6 @@ describe 'Invite API' do
       expect(last_response.status).to eq 200
       expect(last_response.content_type).to include('application/json')
 
-      parsed_body = JSON.parse(last_response.body)
-
-      expect(parsed_body['success']).to eq(true)
-      expect(parsed_body['message']).to eq('Invitation was successfully refused')
       expect(Invite.find(invite.id).status).to eq('refused')
     end
     it "can't refuse invite if event day already passed" do
@@ -268,7 +249,7 @@ describe 'Invite API' do
 
       parsed_body = JSON.parse(last_response.body)
 
-      expect(parsed_body['message']).to eq("Can't refuse invite because the day of the event already passed")
+      expect(parsed_body['error']).to eq("Can't refuse invite because the day of the event already passed")
       expect(Invite.last.status).to eq('unanswered')
     end
   end
@@ -284,10 +265,6 @@ describe 'Invite API' do
       expect(last_response.status).to eq 200
       expect(last_response.content_type).to include('application/json')
 
-      parsed_body = JSON.parse(last_response.body)
-
-      expect(parsed_body['success']).to eq(true)
-      expect(parsed_body['message']).to eq('Invitation status was successfully changed to perhaps')
       expect(Invite.find(invite.id).status).to eq('perhaps')
     end
     it "can't put perhaps on invite if event day already passed" do
@@ -303,7 +280,7 @@ describe 'Invite API' do
 
       parsed_body = JSON.parse(last_response.body)
 
-      expect(parsed_body['message']).to eq("Can't change invite status to perhaps because the day of the event already passed")
+      expect(parsed_body['error']).to eq("Can't change invite status to perhaps because the day of the event already passed")
       expect(Invite.last.status).to eq('unanswered')
     end
   end
