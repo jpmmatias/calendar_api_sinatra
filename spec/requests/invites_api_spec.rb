@@ -151,9 +151,6 @@ describe 'Invite API' do
       expect(last_response.status).to eq 400
       expect(last_response.content_type).to include('application/json')
 
-      parsed_body = JSON.parse(last_response.body)
-
-      expect(parsed_body['error']).to eq("Can't create invite because the day of the event already passed")
       expect(Invite.all).to eq([])
     end
   end
@@ -216,9 +213,6 @@ describe 'Invite API' do
       expect(last_response.status).to eq 400
       expect(last_response.content_type).to include('application/json')
 
-      parsed_body = JSON.parse(last_response.body)
-
-      expect(parsed_body['error']).to eq("Can't accept invite because the day of the event already passed")
       expect(Invite.last.status).to eq('unanswered')
     end
   end
@@ -247,9 +241,6 @@ describe 'Invite API' do
       expect(last_response.status).to eq 400
       expect(last_response.content_type).to include('application/json')
 
-      parsed_body = JSON.parse(last_response.body)
-
-      expect(parsed_body['error']).to eq("Can't refuse invite because the day of the event already passed")
       expect(Invite.last.status).to eq('unanswered')
     end
   end
@@ -278,9 +269,6 @@ describe 'Invite API' do
       expect(last_response.status).to eq 400
       expect(last_response.content_type).to include('application/json')
 
-      parsed_body = JSON.parse(last_response.body)
-
-      expect(parsed_body['error']).to eq("Can't change invite status to perhaps because the day of the event already passed")
       expect(Invite.last.status).to eq('unanswered')
     end
   end
