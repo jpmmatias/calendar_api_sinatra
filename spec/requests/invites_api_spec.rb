@@ -216,6 +216,7 @@ describe 'Invite API' do
       expect(parsed_body['participants'][3]['id']).to eq(reciver3.id)
       expect(parsed_body['participants'][3]['email']).to eq(reciver3.email)
     end
+
     it "can't accept invite if event day already passed" do
       sender = create(:user)
       event = create(:event, owner_id: sender.id, start_date: 2.days.ago, end_date: 1.day.ago)
@@ -228,6 +229,22 @@ describe 'Invite API' do
       expect(last_response.content_type).to include('application/json')
 
       expect(Invite.last.status).to eq('unanswered')
+    end
+
+    it 'possible change status after already had one' do
+      sender = create(:user)
+      invite = create(:invite, reciver_id: user.id, sender_id: sender.id, status: 2)
+
+      expect(invite.status).to eq('refused')
+
+      header 'Authorization', "Bearer #{token(user)}"
+      put "/v1/invites/#{invite.id}/accept"
+
+      expect(last_response.status).to eq 200
+      expect(last_response.content_type).to include('application/json')
+
+      expect(Invite.find(invite.id).status).to eq('accepted')
+      expect(EventSerializer.new(invite.event).response[:participants].count).to eq(2)
     end
   end
 
@@ -244,6 +261,7 @@ describe 'Invite API' do
 
       expect(Invite.find(invite.id).status).to eq('refused')
     end
+
     it "can't refuse invite if event day already passed" do
       sender = create(:user)
       event = create(:event, owner_id: sender.id, start_date: 2.days.ago, end_date: 1.day.ago)
@@ -256,6 +274,22 @@ describe 'Invite API' do
       expect(last_response.content_type).to include('application/json')
 
       expect(Invite.last.status).to eq('unanswered')
+    end
+
+    it 'possible change status after already had one' do
+      sender = create(:user)
+      invite = create(:invite, reciver_id: user.id, sender_id: sender.id, status: 1)
+
+      expect(invite.status).to eq('accepted')
+
+      header 'Authorization', "Bearer #{token(user)}"
+      put "/v1/invites/#{invite.id}/refuse"
+
+      expect(last_response.status).to eq 200
+      expect(last_response.content_type).to include('application/json')
+
+      expect(Invite.find(invite.id).status).to eq('refused')
+      expect(EventSerializer.new(invite.event).response[:participants].count).to eq(1)
     end
   end
 
@@ -272,6 +306,7 @@ describe 'Invite API' do
 
       expect(Invite.find(invite.id).status).to eq('perhaps')
     end
+
     it "can't put perhaps on invite if event day already passed" do
       sender = create(:user)
       event = create(:event, owner_id: sender.id, start_date: 2.days.ago, end_date: 1.day.ago)
@@ -284,6 +319,22 @@ describe 'Invite API' do
       expect(last_response.content_type).to include('application/json')
 
       expect(Invite.last.status).to eq('unanswered')
+    end
+
+    it 'possible change status after already had one' do
+      sender = create(:user)
+      invite = create(:invite, reciver_id: user.id, sender_id: sender.id, status: 1)
+
+      expect(invite.status).to eq('accepted')
+
+      header 'Authorization', "Bearer #{token(user)}"
+      put "/v1/invites/#{invite.id}/perhaps"
+
+      expect(last_response.status).to eq 200
+      expect(last_response.content_type).to include('application/json')
+
+      expect(Invite.find(invite.id).status).to eq('perhaps')
+      expect(EventSerializer.new(invite.event).response[:participants].count).to eq(1)
     end
   end
 end
