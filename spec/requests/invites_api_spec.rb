@@ -227,6 +227,20 @@ describe 'Invite API' do
 
       expect(parsed_body['error']).to eq('User not found with this ID')
     end
+    it 'sending ID and Email' do
+      reciver = create(:user)
+      event = create(:event, owner_id: user.id)
+
+      header 'Authorization', "Bearer #{token(user)}"
+      post "/v1/events/#{event.id}/invite", { user_email: reciver.email, user_id: reciver.id }.to_json,
+           'CONTENT_TYPE' => 'application/json'
+
+      expect(last_response.status).to eq 400
+
+      parsed_body = JSON.parse(last_response.body)
+
+      expect(parsed_body['error']).to eq('Send email or the ID from the user, but not both')
+    end
   end
 
   context 'PUT /v1/invites/:id/accept' do

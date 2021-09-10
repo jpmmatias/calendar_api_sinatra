@@ -12,6 +12,11 @@ post '/v1/events/:event_id/invite' do
   user = request.env[:user]
   body = get_body(request)
 
+  if body['user_email'] && body['user_id']
+    return response_body(400,
+                         { error: 'Send email or the ID from the user, but not both' })
+  end
+
   if body['users_emails']
     emails = body['users_emails']
     results = create_invites_and_return_success(emails, params['event_id'])
