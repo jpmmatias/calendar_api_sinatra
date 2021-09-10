@@ -153,6 +153,7 @@ describe 'Invite API' do
 
       expect(Invite.all).to eq([])
     end
+
     it "can't create multiple invites if event already passed" do
       reciver = create(:user)
       reciver2 = create(:user)
@@ -166,6 +167,65 @@ describe 'Invite API' do
       expect(last_response.status).to eq 400
 
       expect(Invite.all).to eq([])
+    end
+
+    it "can't invite user if user already invited" do
+      reciver = create(:user)
+      event = create(:event, owner_id: user.id)
+      first_sender = create(:user)
+
+      create(:invite, reciver_id: reciver.id, sender_id: first_sender.id, event_id: event.id)
+
+      header 'Authorization', "Bearer #{token(user)}"
+      post "/v1/events/#{event.id}/invite", { user_email: reciver.email }.to_json,
+           'CONTENT_TYPE' => 'application/json'
+
+      expect(last_response.status).to eq 400
+
+      parsed_body = JSON.parse(last_response.body)
+
+      expect(parsed_body['error']).to eq('User already invited')
+    end
+    it 'user not found from email' do
+      event = create(:event, owner_id: user.id)
+
+      header 'Authorization', "Bearer #{token(user)}"
+      post "/v1/events/#{event.id}/invite", { user_email: 'email@gmail.com' }.to_json,
+           'CONTENT_TYPE' => 'application/json'
+
+      expect(last_response.status).to eq 400
+
+      parsed_body = JSON.parse(last_response.body)
+
+      expect(parsed_body['error']).to eq('User not found with this email')
+    end
+
+    it 'user not found from id' do
+      event = create(:event, owner_id: user.id)
+
+      header 'Authorization', "Bearer #{token(user)}"
+      post "/v1/events/#{event.id}/invite", { user_id: 1234 }.to_json,
+           'CONTENT_TYPE' => 'application/json'
+
+      expect(last_response.status).to eq 400
+
+      parsed_body = JSON.parse(last_response.body)
+
+      expect(parsed_body['error']).to eq('User not found with this ID')
+    end
+
+    it 'non existent event' do
+      reciver = create(:user)
+
+      header 'Authorization', "Bearer #{token(user)}"
+      post '/v1/events/32145/invite', { user_id: reciver.id }.to_json,
+           'CONTENT_TYPE' => 'application/json'
+
+      expect(last_response.status).to eq 400
+
+      parsed_body = JSON.parse(last_response.body)
+
+      expect(parsed_body['error']).to eq('User not found with this ID')
     end
   end
 
@@ -227,8 +287,11 @@ describe 'Invite API' do
 
       expect(last_response.status).to eq 400
       expect(last_response.content_type).to include('application/json')
-
       expect(Invite.last.status).to eq('unanswered')
+
+      parsed_body = JSON.parse(last_response.body)
+
+      expect(parsed_body['error']).to eq('Event day already passed')
     end
 
     it 'possible change status after already had one' do
@@ -272,8 +335,11 @@ describe 'Invite API' do
 
       expect(last_response.status).to eq 400
       expect(last_response.content_type).to include('application/json')
-
       expect(Invite.last.status).to eq('unanswered')
+
+      parsed_body = JSON.parse(last_response.body)
+
+      expect(parsed_body['error']).to eq('Event day already passed')
     end
 
     it 'possible change status after already had one' do
@@ -317,8 +383,11 @@ describe 'Invite API' do
 
       expect(last_response.status).to eq 400
       expect(last_response.content_type).to include('application/json')
-
       expect(Invite.last.status).to eq('unanswered')
+
+      parsed_body = JSON.parse(last_response.body)
+
+      expect(parsed_body['error']).to eq('Event day already passed')
     end
 
     it 'possible change status after already had one' do
