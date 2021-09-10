@@ -64,58 +64,106 @@ http://localhost:5000
 
 ## Como usar a API
 
-#### Acessar todos os eventos
+### Acessar todos os eventos
 
 ```
 GET '/v1/events'
 ```
 
-#### Acessar um evento
+### Acessar um evento
 
 ```
 GET '/v1/events/:id'
 ```
 
-#### Criar um evento
+### Criar um evento
 
 ```
 POST '/v1/events/'
 ```
 
-#### Acessar documentos de um evento
+### Acessar documentos de um evento
 
 ```
 GET '/v1/events/:event_id/documents'
 ```
 
-#### Acessar documento de um evento
+### Acessar documento de um evento
 
 ```
 GET '/v1/events/:event_id/documents/:id'
 ```
 
-#### Criar documento para um evento
+### Criar documento para um evento
 
 ```
 POST '/v1/events/:event_id/documents'
 ```
 
-#### Download de documento de um evento
+### Download de documento de um evento
 
 ```
 GET '/v1/events/:event_id/documents/:id/download'
 ```
 
-#### Criação de usuário
+### Criação de usuário
 
 ```
 POST '/v1/users/new_account'
 ```
 
-#### Login de usuário
+### Login de usuário
 
 ```
 POST '/v1/users/login'
+```
+
+### Usuário ve todos os seus convites
+
+```
+GET '/v1/invites'
+```
+
+### Usuário convida outro usuário para evento
+
+```
+POST '/v1/events/:event_id/invite'
+```
+
+Convite pode ser enviado por email:
+
+```
+{"user_email" : "email@gmail.com"}
+```
+
+Convite pode ser enviado por ID do usuário:
+
+```
+{"user_id" : "1"}
+```
+
+Convite pode ser enviado por lista de emails:
+
+```
+{"users_emails" : "[email@gmail.com,email2@gmail.com]"}
+```
+
+### Usuário aceita convite
+
+```
+PUT '/v1/invites/:id/accept'
+```
+
+### Usuário recusa convite
+
+```
+PUT '/v1/invites/:id/accept'
+```
+
+### Usuário bota status com 'talvez' no convite
+
+```
+PUT '/v1/invites/:id/perhaps'
 ```
 
 ## Authors
