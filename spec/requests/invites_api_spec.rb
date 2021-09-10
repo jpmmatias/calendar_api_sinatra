@@ -153,6 +153,20 @@ describe 'Invite API' do
 
       expect(Invite.all).to eq([])
     end
+    it "can't create multiple invites if event already passed" do
+      reciver = create(:user)
+      reciver2 = create(:user)
+      reciver3 = create(:user)
+      event = create(:event, owner_id: user.id, start_date: 2.days.ago, end_date: 1.day.ago)
+
+      header 'Authorization', "Bearer #{token(user)}"
+      post "/v1/events/#{event.id}/invite", { users_emails: [reciver.email, reciver2.email, reciver3.email] }.to_json,
+           'CONTENT_TYPE' => 'application/json'
+
+      expect(last_response.status).to eq 400
+
+      expect(Invite.all).to eq([])
+    end
   end
 
   context 'PUT /v1/invites/:id/accept' do

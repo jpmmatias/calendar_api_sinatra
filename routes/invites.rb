@@ -15,9 +15,16 @@ post '/v1/events/:event_id/invite' do
     results = emails.map do |email|
       reciver = User.find_by(email: email)
       invite = Invite.new({ event_id: params['event_id'], sender_id: user['id'], reciver_id: reciver.id })
-      invite.save
+
+      if invite.event_day_already_passed?
+        false
+      else
+        invite.save
+      end
     end
     return status 201 unless results.include?(false)
+
+    return status 400
   end
 
   reciver = body['user_email'].nil? ? User.find(body['user_id']) : User.find_by(email: body['user_email'])
