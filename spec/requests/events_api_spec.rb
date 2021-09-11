@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'fileutils'
 
 describe 'Event API' do
   def app
@@ -84,7 +85,6 @@ describe 'Event API' do
 
   context 'POST /v1/events' do
     it 'create an event' do
-      user = create(:user)
       new_event = {
         'name': 'CCXP',
         'local': 'São Paulo',
@@ -104,6 +104,20 @@ describe 'Event API' do
       expect(parsed_body['name']).to eq('CCXP')
       expect(parsed_body['description']).to eq('A melhor descrição que existe')
       expect(parsed_body['owner']['name']).to eq(user.name)
+    end
+    it 'create with CSV File' do
+      create(:user, email: 'user1@gmail.com')
+      create(:user, email: 'user2@gmail.com')
+      create(:user, email: 'user3@gmail.com')
+      header 'Authorization', "Bearer #{token(user)}"
+      post '/v1/events',
+           :file => Rack::Test::UploadedFile.new(
+             "#{Dir.pwd}/spec/fixtures/eventss.csv",
+             'text/csv'
+           ), 'CONTENT_TYPE' => 'text/csv'
+
+      expect(last_response.status).to eq 201
+      expect(Event.all.count).to eq(2)
     end
 
     it 'error on event fields' do

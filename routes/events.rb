@@ -1,3 +1,4 @@
+require 'csv'
 get '/v1/events' do
   user = request.env[:user]
 
@@ -17,6 +18,28 @@ end
 
 post '/v1/events' do
   user = request.env[:user]
+
+  unless params[:file].nil?
+    csv = CSV.parse(params[:file][:tempfile].read.force_encoding('UTF-8'), headers: true)
+    results = csv.map do |event|
+      new_event = Event.create!(name: event['Nome de Evento'], local: event['Localidade'], description: event['Descrição'],
+                                start_date: DateTime.parse(event['Data e Hora Inicio']), end_date: DateTime.parse(event['Data e Hora Fim']), owner_id: user['id'])
+
+      emails = event['Participantes'].delete(' ').split(',')
+      invite_results = emails.map do |email|
+        reciver = User.find_by(email: email)
+        invite = Invite.new({ event_id: new_event.id, sender_id: user['id'], reciver_id: reciver.id })
+        if invite.event_day_already_passed?
+          false
+        else
+          invite.save
+        end
+      end
+      !invite_results.include?(false)
+    end
+    return status 201 unless results.include?(false)
+  end
+
   body = get_body(request)
   new_event = Event.new({
                           name: body['name'],
