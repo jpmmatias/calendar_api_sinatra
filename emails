@@ -1,0 +1,30 @@
+
+[1mFrom:[0m /home/joao/code/onboarding_joaopedro/routes/events.rb:71 Object#invitation_with_csv_successed?:
+
+    [1;34m59[0m: [32mdef[0m [1;34minvitation_with_csv_successed?[0m(csv, user)
+    [1;34m60[0m:   emails = {}
+    [1;34m61[0m:   results = csv.map.with_index [32mdo[0m |event, _i|
+    [1;34m62[0m:     new_event = [34m[4mEvent[0m.new([35mname[0m: event[[36m[1;32m'[0m[36mNome de Evento[1;32m'[0m[36m[0m], [35mlocal[0m: event[[36m[1;32m'[0m[36mLocalidade[1;32m'[0m[36m[0m], [35mdescription[0m: event[[36m[1;32m'[0m[36mDescrição[1;32m'[0m[36m[0m],
+    [1;34m63[0m:                           [35mstart_date[0m: [34m[4mDateTime[0m.parse(event[[36m[1;32m'[0m[36mData e Hora Inicio[1;32m'[0m[36m[0m]), [35mend_date[0m: [34m[4mDateTime[0m.parse(event[[36m[1;32m'[0m[36mData e Hora Fim[1;32m'[0m[36m[0m]), [35mowner_id[0m: user[[36m[1;32m'[0m[36mid[1;32m'[0m[36m[0m])
+    [1;34m64[0m:     [32mif[0m new_event.save
+    [1;34m65[0m:       emails[[1;31m:_i[0m] = event[[36m[1;32m'[0m[36mParticipantes[1;32m'[0m[36m[0m].delete([36m[1;32m'[0m[36m [1;32m'[0m[36m[0m).split([36m[1;32m'[0m[36m,[1;32m'[0m[36m[0m)
+    [1;34m66[0m:       [1;36mtrue[0m
+    [1;34m67[0m:     [32melse[0m
+    [1;34m68[0m:       [1;36mfalse[0m
+    [1;34m69[0m:     [32mend[0m
+    [1;34m70[0m:   [32mend[0m
+ => [1;34m71[0m:   binding.pry
+    [1;34m72[0m:   [32mreturn[0m [1;36mfalse[0m [32mif[0m results.include([1;36mfalse[0m)
+    [1;34m73[0m: 
+    [1;34m74[0m:   invite_results = emails.map [32mdo[0m |email|
+    [1;34m75[0m:     reciver = [34m[4mUser[0m.find_by([35memail[0m: email)
+    [1;34m76[0m:     invite = [34m[4mInvite[0m.new({ [35mevent_id[0m: new_event.id, [35msender_id[0m: user[[36m[1;32m'[0m[36mid[1;32m'[0m[36m[0m], [35mreciver_id[0m: reciver.id })
+    [1;34m77[0m:     [32mif[0m invite.event_day_already_passed?
+    [1;34m78[0m:       [1;36mfalse[0m
+    [1;34m79[0m:     [32melse[0m
+    [1;34m80[0m:       invite.save
+    [1;34m81[0m:     [32mend[0m
+    [1;34m82[0m:   [32mend[0m
+    [1;34m83[0m:   puts invite_results
+    [1;34m84[0m: [32mend[0m
+

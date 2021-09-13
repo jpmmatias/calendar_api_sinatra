@@ -120,6 +120,44 @@ describe 'Event API' do
       expect(Event.all.count).to eq(2)
     end
 
+    it 'error on creating with CSV on event fields' do
+      create(:user, email: 'user1@gmail.com')
+      create(:user, email: 'user2@gmail.com')
+      create(:user, email: 'user3@gmail.com')
+      header 'Authorization', "Bearer #{token(user)}"
+      post '/v1/events',
+           :file => Rack::Test::UploadedFile.new(
+             "#{Dir.pwd}/spec/fixtures/events_with_field_error.csv",
+             'text/csv'
+           ), 'CONTENT_TYPE' => 'text/csv'
+
+      expect(last_response.status).to eq 400
+      expect(Event.all.count).to eq(0)
+      expect(Invite.all.count).to eq(0)
+
+      parsed_body = JSON.parse(last_response.body)
+
+      expect(parsed_body['error']).to eq('Error on creating event, please try again')
+    end
+
+    it 'create with CSV File error beause non existent user' do
+      create(:user, email: 'user1@gmail.com')
+      create(:user, email: 'user2@gmail.com')
+      header 'Authorization', "Bearer #{token(user)}"
+      post '/v1/events',
+           :file => Rack::Test::UploadedFile.new(
+             "#{Dir.pwd}/spec/fixtures/eventss.csv",
+             'text/csv'
+           ), 'CONTENT_TYPE' => 'text/csv'
+
+      expect(last_response.status).to eq 400
+      expect(Event.all.count).to eq(0)
+      expect(Invite.all.count).to eq(0)
+
+      parsed_body = JSON.parse(last_response.body)
+
+      expect(parsed_body['error']).to eq('User not found with this email')
+    end
     it 'error on event fields' do
       new_event = {
         'name': 'CCXP'
