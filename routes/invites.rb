@@ -27,7 +27,7 @@ post '/v1/events/:event_id/invite' do
   return response_body(400, { error: 'User already invited' }) if InviteHelper.invite_already_made?(receiver,
                                                                                                     params['event_id'])
 
-  invite = Invite.new({ event_id: params['event_id'], sender_id: user['id'], reciver_id: receiver.id })
+  invite = Invite.new({ event_id: params['event_id'], sender_id: user['id'], receiver_id: receiver.id })
 
   return status 400 if invite.event_day_already_passed?
 
