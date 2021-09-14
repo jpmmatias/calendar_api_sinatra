@@ -21,8 +21,7 @@ post '/v1/events' do
 
   unless params[:file].nil?
     csv = CSV.parse(params[:file][:tempfile].read.force_encoding('UTF-8'), headers: true)
-    return invitation_with_csv_successed?(csv, user)
-
+    return create_events_csv(csv, user)
   end
 
   body = get_body(request)
@@ -68,7 +67,8 @@ def create_events_csv(csv, user)
       end_date: DateTime.parse(event['Data e Hora Fim']),
       owner_id: user['id']
     )
-    return response_body(400, { error: 'Error on creating event, please try again' }) unless new_event.save
+
+    return response_body(400, { error: 'Error on creating events, please try again' }) unless new_event.save
 
     events.push(new_event.id)
     emails = event['Participantes'].delete(' ').split(',')

@@ -137,7 +137,7 @@ describe 'Event API' do
 
       parsed_body = JSON.parse(last_response.body)
 
-      expect(parsed_body['error']).to eq('Error on creating event, please try again')
+      expect(parsed_body['error']).to eq('Error on creating events, please try again')
     end
 
     it 'create with CSV File error beause non existent user' do
