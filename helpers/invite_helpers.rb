@@ -1,8 +1,8 @@
 class InviteHelper
   def self.invite_already_made?(reciver, event_id)
-    !Invite.where('receiver_id = ? and event_id = ?',
-                  reciver.id.to_s,
-                  event_id.to_s).empty?
+    Invite.where('receiver_id = ? and event_id = ?',
+                 reciver.id.to_s,
+                 event_id.to_s).any?
   end
 
   def self.available_invites_from_user(id)
