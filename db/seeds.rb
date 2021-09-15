@@ -1,23 +1,5 @@
 require 'faker'
 
-# User.create!(
-#  name: Faker::Name.unique.name,
-#  email: 'email@gmail.com',
-#  password: 'senha1234'
-# )
-
-# User.create!(
-# name: Faker::Name.unique.name,
-#  email: 'email2@gmail.com',
-#  password: 'senha1234'
-# )
-
-# User.create!(
-# name: Faker::Name.unique.name,
-#  email: 'email3@gmail.com',
-# password: 'senha1234'
-# )
-
 5.times do
   event = Event.create!(
     name: Faker::Hipster.sentence(word_count: 2),
