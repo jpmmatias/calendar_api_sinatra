@@ -1,22 +1,10 @@
 require 'faker'
 
-# User.create!(
-#   name: Faker::Name.unique.name,
-#   email: 'email@gmail.com',
-#   password: 'senha1234'
-# )
-
 5.times do
-  name = Faker::Name.unique.name
-  user = User.create!(
-    name: name,
-    email: Faker::Internet.free_email(name: name),
-    password: 'senha1234'
-  )
   event = Event.create!(
     name: Faker::Hipster.sentence(word_count: 2),
     local: Faker::University.name,
-    owner_id: user.id,
+    owner_id: 1,
     description: Faker::Lorem.paragraph,
     start_date: Faker::Time.forward(days: 5, period: :morning),
     end_date: Faker::Time.forward(days: 23, period: :morning)
@@ -42,4 +30,8 @@ require 'faker'
     file_name: 'teste_apresentacao',
     event: event
   )
+
+  Invite.create!(event_id: event.id, sender_id: 1, receiver_id: 2, status: 1)
+
+  Invite.create!(event_id: event.id, sender_id: 1, receiver_id: 3, status: 1)
 end

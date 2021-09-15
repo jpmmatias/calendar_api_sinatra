@@ -74,7 +74,9 @@ def create_events_csv(csv, user)
     emails = event['Participantes'].delete(' ').split(',')
     invite_results = emails.map do |email|
       reciver = User.find_by(email: email)
-      invite = Invite.new({ event_id: new_event.id, sender_id: user['id'], reciver_id: reciver.id })
+
+      invite = Invite.new({ event_id: new_event.id, sender_id: user['id'], receiver_id: reciver.id })
+
       if invite.event_day_already_passed?
         false
       else

@@ -1,35 +1,33 @@
 get '/v1/invites' do
   user = request.env[:user]
-  invites = Invite.where('reciver_id = ? and status = ?', user['id'].to_s, '0')
-  invites = invites.map { |invite| InviteSerializer.new(invite).response }
-
+  invites = InviteHelper.available_invites_from_user(user['id'])
   response_body(200, invites)
 end
 
 post '/v1/events/:event_id/invite' do
-  return response_body(400, error: 'Non existing event') if non_existing_event(params['event_id'])
-
   user = request.env[:user]
   body = get_body(request)
 
-  if body['user_email'] && body['user_id']
+  return response_body(400, error: 'Non existing event') if non_existing_event(params['event_id'])
+
+  if email_and_id?(body['user_email'], body['user_id'])
     return response_body(400,
                          { error: 'Send email or the ID from the user, but not both' })
   end
 
-  if body['users_emails']
-    emails = body['users_emails']
-    results = create_invites_and_return_success(emails, params['event_id'])
-    return status 201 unless results.include?(false)
+  if multiple_emails?(body['users_emails'])
+    return status 201 if InviteHelper.invitation_successed?(params['event_id'], body['users_emails'],
+                                                            user['id'])
 
-    return status 400
+    status 400
   end
 
-  reciver = body['user_email'].nil? ? User.find(body['user_id']) : User.find_by(email: body['user_email'])
+  receiver = get_receiver(body['user_email'], body['user_id'])
 
-  return response_body(400, { error: 'User already invited' }) if invite_already_made(reciver, params['event_id'])
+  return response_body(400, { error: 'User already invited' }) if InviteHelper.invite_already_made?(receiver,
+                                                                                                    params['event_id'])
 
-  invite = Invite.new({ event_id: params['event_id'], sender_id: user['id'], reciver_id: reciver.id })
+  invite = Invite.new({ event_id: params['event_id'], sender_id: user['id'], receiver_id: receiver.id })
 
   return status 400 if invite.event_day_already_passed?
 
@@ -88,25 +86,18 @@ def response_body(status, body)
   [status(status), body.to_json]
 end
 
-def invite_already_made(reciver, event_id)
-  !Invite.where('reciver_id = ? and event_id = ?',
-                reciver.id.to_s,
-                event_id.to_s).empty?
-end
-
 def non_existing_event(event_id)
   Event.find(event_id).nil?
 end
 
-def create_invites_and_return_success(emails, event_id)
-  emails.map do |email|
-    reciver = User.find_by(email: email)
-    invite = Invite.new({ event_id: event_id, sender_id: request.env[:user]['id'], reciver_id: reciver.id })
+def email_and_id?(user_email, user_id)
+  user_email && user_id
+end
 
-    if invite.event_day_already_passed?
-      false
-    else
-      invite.save
-    end
-  end
+def get_receiver(user_email, user_id)
+  user_id ? User.find(user_id) : User.find_by(email: user_email)
+end
+
+def multiple_emails?(emails)
+  emails ? true : false
 end

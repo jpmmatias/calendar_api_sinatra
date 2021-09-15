@@ -20,6 +20,6 @@ class EventSerializer
 
   def event_participants(event_id)
     accepted_invites = Invite.where('event_id = ? and status = ?', event_id.to_s, '1')
-    accepted_invites.map { |invite| User.find(invite.reciver_id) }.unshift(@event.user)
+    accepted_invites.map { |invite| User.find(invite.receiver_id) }.unshift(@event.user)
   end
 end

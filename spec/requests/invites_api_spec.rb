@@ -27,9 +27,9 @@ describe 'Invite API' do
       event1 = create(:event, owner_id: sender.id)
       event2 = create(:event, owner_id: sender.id)
       event3 = create(:event, owner_id: sender.id)
-      create(:invite, sender_id: sender.id, reciver_id: user.id, event_id: event1.id)
-      create(:invite, sender_id: sender.id, reciver_id: user.id, event_id: event2.id)
-      create(:invite, sender_id: sender.id, reciver_id: user.id, event_id: event3.id)
+      create(:invite, sender_id: sender.id, receiver_id: user.id, event_id: event1.id)
+      create(:invite, sender_id: sender.id, receiver_id: user.id, event_id: event2.id)
+      create(:invite, sender_id: sender.id, receiver_id: user.id, event_id: event3.id)
 
       header 'Authorization', "Bearer #{token(user)}"
       get 'v1/invites'
@@ -84,7 +84,7 @@ describe 'Invite API' do
 
       expect(parsed_body['event_name']).to eq(event.name)
       expect(parsed_body['sender_name']).to eq(user.name)
-      expect(Invite.last.reciver_id).to eq(reciver.id)
+      expect(Invite.last.receiver_id).to eq(reciver.id)
       expect(Invite.last.sender_id).to eq(user.id)
       expect(Invite.last.event_id).to eq(event.id)
     end
@@ -104,7 +104,7 @@ describe 'Invite API' do
 
       expect(parsed_body['event_name']).to eq(event.name)
       expect(parsed_body['sender_name']).to eq(user.name)
-      expect(Invite.last.reciver_id).to eq(reciver.id)
+      expect(Invite.last.receiver_id).to eq(reciver.id)
       expect(Invite.last.sender_id).to eq(user.id)
       expect(Invite.last.event_id).to eq(event.id)
     end
@@ -122,8 +122,8 @@ describe 'Invite API' do
       expect(last_response.status).to eq 201
       expect(last_response.content_type).to include('application/json')
 
-      expect(Invite.find_by(reciver_id: reciver2.id).event).to eq(event)
-      expect(Invite.find_by(reciver_id: reciver3.id).event).to eq(event)
+      expect(Invite.find_by(receiver_id: reciver2.id).event).to eq(event)
+      expect(Invite.find_by(receiver_id: reciver3.id).event).to eq(event)
     end
 
     it 'not json body' do
@@ -174,7 +174,7 @@ describe 'Invite API' do
       event = create(:event, owner_id: user.id)
       first_sender = create(:user)
 
-      create(:invite, reciver_id: reciver.id, sender_id: first_sender.id, event_id: event.id)
+      create(:invite, receiver_id: reciver.id, sender_id: first_sender.id, event_id: event.id)
 
       header 'Authorization', "Bearer #{token(user)}"
       post "/v1/events/#{event.id}/invite", { user_email: reciver.email }.to_json,
@@ -246,7 +246,7 @@ describe 'Invite API' do
   context 'PUT /v1/invites/:id/accept' do
     it 'accept invite' do
       sender = create(:user)
-      invite = create(:invite, reciver_id: user.id, sender_id: sender.id)
+      invite = create(:invite, receiver_id: user.id, sender_id: sender.id)
 
       header 'Authorization', "Bearer #{token(user)}"
       put "/v1/invites/#{invite.id}/accept"
@@ -262,9 +262,9 @@ describe 'Invite API' do
       reciver2 = create(:user)
       reciver3 = create(:user)
       event = create(:event, owner_id: user.id)
-      create(:invite, reciver_id: reciver.id, event_id: event.id, sender_id: user.id, status: 1)
-      create(:invite, reciver_id: reciver2.id, event_id: event.id, sender_id: user.id, status: 1)
-      create(:invite, reciver_id: reciver3.id, event_id: event.id, sender_id: user.id, status: 1)
+      create(:invite, receiver_id: reciver.id, event_id: event.id, sender_id: user.id, status: 1)
+      create(:invite, receiver_id: reciver2.id, event_id: event.id, sender_id: user.id, status: 1)
+      create(:invite, receiver_id: reciver3.id, event_id: event.id, sender_id: user.id, status: 1)
 
       header 'Authorization', "Bearer #{token(user)}"
       get "/v1/events/#{event.id}"
@@ -294,7 +294,7 @@ describe 'Invite API' do
     it "can't accept invite if event day already passed" do
       sender = create(:user)
       event = create(:event, owner_id: sender.id, start_date: 2.days.ago, end_date: 1.day.ago)
-      invite = create(:invite, event_id: event.id, sender_id: sender.id, reciver_id: user.id)
+      invite = create(:invite, event_id: event.id, sender_id: sender.id, receiver_id: user.id)
 
       header 'Authorization', "Bearer #{token(user)}"
       put "/v1/invites/#{invite.id}/accept"
@@ -310,7 +310,7 @@ describe 'Invite API' do
 
     it 'possible change status after already had one' do
       sender = create(:user)
-      invite = create(:invite, reciver_id: user.id, sender_id: sender.id, status: 2)
+      invite = create(:invite, receiver_id: user.id, sender_id: sender.id, status: 2)
 
       expect(invite.status).to eq('refused')
 
@@ -328,7 +328,7 @@ describe 'Invite API' do
   context 'PUT /v1/invites/:id/refuse' do
     it 'refuse invite' do
       sender = create(:user)
-      invite = create(:invite, reciver_id: user.id, sender_id: sender.id)
+      invite = create(:invite, receiver_id: user.id, sender_id: sender.id)
 
       header 'Authorization', "Bearer #{token(user)}"
       put "/v1/invites/#{invite.id}/refuse"
@@ -342,7 +342,7 @@ describe 'Invite API' do
     it "can't refuse invite if event day already passed" do
       sender = create(:user)
       event = create(:event, owner_id: sender.id, start_date: 2.days.ago, end_date: 1.day.ago)
-      invite = create(:invite, event_id: event.id, sender_id: sender.id, reciver_id: user.id)
+      invite = create(:invite, event_id: event.id, sender_id: sender.id, receiver_id: user.id)
 
       header 'Authorization', "Bearer #{token(user)}"
       put "/v1/invites/#{invite.id}/refuse"
@@ -358,7 +358,7 @@ describe 'Invite API' do
 
     it 'possible change status after already had one' do
       sender = create(:user)
-      invite = create(:invite, reciver_id: user.id, sender_id: sender.id, status: 1)
+      invite = create(:invite, receiver_id: user.id, sender_id: sender.id, status: 1)
 
       expect(invite.status).to eq('accepted')
 
@@ -376,7 +376,7 @@ describe 'Invite API' do
   context 'PUT /v1/invites/:id/perhaps' do
     it 'perhaps in the future accept invite (perhaps)' do
       sender = create(:user)
-      invite = create(:invite, reciver_id: user.id, sender_id: sender.id)
+      invite = create(:invite, receiver_id: user.id, sender_id: sender.id)
 
       header 'Authorization', "Bearer #{token(user)}"
       put "/v1/invites/#{invite.id}/perhaps"
@@ -390,7 +390,7 @@ describe 'Invite API' do
     it "can't put perhaps on invite if event day already passed" do
       sender = create(:user)
       event = create(:event, owner_id: sender.id, start_date: 2.days.ago, end_date: 1.day.ago)
-      invite = create(:invite, event_id: event.id, sender_id: sender.id, reciver_id: user.id)
+      invite = create(:invite, event_id: event.id, sender_id: sender.id, receiver_id: user.id)
 
       header 'Authorization', "Bearer #{token(user)}"
       put "/v1/invites/#{invite.id}/perhaps"
@@ -406,7 +406,7 @@ describe 'Invite API' do
 
     it 'possible change status after already had one' do
       sender = create(:user)
-      invite = create(:invite, reciver_id: user.id, sender_id: sender.id, status: 1)
+      invite = create(:invite, receiver_id: user.id, sender_id: sender.id, status: 1)
 
       expect(invite.status).to eq('accepted')
 

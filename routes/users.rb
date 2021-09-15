@@ -49,7 +49,7 @@ def payload(user)
     exp: Time.now.to_i + 60 * 60,
     iat: Time.now.to_i,
     iss: ENV['JWT_ISSUER'],
-    scopes: %w[events documents],
+    scopes: %w[events documents invites],
     user: { email: user.email, name: user.name, id: user.id }
   }
 end
