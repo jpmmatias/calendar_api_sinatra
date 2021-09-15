@@ -156,7 +156,7 @@ describe 'Event API' do
 
       parsed_body = JSON.parse(last_response.body)
 
-      expect(parsed_body['error']).to eq('User not found with this email')
+      expect(parsed_body['error']).to eq('Error on users invitation, please try again')
     end
     it 'error on event fields' do
       new_event = {

@@ -1,6 +1,6 @@
 get '/v1/invites' do
   user = request.env[:user]
-  invites = InviteHelper.available_invites_from_user(user['id'])
+  invites = available_invites_from_user(user['id'])
   response_body(200, invites)
 end
 
@@ -16,16 +16,16 @@ post '/v1/events/:event_id/invite' do
   end
 
   if multiple_emails?(body['users_emails'])
-    return status 201 if InviteHelper.invitation_successed?(params['event_id'], body['users_emails'],
-                                                            user['id'])
+    return status 201 if invitation_successed?(params['event_id'], body['users_emails'],
+                                               user['id'])
 
     status 400
   end
 
   receiver = get_receiver(body['user_email'], body['user_id'])
 
-  return response_body(400, { error: 'User already invited' }) if InviteHelper.invite_already_made?(receiver,
-                                                                                                    params['event_id'])
+  return response_body(400, { error: 'User already invited' }) if invite_already_made?(receiver,
+                                                                                       params['event_id'])
 
   invite = Invite.new({ event_id: params['event_id'], sender_id: user['id'], receiver_id: receiver.id })
 
@@ -73,31 +73,4 @@ put '/v1/invites/:id/perhaps' do
   invite.status = 3
 
   status 200 if invite.save
-end
-
-private
-
-def get_body(req)
-  req.body.rewind
-  JSON.parse(req.body.read)
-end
-
-def response_body(status, body)
-  [status(status), body.to_json]
-end
-
-def non_existing_event(event_id)
-  Event.find(event_id).nil?
-end
-
-def email_and_id?(user_email, user_id)
-  user_email && user_id
-end
-
-def get_receiver(user_email, user_id)
-  user_id ? User.find(user_id) : User.find_by(email: user_email)
-end
-
-def multiple_emails?(emails)
-  emails ? true : false
 end
