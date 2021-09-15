@@ -12,7 +12,7 @@ class InviteHelper
 
   def self.invitation_successed?(event_id, emails, user_id)
     results = create_invites_and_return_success(emails, event_id, user_id)
-    return true unless results.include?(false)
+    return true if !results.include?(false)
 
     false
   end

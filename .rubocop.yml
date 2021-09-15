@@ -4,6 +4,9 @@ Style/FrozenStringLiteralComment:
 Style/Documentation:
   Enabled: false
 
+Style/NegatedIf:
+  Enabled: false
+
 Metrics/ClassLength:
   Description: "Avoid classes longer than 100 lines of code."
   Max: 100
@@ -30,4 +33,4 @@ Metrics/BlockLength:
 AllCops:
   Exclude:
     - "db/schema.rb"
-    - "db/migrate"
+    - "db/migrate/*"
