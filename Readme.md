@@ -82,6 +82,14 @@ GET '/v1/events/:id'
 POST '/v1/events/'
 ```
 
+### Criar eventos com CSV
+
+```
+POST '/v1/events/'
+```
+
+Adicionar 'file' como param
+
 ### Acessar documentos de um evento
 
 ```
