@@ -74,7 +74,7 @@ describe 'Invite API' do
       event = create(:event, owner_id: user.id)
 
       header 'Authorization', "Bearer #{token(user)}"
-      post "/v1/events/#{event.id}/invite", { user_email: reciver.email }.to_json,
+      post "/v1/events/#{event.id}/invite", { users_emails: [reciver.email] }.to_json,
            'CONTENT_TYPE' => 'application/json'
 
       expect(last_response.status).to eq 201
@@ -82,8 +82,8 @@ describe 'Invite API' do
 
       parsed_body = JSON.parse(last_response.body)
 
-      expect(parsed_body['event_name']).to eq(event.name)
-      expect(parsed_body['sender_name']).to eq(user.name)
+      expect(parsed_body[0]['event_name']).to eq(event.name)
+      expect(parsed_body[0]['sender_name']).to eq(user.name)
       expect(Invite.last.receiver_id).to eq(reciver.id)
       expect(Invite.last.sender_id).to eq(user.id)
       expect(Invite.last.event_id).to eq(event.id)
