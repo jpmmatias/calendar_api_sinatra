@@ -101,15 +101,12 @@ describe 'Event API' do
              "#{Dir.pwd}/spec/fixtures/eventss.csv",
              'text/csv'
            ), 'CONTENT_TYPE' => 'text/csv'
-
       expect(last_response.status).to eq 201
       expect(Event.all.count).to eq(2)
     end
 
     it 'error on creating with CSV on event fields' do
-      create(:user, email: 'user1@gmail.com')
-      create(:user, email: 'user2@gmail.com')
-      create(:user, email: 'user3@gmail.com')
+      3.times { create(:user) }
       header 'Authorization', "Bearer #{token(user)}"
       post '/v1/events',
            :file => Rack::Test::UploadedFile.new(
@@ -127,8 +124,7 @@ describe 'Event API' do
     end
 
     it 'create with CSV File error beause non existent user' do
-      create(:user, email: 'user1@gmail.com')
-      create(:user, email: 'user2@gmail.com')
+      2.times { create(:user) }
       header 'Authorization', "Bearer #{token(user)}"
       post '/v1/events',
            :file => Rack::Test::UploadedFile.new(
