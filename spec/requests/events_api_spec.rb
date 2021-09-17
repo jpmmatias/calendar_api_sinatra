@@ -6,7 +6,7 @@ describe 'Event API' do
     Sinatra::Application
   end
 
-  let(:user) { create(:user) }
+  let(:user) { create(:user, email: 'email@gmail.com') }
 
   context 'GET /v1/events' do
     it 'should get all events' do
@@ -92,9 +92,7 @@ describe 'Event API' do
       expect(parsed_body['owner']['name']).to eq(user.name)
     end
     it 'create with CSV File' do
-      create(:user, email: 'user1@gmail.com')
-      create(:user, email: 'user2@gmail.com')
-      create(:user, email: 'user3@gmail.com')
+      3.times { create(:user) }
       header 'Authorization', "Bearer #{token(user)}"
       post '/v1/events',
            :file => Rack::Test::UploadedFile.new(

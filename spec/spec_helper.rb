@@ -26,6 +26,7 @@ RSpec.configure do |config|
 
   config.before :each do
     DatabaseCleaner.start
+    FactoryBot.reload
   end
 
   config.after :each do
