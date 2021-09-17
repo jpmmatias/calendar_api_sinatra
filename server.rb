@@ -28,8 +28,8 @@ options '*' do
   200
 end
 
+require_relative 'helpers/init'
 require_relative 'models/init'
 require_relative 'serializers/init'
-require_relative 'helpers/init'
 require_relative 'services/init'
 require_relative 'routes/init'

@@ -7,10 +7,11 @@ end
 post '/v1/events/:event_id/invite' do
   user = request.env[:user]
   body = get_body(request)
-
   invites = CreateInvites.new(params, body, user).call
-  invites = invites.map { |invite| InviteSerializer.new(invite).response }
-  response_body(201, invites)
+
+  return response_body(201, invites) if invites.is_a?(Array)
+
+  return response_body(400, { error: invites })
   # return response_body(400, error: 'Non existing event') if non_existing_event(params['event_id'])
 
   # if email_and_id?(body['user_email'], body['user_id'])

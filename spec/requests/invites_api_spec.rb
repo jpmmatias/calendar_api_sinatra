@@ -76,7 +76,6 @@ describe 'Invite API' do
       header 'Authorization', "Bearer #{token(user)}"
       post "/v1/events/#{event.id}/invite", { users_emails: [reciver.email] }.to_json,
            'CONTENT_TYPE' => 'application/json'
-
       expect(last_response.status).to eq 201
       expect(last_response.content_type).to include('application/json')
 
@@ -101,9 +100,8 @@ describe 'Invite API' do
       expect(last_response.content_type).to include('application/json')
 
       parsed_body = JSON.parse(last_response.body)
-
-      expect(parsed_body['event_name']).to eq(event.name)
-      expect(parsed_body['sender_name']).to eq(user.name)
+      expect(parsed_body[0]['event_name']).to eq(event.name)
+      expect(parsed_body[0]['sender_name']).to eq(user.name)
       expect(Invite.last.receiver_id).to eq(reciver.id)
       expect(Invite.last.sender_id).to eq(user.id)
       expect(Invite.last.event_id).to eq(event.id)
@@ -121,7 +119,6 @@ describe 'Invite API' do
 
       expect(last_response.status).to eq 201
       expect(last_response.content_type).to include('application/json')
-
       expect(Invite.find_by(receiver_id: reciver2.id).event).to eq(event)
       expect(Invite.find_by(receiver_id: reciver3.id).event).to eq(event)
     end
@@ -145,7 +142,7 @@ describe 'Invite API' do
       event = create(:event, owner_id: user.id, start_date: 2.days.ago, end_date: 1.day.ago)
 
       header 'Authorization', "Bearer #{token(user)}"
-      post "/v1/events/#{event.id}/invite", { user_email: reciver.email }.to_json,
+      post "/v1/events/#{event.id}/invite", { users_emails: [reciver.email] }.to_json,
            'CONTENT_TYPE' => 'application/json'
 
       expect(last_response.status).to eq 400
@@ -177,27 +174,27 @@ describe 'Invite API' do
       create(:invite, receiver_id: reciver.id, sender_id: first_sender.id, event_id: event.id)
 
       header 'Authorization', "Bearer #{token(user)}"
-      post "/v1/events/#{event.id}/invite", { user_email: reciver.email }.to_json,
+      post "/v1/events/#{event.id}/invite", { users_emails: [reciver.email] }.to_json,
            'CONTENT_TYPE' => 'application/json'
 
       expect(last_response.status).to eq 400
 
       parsed_body = JSON.parse(last_response.body)
-
       expect(parsed_body['error']).to eq('User already invited')
     end
+
     it 'user not found from email' do
       event = create(:event, owner_id: user.id)
 
       header 'Authorization', "Bearer #{token(user)}"
-      post "/v1/events/#{event.id}/invite", { user_email: 'email@gmail.com' }.to_json,
+      post "/v1/events/#{event.id}/invite", { users_emails: ['email@gmail.com'] }.to_json,
            'CONTENT_TYPE' => 'application/json'
 
       expect(last_response.status).to eq 400
 
       parsed_body = JSON.parse(last_response.body)
 
-      expect(parsed_body['error']).to eq('User not found with this email')
+      expect(parsed_body['error']).to eq("Couldn't find User with 'email'= email@gmail.com")
     end
 
     it 'user not found from id' do
@@ -211,7 +208,7 @@ describe 'Invite API' do
 
       parsed_body = JSON.parse(last_response.body)
 
-      expect(parsed_body['error']).to eq('User not found with this ID')
+      expect(parsed_body['error']).to eq("Couldn't find User with 'id'=1234")
     end
 
     it 'non existent event' do
@@ -225,14 +222,15 @@ describe 'Invite API' do
 
       parsed_body = JSON.parse(last_response.body)
 
-      expect(parsed_body['error']).to eq('User not found with this ID')
+      expect(parsed_body['error']).to eq('Event not found')
     end
+
     it 'sending ID and Email' do
       reciver = create(:user)
       event = create(:event, owner_id: user.id)
 
       header 'Authorization', "Bearer #{token(user)}"
-      post "/v1/events/#{event.id}/invite", { user_email: reciver.email, user_id: reciver.id }.to_json,
+      post "/v1/events/#{event.id}/invite", { users_emails: [reciver.email], user_id: reciver.id }.to_json,
            'CONTENT_TYPE' => 'application/json'
 
       expect(last_response.status).to eq 400
