@@ -15,9 +15,7 @@ class CreateInvites
   def self.with_csv(emails, event_id, user_id)
     emails.map do |email|
       receiver = User.find_by(email: email)
-
-      raise StandardError, 'Error on users invitation, please try again' if receiver.nil?
-
+      ValidateInvite.new(receiver, event_id, user_id).call
       invite = Invite.create({ event_id: event_id.to_i, sender_id: user_id, receiver_id: receiver.id })
       InviteSerializer.new(invite).response
     end
@@ -40,6 +38,8 @@ class CreateInvites
 
   def create_invite
     invite_already_made?
+    invite_for_the_owner?
+    user_invinting_himslef?
     invite = Invite.create({ event_id: @event.id, sender_id: @user['id'], receiver_id: @receiver.id })
     InviteSerializer.new(invite).response
   rescue NoMethodError
@@ -55,6 +55,14 @@ class CreateInvites
 
   def existe_evento
     raise StandardError, 'Event not found' unless event
+  end
+
+  def invite_for_the_owner?
+    raise StandardError, 'User alredy invited' if event.owner_id == @receiver.id
+  end
+
+  def user_invinting_himslef?
+    raise StandardError, 'User alredy invited' if @user['id'] == @receiver.id
   end
 
   def email_and_id

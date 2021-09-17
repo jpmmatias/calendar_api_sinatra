@@ -225,6 +225,35 @@ describe 'Invite API' do
 
       expect(parsed_body['error']).to eq('Send email or the ID from the user, but not both')
     end
+
+    it "cant't invite owner of the event" do
+      event = create(:event, owner_id: user.id)
+
+      header 'Authorization', "Bearer #{token(user)}"
+      post "/v1/events/#{event.id}/invite", { users_emails: [user.email] }.to_json,
+           'CONTENT_TYPE' => 'application/json'
+
+      expect(last_response.status).to eq 400
+
+      parsed_body = JSON.parse(last_response.body)
+
+      expect(parsed_body['error']).to eq('User alredy invited')
+    end
+
+    it "user cant't invite himself" do
+      owner = create(:user)
+      event = create(:event, owner_id: owner.id)
+
+      header 'Authorization', "Bearer #{token(user)}"
+      post "/v1/events/#{event.id}/invite", { users_emails: [user.email] }.to_json,
+           'CONTENT_TYPE' => 'application/json'
+
+      expect(last_response.status).to eq 400
+
+      parsed_body = JSON.parse(last_response.body)
+
+      expect(parsed_body['error']).to eq('User alredy invited')
+    end
   end
 
   context 'PUT /v1/invites/:id/accept' do
