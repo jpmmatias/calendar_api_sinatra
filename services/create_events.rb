@@ -1,4 +1,4 @@
-class CreateEvents
+class CreateEventsWithCSV
   def initialize(csv, user)
     @csv = csv
     @user = user

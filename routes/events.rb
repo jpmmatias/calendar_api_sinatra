@@ -21,7 +21,7 @@ post '/v1/events' do
 
   unless params[:file].nil?
     csv = CSV.parse(params[:file][:tempfile].read.force_encoding('UTF-8'), headers: true)
-    events = CreateEvents.new(csv, user).call
+    events = CreateEventsWithCSV.new(csv, user).call
     return response_body(201, events) if events.is_a?(Array)
 
     return response_body(400, { error: events })
