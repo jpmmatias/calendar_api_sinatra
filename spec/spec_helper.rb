@@ -10,12 +10,14 @@ require 'factory_bot'
 require 'rack/test'
 require 'database_cleaner/active_record'
 require 'shoulda-matchers'
+require_relative './helpers/user_helper'
 SimpleCov.start
 
 RSpec.configure do |config|
   config.include Rack::Test::Methods
   config.expose_dsl_globally = true
   config.include FactoryBot::Syntax::Methods
+  config.include UserHelpers
   config.before(:suite) do
     FactoryBot.find_definitions
     DatabaseCleaner.strategy = :transaction

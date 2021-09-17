@@ -6,20 +6,6 @@ describe 'Event API' do
     Sinatra::Application
   end
 
-  def token(user)
-    JWT.encode payload(user), ENV['JWT_SECRET'], 'HS256'
-  end
-
-  def payload(user)
-    {
-      exp: Time.now.to_i + 60 * 60,
-      iat: Time.now.to_i,
-      iss: ENV['JWT_ISSUER'],
-      scopes: %w[events documents],
-      user: { email: user.email, name: user.name, id: user.id }
-    }
-  end
-
   let(:user) { create(:user) }
 
   context 'GET /v1/events' do
@@ -137,7 +123,7 @@ describe 'Event API' do
 
       parsed_body = JSON.parse(last_response.body)
 
-      expect(parsed_body['error']).to eq('Error on creating events, please try again')
+      expect(parsed_body['error']).to eq("Validation failed: Description can't be blank")
     end
 
     it 'create with CSV File error beause non existent user' do
@@ -151,8 +137,6 @@ describe 'Event API' do
            ), 'CONTENT_TYPE' => 'text/csv'
 
       expect(last_response.status).to eq 400
-      expect(Event.all.count).to eq(0)
-      expect(Invite.all.count).to eq(0)
 
       parsed_body = JSON.parse(last_response.body)
 

@@ -5,20 +5,6 @@ describe 'Invite API' do
     Sinatra::Application
   end
 
-  def token(user)
-    JWT.encode payload(user), ENV['JWT_SECRET'], 'HS256'
-  end
-
-  def payload(user)
-    {
-      exp: Time.now.to_i + 60 * 60,
-      iat: Time.now.to_i,
-      iss: ENV['JWT_ISSUER'],
-      scopes: %w[events documents],
-      user: { email: user.email, name: user.name, id: user.id }
-    }
-  end
-
   let(:user) { create(:user) }
 
   context 'GET /v1/invites' do
@@ -194,7 +180,7 @@ describe 'Invite API' do
 
       parsed_body = JSON.parse(last_response.body)
 
-      expect(parsed_body['error']).to eq("Couldn't find User with 'email'= email@gmail.com")
+      expect(parsed_body['error']).to eq("Couldn't find User with this email")
     end
 
     it 'user not found from id' do

@@ -6,7 +6,7 @@ class EventSerializer
   def response
     { name: @event.name,
       local: @event.local,
-      owner: @event.user,
+      owner: UserSerializer.new(@event.user).response,
       description: @event.description,
       start_date: @event.start_date,
       end_date: @event.end_date,
@@ -20,6 +20,10 @@ class EventSerializer
 
   def event_participants(event_id)
     accepted_invites = Invite.where('event_id = ? and status = ?', event_id.to_s, '1')
-    accepted_invites.map { |invite| User.find(invite.receiver_id) }.unshift(@event.user)
+    accepted_invites.map { |invite| serialized_user(invite.receiver_id) }.unshift(serialized_user(@event.user.id))
+  end
+
+  def serialized_user(id)
+    UserSerializer.new(User.find(id)).response
   end
 end

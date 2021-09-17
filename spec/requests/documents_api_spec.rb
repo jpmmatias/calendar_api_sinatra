@@ -17,20 +17,6 @@ describe 'Document API' do
     FileUtils.rm_rf('public/uploads', secure: true)
   end
 
-  def token(user)
-    JWT.encode payload(user), ENV['JWT_SECRET'], 'HS256'
-  end
-
-  def payload(user)
-    {
-      exp: Time.now.to_i + 60 * 60,
-      iat: Time.now.to_i,
-      iss: ENV['JWT_ISSUER'],
-      scopes: %w[events documents],
-      user: { email: user.email, name: user.name, id: user.id }
-    }
-  end
-
   context 'GET /v1/events/:event_id/documents' do
     it 'get all the documents from an event' do
       event = event_with_documents(3, user.id)
