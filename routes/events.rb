@@ -19,14 +19,6 @@ end
 post '/v1/events' do
   user = request.env[:user]
 
-  unless params[:file].nil?
-    csv = CSV.parse(params[:file][:tempfile].read.force_encoding('UTF-8'), headers: true)
-    events = CreateEventsWithCSV.new(csv, user).call
-    return response_body(201, events) if events.is_a?(Array)
-
-    return response_body(400, { error: events })
-  end
-
   body = get_body(request)
   new_event = Event.new({
                           name: body['name'],
@@ -45,4 +37,18 @@ post '/v1/events' do
 
 rescue JSON::ParserError
   status 400
+end
+
+post '/v1/events/csv' do
+  user = request.env[:user]
+
+  unless params[:file].nil?
+    csv = CSV.parse(params[:file][:tempfile].read.force_encoding('UTF-8'), headers: true)
+    events = CreateEventsWithCSV.new(csv, user).call
+    return response_body(201, events) if events.is_a?(Array)
+
+    return response_body(400, { error: events })
+  end
+
+  response_body(400, { error: 'Send a CSV File' })
 end

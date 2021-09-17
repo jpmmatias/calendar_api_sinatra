@@ -91,51 +91,6 @@ describe 'Event API' do
       expect(parsed_body['description']).to eq('A melhor descrição que existe')
       expect(parsed_body['owner']['name']).to eq(user.name)
     end
-    it 'create with CSV File' do
-      3.times { create(:user) }
-      header 'Authorization', "Bearer #{token(user)}"
-      post '/v1/events',
-           :file => Rack::Test::UploadedFile.new(
-             "#{Dir.pwd}/spec/fixtures/eventss.csv",
-             'text/csv'
-           ), 'CONTENT_TYPE' => 'text/csv'
-      expect(last_response.status).to eq 201
-      expect(Event.all.count).to eq(2)
-    end
-
-    it 'error on creating with CSV on event fields' do
-      3.times { create(:user) }
-      header 'Authorization', "Bearer #{token(user)}"
-      post '/v1/events',
-           :file => Rack::Test::UploadedFile.new(
-             "#{Dir.pwd}/spec/fixtures/events_with_field_error.csv",
-             'text/csv'
-           ), 'CONTENT_TYPE' => 'text/csv'
-
-      expect(last_response.status).to eq 400
-      expect(Event.all.count).to eq(0)
-      expect(Invite.all.count).to eq(0)
-
-      parsed_body = JSON.parse(last_response.body)
-
-      expect(parsed_body['error']).to eq("Validation failed: Description can't be blank")
-    end
-
-    it 'create with CSV File error beause non existent user' do
-      2.times { create(:user) }
-      header 'Authorization', "Bearer #{token(user)}"
-      post '/v1/events',
-           :file => Rack::Test::UploadedFile.new(
-             "#{Dir.pwd}/spec/fixtures/eventss.csv",
-             'text/csv'
-           ), 'CONTENT_TYPE' => 'text/csv'
-
-      expect(last_response.status).to eq 400
-
-      parsed_body = JSON.parse(last_response.body)
-
-      expect(parsed_body['error']).to eq('Error on users invitation, please try again')
-    end
     it 'error on event fields' do
       new_event = {
         'name': 'CCXP'
@@ -154,6 +109,54 @@ describe 'Event API' do
       header 'Authorization', "Bearer #{token(user)}"
       post '/v1/events', wrong_event_type, 'CONTENT_TYPE' => 'html/text'
       expect(last_response.status).not_to eq 500
+    end
+  end
+
+  context 'POST /v1/events/csv' do
+    it 'create with CSV File' do
+      3.times { create(:user) }
+      header 'Authorization', "Bearer #{token(user)}"
+      post '/v1/events/csv',
+           :file => Rack::Test::UploadedFile.new(
+             "#{Dir.pwd}/spec/fixtures/eventss.csv",
+             'text/csv'
+           ), 'CONTENT_TYPE' => 'text/csv'
+      expect(last_response.status).to eq 201
+      expect(Event.all.count).to eq(2)
+    end
+
+    it 'error on creating with CSV on event fields' do
+      3.times { create(:user) }
+      header 'Authorization', "Bearer #{token(user)}"
+      post '/v1/events/csv',
+           :file => Rack::Test::UploadedFile.new(
+             "#{Dir.pwd}/spec/fixtures/events_with_field_error.csv",
+             'text/csv'
+           ), 'CONTENT_TYPE' => 'text/csv'
+
+      expect(last_response.status).to eq 400
+      expect(Event.all.count).to eq(0)
+      expect(Invite.all.count).to eq(0)
+
+      parsed_body = JSON.parse(last_response.body)
+
+      expect(parsed_body['error']).to eq("Validation failed: Description can't be blank")
+    end
+
+    it 'create with CSV File error beause non existent user' do
+      2.times { create(:user) }
+      header 'Authorization', "Bearer #{token(user)}"
+      post '/v1/events/csv',
+           :file => Rack::Test::UploadedFile.new(
+             "#{Dir.pwd}/spec/fixtures/eventss.csv",
+             'text/csv'
+           ), 'CONTENT_TYPE' => 'text/csv'
+
+      expect(last_response.status).to eq 400
+
+      parsed_body = JSON.parse(last_response.body)
+
+      expect(parsed_body['error']).to eq('Error on users invitation, please try again')
     end
   end
 end
