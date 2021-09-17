@@ -44,3 +44,10 @@ put '/v1/invites/:id/perhaps' do
 
   status 200 if invite.save
 end
+
+private
+
+def available_invites_from_user(id)
+  invites = Invite.where('receiver_id= ? and status = ?', id.to_s, '0')
+  invites.map { |invite| InviteSerializer.new(invite).response }
+end
