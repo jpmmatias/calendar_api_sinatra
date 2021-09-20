@@ -1,23 +1,20 @@
 require 'csv'
 get '/v1/events' do
-  user = request.env[:user]
+  user = User.find(request.env[:user]['id'])
 
-  events = Event.where(owner_id: user['id'])
+  events = user.all_events
+
   events = events.map { |event| EventSerializer.new(event).response }
   response_body(200, events)
 end
 
 get '/v1/events/:id' do
   user = request.env[:user]
-  event = Event.where(['id = ? and owner_id = ?', params['id'].to_s, user['id'].to_s]).first
+  event = Event.find_by(id: params['id'])
 
-  if event.nil?
-    event = Event.find_by(id: params['id'])
-    return status 404 if event.nil?
+  return status 404 if event.nil?
 
-    participants = EventSerializer.new(event).response[:participants].map { |user| user[:email] }
-    return response_body(403, { error: 'Forbidden' }) unless participants.include?(user['email'])
-  end
+  user_allowed_to_see_event?(event, user['id'])
 
   event = EventSerializer.new(event).response
   response_body(200, event)

@@ -204,7 +204,7 @@ describe 'Invite API' do
       post '/v1/events/32145/invite', { user_id: reciver.id }.to_json,
            'CONTENT_TYPE' => 'application/json'
 
-      expect(last_response.status).to eq 400
+      expect(last_response.status).to eq 404
 
       parsed_body = JSON.parse(last_response.body)
 
@@ -243,6 +243,7 @@ describe 'Invite API' do
     it "user cant't invite himself" do
       owner = create(:user)
       event = create(:event, owner_id: owner.id)
+      create(:invite, event_id: event.id, sender_id: owner.id, receiver_id: user.id, status: 1)
 
       header 'Authorization', "Bearer #{token(user)}"
       post "/v1/events/#{event.id}/invite", { users_emails: [user.email] }.to_json,
@@ -252,7 +253,7 @@ describe 'Invite API' do
 
       parsed_body = JSON.parse(last_response.body)
 
-      expect(parsed_body['error']).to eq('User alredy invited')
+      expect(parsed_body['error']).to eq('User already invited')
     end
   end
 

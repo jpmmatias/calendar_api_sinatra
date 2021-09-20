@@ -81,7 +81,7 @@ describe 'Event API' do
       expect(last_response.content_type).to include('application/json')
       parsed_body = JSON.parse(last_response.body)
 
-      expect(parsed_body['error']).to eq('Forbidden')
+      expect(parsed_body['error']).to eq('User not allowed')
     end
   end
 

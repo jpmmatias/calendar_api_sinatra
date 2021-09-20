@@ -8,4 +8,5 @@ class UserSerializer
       name: @user.name,
       email: @user.email }
   end
+
 end

@@ -7,4 +7,13 @@ class User < ActiveRecord::Base
   validates :email, presence: true, uniqueness: true,
                     format: { with: /\w+@\w+\.\w+/ }
   validates :password, presence: true
+
+  def confirmed_events
+    accepted_invites = Invite.where('receiver_id = ? and status = ?', @user_id.to_s, '1')
+    accepted_invites.map { |invite| Event.find(invite.event_id) }
+  end
+
+  def all_events
+    events.push(confirmed_events)
+  end
 end

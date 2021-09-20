@@ -7,11 +7,18 @@ end
 post '/v1/events/:event_id/invite' do
   user = request.env[:user]
   body = get_body(request)
+  event = Event.find_by(id: params['event_id'])
+
+  return response_body(404, { error: 'Event not found' }) if event.nil?
+
+  user_allowed_to_see_event?(event, user['id'])
+
   invites = CreateInvites.new(params, body, user).call
 
   return response_body(201, invites) if invites.is_a?(Array)
 
   error = invites
+
   response_body(400, { error: error })
 end
 
