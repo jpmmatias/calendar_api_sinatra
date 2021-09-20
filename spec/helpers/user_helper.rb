@@ -9,7 +9,7 @@ module UserHelpers
       iat: Time.now.to_i,
       iss: ENV['JWT_ISSUER'],
       scopes: %w[events documents],
-      user: { email: user.email, name: user.name, id: user.id }
+      user: { id: user.id, name: user.name, email: user.email }
     }
   end
 end

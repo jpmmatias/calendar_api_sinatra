@@ -10,7 +10,14 @@ end
 get '/v1/events/:id' do
   user = request.env[:user]
   event = Event.where(['id = ? and owner_id = ?', params['id'].to_s, user['id'].to_s]).first
-  return status 404 if event.nil?
+
+  if event.nil?
+    event = Event.find_by(id: params['id'])
+    return status 404 if event.nil?
+
+    participants = EventSerializer.new(event).response[:participants].map { |user| user[:email] }
+    return response_body(403, { error: 'Forbidden' }) unless participants.include?(user['email'])
+  end
 
   event = EventSerializer.new(event).response
   response_body(200, event)
@@ -56,26 +63,24 @@ end
 put '/v1/events/:id' do
   user = request.env[:user]
   body = get_body(request)
-  event = Event.find(params[:id])
-  event.update(
-    name: body['name'],
-    local: body['local'],
-    description: body['description'],
-    owner_id: user['id'],
-    start_date: body['start_date'],
-    end_date: body['end_date']
-  )
+  event = Event.where(['id = ? and owner_id = ?', params['id'].to_s, user['id'].to_s]).first
+
+  halt 404 if event.nil?
+
+  event.update(update_values(body))
   if event.save
     event = EventSerializer.new(event).response
     status 200
     body event.to_json
   else
-    response_body(400, { error: 'erro' })
+    response_body(400, { error: 'Error when update event, please try again' })
   end
 end
 
 delete '/v1/events/:id' do
-  event = Event.find(params[:id])
+  user = request.env[:user]
+  event = Event.where(['id = ? and owner_id = ?', params['id'].to_s, user['id'].to_s]).first
+  halt 404 if event.nil?
   event.destroy
   status 204
 end

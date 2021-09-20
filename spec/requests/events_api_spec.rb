@@ -67,7 +67,21 @@ describe 'Event API' do
       get "/v1/events/#{rand(1...1000)}"
       expect(last_response.status).to eq 404
     end
-    xit 'only participants can see' do
+
+    it 'only participants can see' do
+      event = create(:event)
+      another_user = create(:user)
+
+      create(:invite, sender_id: event.owner_id, receiver_id: another_user.id, event_id: event.id, status: 1)
+
+      header 'Authorization', "Bearer #{token(user)}"
+      get "/v1/events/#{event.id}"
+
+      expect(last_response.status).to eq 403
+      expect(last_response.content_type).to include('application/json')
+      parsed_body = JSON.parse(last_response.body)
+
+      expect(parsed_body['error']).to eq('Forbidden')
     end
   end
 
@@ -189,16 +203,76 @@ describe 'Event API' do
       expect(parsed_body['local']).to eq(event_changes[:local])
       expect(parsed_body['owner']['name']).to eq(user.name)
     end
-    xit 'accepts only the field to edit' do
+    it 'accepts only the field to edit' do
+      event = create(:event, owner_id: user.id)
+      event_changes = {
+        'name': 'Evento Mudado com Sucesso'
+      }
+
+      header 'Authorization', "Bearer #{token(user)}"
+      put "/v1/events/#{event.id}", event_changes.to_json, 'CONTENT_TYPE' => 'application/json'
+
+      expect(last_response.status).to eq(200)
+      expect(last_response.content_type).to eq('application/json')
+
+      parsed_body = JSON.parse(last_response.body)
+
+      expect(parsed_body['name']).not_to eq(event.name)
+      expect(parsed_body['description']).to eq(event.description)
+      expect(parsed_body['name']).to eq(event_changes[:name])
+      expect(parsed_body['local']).to eq(event.local)
+      expect(parsed_body['owner']['name']).to eq(user.name)
     end
 
-    xit 'but event not found' do
+    it 'but event not found' do
+      event_changes = {
+        'name': 'Evento Mudado com Sucesso'
+      }
+
+      header 'Authorization', "Bearer #{token(user)}"
+      put "/v1/events/#{rand(1..1000)}", event_changes.to_json, 'CONTENT_TYPE' => 'application/json'
+
+      expect(last_response.status).to eq(404)
+      expect(last_response.content_type).to eq('application/json')
     end
 
-    xit 'but nil fields' do
+    it 'but nil fields' do
+      event = create(:event, owner_id: user.id)
+
+      event_changes = {
+        'name': nil,
+        'local': nil,
+        'description': nil,
+        'start_date': 88.days.from_now,
+        'end_date': 100.days.from_now
+      }
+
+      header 'Authorization', "Bearer #{token(user)}"
+      put "/v1/events/#{event.id}", event_changes.to_json, 'CONTENT_TYPE' => 'application/json'
+
+      expect(last_response.status).to eq(400)
+      expect(last_response.content_type).to eq('application/json')
+
+      parsed_body = JSON.parse(last_response.body)
+
+      expect(parsed_body['error']).to eq('Error when update event, please try again')
     end
 
-    xit 'only the owner can edit' do
+    it 'only the owner can edit' do
+      event = create(:event)
+
+      event_changes = {
+        'name': 'Evento Mudado com Sucesso',
+        'local': 'Costa Rica',
+        'description': 'Evento Mudado com sucesso',
+        'start_date': 88.days.from_now,
+        'end_date': 100.days.from_now
+      }
+
+      header 'Authorization', "Bearer #{token(user)}"
+      put "/v1/events/#{event.id}", event_changes.to_json, 'CONTENT_TYPE' => 'application/json'
+
+      expect(last_response.status).to eq(404)
     end
   end
 
@@ -213,6 +287,13 @@ describe 'Event API' do
 
       expect(Event.all).to eq([])
     end
-    xit 'only the owner can delete'
+    it 'only the owner can delete' do
+      event = create(:event)
+
+      header 'Authorization', "Bearer #{token(user)}"
+      delete "/v1/events/#{event.id}", 'CONTENT_TYPE' => 'application/json'
+
+      expect(last_response.status).to eq 404
+    end
   end
 end
