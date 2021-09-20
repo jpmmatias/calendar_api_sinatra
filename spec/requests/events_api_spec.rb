@@ -67,6 +67,8 @@ describe 'Event API' do
       get "/v1/events/#{rand(1...1000)}"
       expect(last_response.status).to eq 404
     end
+    xit 'only participants can see' do
+    end
   end
 
   context 'POST /v1/events' do
@@ -158,5 +160,59 @@ describe 'Event API' do
 
       expect(parsed_body['error']).to eq('Error on users invitation, please try again')
     end
+  end
+
+  context 'PUT /v1/events/:id' do
+    it 'Edit event successufuly' do
+      event = create(:event, owner_id: user.id)
+
+      event_changes = {
+        'name': 'Evento Mudado com Sucesso',
+        'local': 'Costa Rica',
+        'description': 'Evento Mudado com sucesso',
+        'start_date': 88.days.from_now,
+        'end_date': 100.days.from_now
+      }
+
+      header 'Authorization', "Bearer #{token(user)}"
+      put "/v1/events/#{event.id}", event_changes.to_json, 'CONTENT_TYPE' => 'application/json'
+
+      expect(last_response.status).to eq(200)
+      expect(last_response.content_type).to eq('application/json')
+
+      parsed_body = JSON.parse(last_response.body)
+
+      expect(parsed_body['name']).not_to eq(event.name)
+      expect(parsed_body['description']).not_to eq(event.description)
+      expect(parsed_body['name']).to eq(event_changes[:name])
+      expect(parsed_body['description']).to eq(event_changes[:description])
+      expect(parsed_body['local']).to eq(event_changes[:local])
+      expect(parsed_body['owner']['name']).to eq(user.name)
+    end
+    xit 'accepts only the field to edit' do
+    end
+
+    xit 'but event not found' do
+    end
+
+    xit 'but nil fields' do
+    end
+
+    xit 'only the owner can edit' do
+    end
+  end
+
+  context 'DELETE /v1/events/:id' do
+    it 'Successufuly delete event' do
+      event = create(:event, owner_id: user.id)
+
+      header 'Authorization', "Bearer #{token(user)}"
+      delete "/v1/events/#{event.id}", 'CONTENT_TYPE' => 'application/json'
+
+      expect(last_response.status).to eq 204
+
+      expect(Event.all).to eq([])
+    end
+    xit 'only the owner can delete'
   end
 end

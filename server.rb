@@ -15,7 +15,7 @@ configure do
   set :database_file, File.expand_path('config/database.yml', __dir__)
   set :default_content_type, 'application/json'
   set :allow_origin, '*'
-  set :allow_methods, %i[get post patch delete options]
+  set :allow_methods, %i[get post patch put delete options]
   set :allow_credentials, true
   set :max_age, 1_728_000
   set :expose_headers, ['Content-Type']

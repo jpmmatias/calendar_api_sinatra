@@ -52,3 +52,30 @@ post '/v1/events/csv' do
 
   response_body(400, { error: 'Send a CSV File' })
 end
+
+put '/v1/events/:id' do
+  user = request.env[:user]
+  body = get_body(request)
+  event = Event.find(params[:id])
+  event.update(
+    name: body['name'],
+    local: body['local'],
+    description: body['description'],
+    owner_id: user['id'],
+    start_date: body['start_date'],
+    end_date: body['end_date']
+  )
+  if event.save
+    event = EventSerializer.new(event).response
+    status 200
+    body event.to_json
+  else
+    response_body(400, { error: 'erro' })
+  end
+end
+
+delete '/v1/events/:id' do
+  event = Event.find(params[:id])
+  event.destroy
+  status 204
+end
