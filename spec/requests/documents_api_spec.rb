@@ -29,7 +29,6 @@ describe 'Document API' do
       expect(last_response.content_type).to include('application/json')
 
       parsed_body = JSON.parse(last_response.body)
-
       expect(parsed_body[0]['file_path']).to eq(documents[0].file_path)
       expect(parsed_body[1]['file_path']).to eq(documents[1].file_path)
       expect(parsed_body[2]['file_path']).to eq(documents[2].file_path)

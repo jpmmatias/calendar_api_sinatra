@@ -12,8 +12,13 @@ class JwtAuth
     env[:scopes] = payload['scopes']
     env[:user] = payload['user']
     env[:alg] = header['alg']
-    rescue_jwt
     @app.call env
+  rescue StandardError => e
+    [status(e), { 'Content-Type' => 'application/json' }, [{ error: e }.to_json]]
+  end
+
+  def status(err)
+    err.message == 'Nil JSON web token' ? 401 : 403
   end
 
   def user_routes_in_path_info(env)
@@ -22,17 +27,5 @@ class JwtAuth
 
   def fethc_http_auth(env)
     env.fetch('HTTP_AUTHORIZATION', '').slice(7..-1)
-  end
-
-  def rescue_jwt
-  rescue JWT::DecodeError
-    [401, { 'Content-Type' => 'application/json' }, [{ error: 'A token must be passed.' }.to_json]]
-  rescue JWT::ExpiredSignature
-    [403, { 'Content-Type' => 'application/json' }, [{ errror: 'The token has expired.' }.to_json]]
-  rescue JWT::InvalidIssuerError
-    [403, { 'Content-Type' => 'application/json' }, [{ error: 'The token does not have a valid issuer.' }.to_json]]
-  rescue JWT::InvalidIatError
-    [403, { 'Content-Type' => 'application/json' },
-     [{ error: 'The token does not have a valid "issued at" time.' }.to_json]]
   end
 end

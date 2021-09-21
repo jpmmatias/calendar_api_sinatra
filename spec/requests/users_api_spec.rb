@@ -60,5 +60,11 @@ describe 'User API' do
       post '/v1/users/login', { email: user.email, password: 'pass' }.to_json
       expect(last_response.status).to eq(400)
     end
+
+    it 'try to get access with out login error' do
+      get '/v1/events'
+      parsed_body = JSON.parse(last_response.body)
+      expect(parsed_body['error']).to eq('Nil JSON web token')
+    end
   end
 end
