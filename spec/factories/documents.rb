@@ -6,6 +6,7 @@ FactoryBot.define do
       ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'image/jpeg',
        'application/vnd.openxmlformats-officedocument.presentationml.presentation'].sample
     end
+
     file_name { %w[documento_1 documento_2 documento_3].sample }
 
     trait :image do

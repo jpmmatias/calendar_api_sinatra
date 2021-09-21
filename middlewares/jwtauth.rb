@@ -26,12 +26,13 @@ class JwtAuth
 
   def rescue_jwt
   rescue JWT::DecodeError
-    [401, { 'Content-Type' => 'text/plain' }, ['A token must be passed.']]
+    [401, { 'Content-Type' => 'application/json' }, [{ error: 'A token must be passed.' }.to_json]]
   rescue JWT::ExpiredSignature
-    [403, { 'Content-Type' => 'text/plain' }, ['The token has expired.']]
+    [403, { 'Content-Type' => 'application/json' }, [{ errror: 'The token has expired.' }.to_json]]
   rescue JWT::InvalidIssuerError
-    [403, { 'Content-Type' => 'text/plain' }, ['The token does not have a valid issuer.']]
+    [403, { 'Content-Type' => 'application/json' }, [{ error: 'The token does not have a valid issuer.' }.to_json]]
   rescue JWT::InvalidIatError
-    [403, { 'Content-Type' => 'text/plain' }, ['The token does not have a valid "issued at" time.']]
+    [403, { 'Content-Type' => 'application/json' },
+     [{ error: 'The token does not have a valid "issued at" time.' }.to_json]]
   end
 end

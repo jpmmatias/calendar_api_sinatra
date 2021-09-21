@@ -295,5 +295,16 @@ describe 'Event API' do
 
       expect(last_response.status).to eq 404
     end
+    it 'the invites and the documents are delete as well' do
+      event = event_with_documents(3, user.id)
+      create(:invite, event_id: event.id, status: 1, sender_id: user.id, receiver_id: create(:user).id)
+
+      header 'Authorization', "Bearer #{token(user)}"
+      delete "/v1/events/#{event.id}", 'CONTENT_TYPE' => 'application/json'
+
+      expect(Event.all.count).to eq(0)
+      expect(Document.all.count).to eq(0)
+      expect(Invite.all.count).to eq(0)
+    end
   end
 end
