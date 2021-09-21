@@ -22,6 +22,10 @@ helpers do
     halt response_body(403, { error: 'User not allowed' }) unless allowed
   end
 
+  def user
+    @user ||= User.find(request.env[:user]['id'])
+  end
+
   private
 
   def event

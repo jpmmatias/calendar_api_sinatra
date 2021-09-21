@@ -1,7 +1,5 @@
 require 'csv'
 get '/v1/events' do
-  user = User.find(request.env[:user]['id'])
-
   events = user.all_events
 
   events = events.map { |event| EventSerializer.new(event).response }
@@ -17,8 +15,6 @@ get '/v1/events/:id' do
 end
 
 post '/v1/events' do
-  user = request.env[:user]
-
   body = get_body(request)
   new_event = Event.new({
                           name: body['name'],
@@ -40,8 +36,6 @@ rescue JSON::ParserError
 end
 
 post '/v1/events/csv' do
-  user = request.env[:user]
-
   unless params[:file].nil?
     csv = CSV.parse(params[:file][:tempfile].read.force_encoding('UTF-8'), headers: true)
     events = CreateEventsWithCSV.new(csv, user).call
@@ -54,7 +48,6 @@ post '/v1/events/csv' do
 end
 
 put '/v1/events/:id' do
-  user = request.env[:user]
   body = get_body(request)
   event = Event.where(['id = ? and owner_id = ?', params['id'].to_s, user['id'].to_s]).first
 
@@ -71,7 +64,6 @@ put '/v1/events/:id' do
 end
 
 delete '/v1/events/:id' do
-  user = request.env[:user]
   event = Event.where(['id = ? and owner_id = ?', params['id'].to_s, user['id'].to_s]).first
   halt 404 if event.nil?
   event.destroy

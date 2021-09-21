@@ -1,12 +1,10 @@
 get '/v1/invites' do
-  user = request.env[:user]
   invites = available_invites_from_user(user['id'])
   response_body(200, invites)
 end
 
 post '/v1/events/:event_id/invite' do
   user_allowed_to_see_event?
-  user = request.env[:user]
   body = get_body(request)
 
   invites = CreateInvites.new(params, body, user).call

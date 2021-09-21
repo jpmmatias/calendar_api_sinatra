@@ -1,11 +1,9 @@
 get '/v1/events/:event_id/documents' do
-  user = request.env[:user]
   event = Event.where(['id = ? and owner_id=?', params['event_id'].to_s, user['id'].to_s]).first
   response_body(200, event.documents)
 end
 
 get '/v1/events/:event_id/documents/:id' do
-  user = request.env[:user]
   event = Event.where(['id = ? and owner_id=?', params['event_id'].to_s, user['id'].to_s]).first
   document = Document.where(['id = ? and event_id = ?', params['id'].to_s, event.id.to_s]).first
   return response_body(200, document) if document
