@@ -5,13 +5,9 @@ get '/v1/invites' do
 end
 
 post '/v1/events/:event_id/invite' do
+  user_allowed_to_see_event?
   user = request.env[:user]
   body = get_body(request)
-  event = Event.find_by(id: params['event_id'])
-
-  return response_body(404, { error: 'Event not found' }) if event.nil?
-
-  user_allowed_to_see_event?(event, user['id'])
 
   invites = CreateInvites.new(params, body, user).call
 

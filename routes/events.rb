@@ -9,12 +9,8 @@ get '/v1/events' do
 end
 
 get '/v1/events/:id' do
-  user = request.env[:user]
-  event = Event.find_by(id: params['id'])
-
-  return status 404 if event.nil?
-
-  user_allowed_to_see_event?(event, user['id'])
+  user_allowed_to_see_event?
+  event = Event.find(params['id'])
 
   event = EventSerializer.new(event).response
   response_body(200, event)

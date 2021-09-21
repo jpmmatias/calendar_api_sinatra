@@ -14,10 +14,29 @@ helpers do
     body.map { |key, value| { key.gsub(' 00:00:00+00', '') => value } }.reduce(:merge)
   end
 
-  def user_allowed_to_see_event?(event, user_id)
-    accepted_invites = Invite.where('event_id = ? and status = ?', event.id.to_s, '1')
-    allowed = accepted_invites.map { |invite| invite.receiver_id }.unshift(event.owner_id).include?(user_id)
+  def user_allowed_to_see_event?
+    user_id = request.env[:user]['id']
+    event_exists?
+    allowed = accepted_invites.map(&:receiver_id).unshift(event.owner_id).include?(user_id)
 
     halt response_body(403, { error: 'User not allowed' }) unless allowed
+  end
+
+  private
+
+  def event
+    @event ||= Event.find_by(id: event_id)
+  end
+
+  def event_exists?
+    halt response_body(404, { error: 'Event not found' }) if event.nil?
+  end
+
+  def event_id
+    params['event_id'].nil? ? params['id'] : params['event_id']
+  end
+
+  def accepted_invites
+    Invite.where('event_id = ? and status = ?', @event.id.to_s, '1')
   end
 end
