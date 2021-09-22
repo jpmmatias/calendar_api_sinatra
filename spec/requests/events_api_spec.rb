@@ -272,7 +272,7 @@ describe 'Event API' do
       header 'Authorization', "Bearer #{token(user)}"
       put "/v1/events/#{event.id}", event_changes.to_json, 'CONTENT_TYPE' => 'application/json'
 
-      expect(last_response.status).to eq(404)
+      expect(last_response.status).to eq(403)
     end
   end
 
@@ -293,7 +293,7 @@ describe 'Event API' do
       header 'Authorization', "Bearer #{token(user)}"
       delete "/v1/events/#{event.id}", 'CONTENT_TYPE' => 'application/json'
 
-      expect(last_response.status).to eq 404
+      expect(last_response.status).to eq 403
     end
     it 'the invites and the documents are delete as well' do
       event = event_with_documents(3, user.id)

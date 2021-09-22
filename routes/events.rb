@@ -7,11 +7,11 @@ get '/v1/events' do
 end
 
 get '/v1/events/:id' do
+  event_exists?
   user_allowed_to_see_event?
-  event = Event.find(params['id'])
 
-  event = EventSerializer.new(event).response
-  response_body(200, event)
+  serialized_event = EventSerializer.new(event).response
+  response_body(200, serialized_event)
 end
 
 post '/v1/events' do
@@ -49,11 +49,13 @@ end
 
 put '/v1/events/:id' do
   body = get_body(request)
-  event = Event.where(['id = ? and owner_id = ?', params['id'].to_s, user['id'].to_s]).first
-  event_exists?(event)
-  event.update(update_values(body))
-  if event.save
-    event = EventSerializer.new(event).response
+  event_exists?
+  user_owner_of_the_event?
+
+  @event.update(update_values(body))
+
+  if @event.save
+    event = EventSerializer.new(@event).response
     response_body(200, event)
   else
     response_body(400, { error: 'Error when update event, please try again' })
@@ -61,8 +63,9 @@ put '/v1/events/:id' do
 end
 
 delete '/v1/events/:id' do
-  event = Event.where(['id = ? and owner_id = ?', params['id'].to_s, user['id'].to_s]).first
-  event_exists?(event)
+  event_exists?
+  user_owner_of_the_event?
+
   event.destroy
   status 204
 end

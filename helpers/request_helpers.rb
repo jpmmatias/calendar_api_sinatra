@@ -16,25 +16,29 @@ helpers do
 
   def user_allowed_to_see_event?
     user_id = request.env[:user]['id']
-    event_exists?(event)
+    event_exists?
     allowed = accepted_invites.map(&:receiver_id).unshift(event.owner_id).include?(user_id)
 
     halt response_body(403, { error: 'User not allowed' }) unless allowed
+  end
+
+  def user_owner_of_the_event?
+    halt response_body(403, { error: 'User not allowed' }) unless event.owner_id == request.env[:user]['id']
   end
 
   def user
     @user ||= User.find(request.env[:user]['id'])
   end
 
-  def event_exists?(event)
+  def event_exists?
     halt response_body(404, { error: 'Event not found' }) if event.nil?
   end
-
-  private
 
   def event
     @event ||= Event.find_by(id: event_id)
   end
+
+  private
 
   def event_id
     params['event_id'].nil? ? params['id'] : params['event_id']
