@@ -50,14 +50,11 @@ end
 put '/v1/events/:id' do
   body = get_body(request)
   event = Event.where(['id = ? and owner_id = ?', params['id'].to_s, user['id'].to_s]).first
-
-  halt 404 if event.nil?
-
+  event_exists?(event)
   event.update(update_values(body))
   if event.save
     event = EventSerializer.new(event).response
-    status 200
-    body event.to_json
+    response_body(200, event)
   else
     response_body(400, { error: 'Error when update event, please try again' })
   end
@@ -65,7 +62,7 @@ end
 
 delete '/v1/events/:id' do
   event = Event.where(['id = ? and owner_id = ?', params['id'].to_s, user['id'].to_s]).first
-  halt 404 if event.nil?
+  event_exists?(event)
   event.destroy
   status 204
 end
