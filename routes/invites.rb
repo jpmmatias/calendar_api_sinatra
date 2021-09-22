@@ -16,8 +16,8 @@ post '/v1/events/:event_id/invite' do
   response_body(400, { error: error })
 end
 
-put '/v1/invites/:id/accept' do
-  invite = Invite.find(params[:id])
+put '/v1/invites/:token/accept' do
+  invite = Invite.find_by(token: params[:token])
 
   return response_body(400, { error: 'Event day already passed' }) if invite.event_day_already_passed?
 
@@ -26,8 +26,8 @@ put '/v1/invites/:id/accept' do
   return status 200 if invite.save
 end
 
-put '/v1/invites/:id/refuse' do
-  invite = Invite.find(params[:id])
+put '/v1/invites/:token/refuse' do
+  invite = Invite.find_by(token: params[:token])
 
   return response_body(400, { error: 'Event day already passed' }) if invite.event_day_already_passed?
 
@@ -36,8 +36,8 @@ put '/v1/invites/:id/refuse' do
   status 200 if invite.save
 end
 
-put '/v1/invites/:id/perhaps' do
-  invite = Invite.find(params[:id])
+put '/v1/invites/:token/perhaps' do
+  invite = Invite.find_by(token: params[:token])
 
   return response_body(400, { error: 'Event day already passed' }) if invite.event_day_already_passed?
 
