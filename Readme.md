@@ -7,10 +7,10 @@ Styles for lists of links typically used in navigation elements and asides.
 - [Instalação](#instalação)
 - [Ferramentas Usadas](#ferramentas-usadas)
 - [Como Usar a API](#como-usar-a-api)
-  - [User](#ferramentas-usadas)
-  - [Eventos](#ferramentas-usadas)
-  - [Convites](#ferramentas-usadas)
-  - [Documentos](#ferramentas-usadas)
+  - [User](#user)
+  - [Eventos](#eventos)
+  - [Documentos](#documentos)
+  - [Convites](#convites)
 - [Contato](#contato)
 
 # Instalação
@@ -89,6 +89,52 @@ http://localhost:5000
 - Factory Bot
 
 # Como usar a API
+
+## User
+
+## Criação de usuário
+
+### Request
+
+```
+POST '/v1/users/new_account'
+Body JSON
+{
+	"name":"User",
+	"email":"email@gmail.com",
+	"password":"senha1234"
+}
+```
+
+### Respota
+
+    HTTP/1.1 201 Created
+
+## Login de usuário
+
+### Request
+
+```
+POST '/v1/users/login'
+Body JSON
+{
+	"email":"email@gmail.com",
+	"password":"senha1234"
+}
+```
+
+### Exemplo de resposta
+
+    HTTP/1.1 200 Success
+    Content-Type: application/json
+
+    "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2MzIyNDkwOTEsImlhdCI6MTYzMjI0NTQ5MSwiaXsdafasdfoib25ib2FyZGluZyIsInNjb3BlcyI6WyJldmVudHMiLCJkb2N1bWVudHMiLCJpbnZpdGVzIl0sInVzZXIiOnsiZW1haWwiOiJlbWFpbEBnbWFpbC5jb20iLCJuYWsdfsfiVXNlciIsImlkIjoxfX0.EKhrixtf9YSNSeqfXmlTaIsoSXZw85JueS2riL1dkrE"
+
+A resposta é o token de autenticação para fazer requests
+
+---
+
+## Eventos
 
 ## Acessar todos os eventos
 
@@ -280,6 +326,8 @@ file: events.csv
 
 ---
 
+## Documentos
+
 ## Acessar documentos de um evento
 
 ### Request
@@ -381,47 +429,7 @@ GET '/v1/events/:event_id/documents/:id/download'
 
 ---
 
-## Criação de usuário
-
-### Request
-
-```
-POST '/v1/users/new_account'
-Body JSON
-{
-	"name":"User",
-	"email":"email@gmail.com",
-	"password":"senha1234"
-}
-```
-
-### Respota
-
-    HTTP/1.1 201 Created
-
-## Login de usuário
-
-### Request
-
-```
-POST '/v1/users/login'
-Body JSON
-{
-	"email":"email@gmail.com",
-	"password":"senha1234"
-}
-```
-
-### Exemplo de resposta
-
-    HTTP/1.1 200 Success
-    Content-Type: application/json
-
-    "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2MzIyNDkwOTEsImlhdCI6MTYzMjI0NTQ5MSwiaXsdafasdfoib25ib2FyZGluZyIsInNjb3BlcyI6WyJldmVudHMiLCJkb2N1bWVudHMiLCJpbnZpdGVzIl0sInVzZXIiOnsiZW1haWwiOiJlbWFpbEBnbWFpbC5jb20iLCJuYWsdfsfiVXNlciIsImlkIjoxfX0.EKhrixtf9YSNSeqfXmlTaIsoSXZw85JueS2riL1dkrE"
-
-A resposta é o token de autenticação para fazer requests
-
----
+## Convites
 
 ## Usuário ve todos os seus convites
 

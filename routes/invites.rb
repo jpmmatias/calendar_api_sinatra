@@ -1,5 +1,4 @@
 get '/v1/invites' do
-  binding.pry
   invites = available_invites_from_user(user['id'])
   response_body(200, invites)
 end
