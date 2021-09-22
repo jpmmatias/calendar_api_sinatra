@@ -265,6 +265,59 @@ Body JSON:
       ]
     }
 
+## Editar Evento
+
+### Request:
+
+```
+PUT '/v1/events/1'
+Body JSON
+{
+	"name": "mudou",
+  "local": "São Paulo",
+  "description": "evento",
+  "start_date":"2022-04-23T18:25:43.511Z",
+  "end_date": "2022-04-23T18:25:43.511Z"
+}
+```
+
+### Exemplo de resposta
+
+    HTTP/1.1 201 Created
+    Content-Type: application/json
+    {
+      "name": "mudou",
+      "local": "São Paulo",
+      "owner": {
+        "id": 1,
+        "name": "User",
+        "email": "email@gmail.com"
+      },
+      "description": "evento",
+      "start_date": "2022-04-23T18:25:43.511Z",
+      "end_date": "2022-04-23T18:25:43.511Z",
+      "documents": [],
+      "participants": [
+        {
+          "id": 1,
+          "name": "User",
+          "email": "email@gmail.com"
+        }
+      ]
+    }
+
+## Excluir Evento
+
+### Request:
+
+```
+DELETE '/v1/events/1
+```
+
+### Exemplo de resposta
+
+    HTTP/1.1 204 No Content
+
 ## Criar eventos com CSV
 
 ### Request:
