@@ -22,6 +22,13 @@ helpers do
     halt response_body(403, { error: 'User not allowed' }) unless allowed
   end
 
+  def user_allowed_to_see_invite?
+    user_id = request.env[:user]['id']
+    allowed = user_id == invite.sender_id || user_id == invite.receiver_id
+
+    halt response_body(403, { error: 'User not allowed' }) unless allowed
+  end
+
   def user_owner_of_the_event?
     halt response_body(403, { error: 'User not allowed' }) unless event.owner_id == request.env[:user]['id']
   end
@@ -34,11 +41,19 @@ helpers do
     halt response_body(404, { error: 'Event not found' }) if event.nil?
   end
 
+  def invite_exists?
+    halt response_body(404, { error: 'Invite not found' }) if invite.nil?
+  end
+
   def event
     @event ||= Event.find_by(id: event_id)
   end
 
   private
+
+  def invite
+    @invite ||= Invite.find_by(token: params['token'])
+  end
 
   def event_id
     params['event_id'].nil? ? params['id'] : params['event_id']
