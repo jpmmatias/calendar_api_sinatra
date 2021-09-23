@@ -52,7 +52,7 @@ put '/v1/events/:id' do
   event_exists?
   user_owner_of_the_event?
 
-  @event.update(update_values(body))
+  @event.update(body)
 
   if @event.save
     event = EventSerializer.new(@event).response

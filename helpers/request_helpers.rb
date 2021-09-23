@@ -10,10 +10,6 @@ helpers do
     [status(status), body.to_json]
   end
 
-  def update_values(body)
-    body.map { |key, value| { key => value } }.reduce(:merge)
-  end
-
   def user_allowed_to_see_event?
     user_id = request.env[:user]['id']
     event_exists?
