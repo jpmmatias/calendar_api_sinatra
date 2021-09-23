@@ -8,8 +8,8 @@ class EventSerializer
       local: @event.local,
       owner: UserSerializer.new(@event.user).response,
       description: @event.description,
-      start_date: @event.start_date,
-      end_date: @event.end_date,
+      start_date: @event.start_date.to_s,
+      end_date: @event.end_date.to_s,
       documents: event_documents(@event.id),
       participants: event_participants(@event.id) }
   end
