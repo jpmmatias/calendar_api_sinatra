@@ -106,6 +106,8 @@ describe 'Event API' do
       expect(parsed_body['name']).to eq('CCXP')
       expect(parsed_body['description']).to eq('A melhor descrição que existe')
       expect(parsed_body['owner']['name']).to eq(user.name)
+      expect(parsed_body['start_date']).to eq(DateTime.parse(new_event[:start_date].to_s).utc.to_s)
+      expect(parsed_body['end_date']).to eq(DateTime.parse(new_event[:end_date].to_s).utc.to_s)
     end
     it 'error on event fields' do
       new_event = {
@@ -202,6 +204,8 @@ describe 'Event API' do
       expect(parsed_body['description']).to eq(event_changes[:description])
       expect(parsed_body['local']).to eq(event_changes[:local])
       expect(parsed_body['owner']['name']).to eq(user.name)
+      expect(parsed_body['start_date']).to eq(DateTime.parse(event_changes[:start_date].to_s).utc.to_s)
+      expect(parsed_body['end_date']).to eq(DateTime.parse(event_changes[:end_date].to_s).utc.to_s)
     end
     it 'accepts only the field to edit' do
       event = create(:event, owner_id: user.id)
