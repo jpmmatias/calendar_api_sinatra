@@ -11,7 +11,7 @@ helpers do
   end
 
   def update_values(body)
-    body.map { |key, value| { key.gsub(' 00:00:00+00', '') => value } }.reduce(:merge)
+    body.map { |key, value| { key => value } }.reduce(:merge)
   end
 
   def user_allowed_to_see_event?
@@ -20,10 +20,12 @@ helpers do
     allowed = accepted_invites.map(&:receiver_id).unshift(event.owner_id).include?(user_id)
 
     halt response_body(403, { error: 'User not allowed' }) unless allowed
+    true
   end
 
   def user_owner_of_the_event?
     halt response_body(403, { error: 'User not allowed' }) unless event.owner_id == request.env[:user]['id']
+    true
   end
 
   def user
@@ -32,6 +34,7 @@ helpers do
 
   def event_exists?
     halt response_body(404, { error: 'Event not found' }) if event.nil?
+    true
   end
 
   def event
