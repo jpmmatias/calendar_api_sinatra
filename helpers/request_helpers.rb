@@ -16,6 +16,7 @@ helpers do
     allowed = accepted_invites.map(&:receiver_id).unshift(event.owner_id).include?(user_id)
 
     halt response_body(403, { error: 'User not allowed' }) unless allowed
+    true
   end
 
   def user_allowed_to_see_invite!
