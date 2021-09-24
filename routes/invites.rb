@@ -6,13 +6,13 @@ end
 get '/v1/invites/:token' do
   invite = Invite.find_by(token: params['token'])
   invite_exists?
-  user_allowed_to_see_invite?
+  user_allowed_to_see_invite!
   invite = InviteSerializer.new(invite).response
   response_body(200, invite)
 end
 
 post '/v1/events/:event_id/invite' do
-  user_allowed_to_see_event?
+  user_allowed_to_see_event!
   body = get_body(request)
 
   invites = CreateInvites.new(params, body, user).call
