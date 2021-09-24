@@ -8,7 +8,7 @@ end
 
 get '/v1/events/:id' do
   event_exists?
-  user_allowed_to_see_event?
+  user_allowed_to_see_event!
 
   serialized_event = EventSerializer.new(event).response
   response_body(200, serialized_event)

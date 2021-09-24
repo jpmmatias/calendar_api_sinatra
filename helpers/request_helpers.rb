@@ -10,21 +10,19 @@ helpers do
     [status(status), body.to_json]
   end
 
-  def user_allowed_to_see_event?
+  def user_allowed_to_see_event!
     user_id = request.env[:user]['id']
     event_exists?
     allowed = accepted_invites.map(&:receiver_id).unshift(event.owner_id).include?(user_id)
 
     halt response_body(403, { error: 'User not allowed' }) unless allowed
-    true
   end
 
-  def user_allowed_to_see_invite?
+  def user_allowed_to_see_invite!
     user_id = request.env[:user]['id']
     allowed = user_id == invite.sender_id || user_id == invite.receiver_id
 
     halt response_body(403, { error: 'User not allowed' }) unless allowed
-    true
   end
 
   def user_owner_of_the_event?
