@@ -67,4 +67,13 @@ helpers do
   def accepted_invites
     Invite.where('event_id = ? and status = ?', @event.id.to_s, '1')
   end
+
+  def filtred_events?
+    params['start_date'] || params['end_date'] ? true : false
+  end
+
+  def error_on_filtering?(filter_result)
+    halt response_body(400, { error: filter_result }) if filter_result.is_a? String
+    false
+  end
 end

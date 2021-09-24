@@ -1,18 +1,9 @@
 require 'csv'
 get '/v1/events' do
   events = user.all_events
-  if params['start_date'] || params['end_date']
-    begin
-      start_date = DateTime.parse(params['start_date'])
-      end_date = DateTime.parse(params['end_date'])
-    rescue ArgumentError
-      halt response_body(400, { error: 'FIltro erro' })
-    end
-    events = events.select do |event|
-      event.start_date >= start_date && event.end_date <= end_date
-    end
-  end
-  events = events.map { |event| EventSerializer.new(event).response }
+  events = FilterEvents.new(params, events).call if filtred_events?
+  events = events.map { |event| EventSerializer.new(event).response } unless error_on_filtering?(events)
+
   response_body(200, events)
 end
 

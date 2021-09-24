@@ -98,7 +98,7 @@ describe 'Event API' do
       expect(last_response.content_type).to include('application/json')
       parsed_body = JSON.parse(last_response.body)
 
-      expect(parsed_body['error']).not_to eq('Parâmetros de filtros invalidos, tente novamente')
+      expect(parsed_body['error']).to eq('Parâmetros de filtros invalidos, tente novamente')
     end
   end
 
