@@ -505,6 +505,25 @@ GET '/v1/invites'
       }
     ]
 
+## Usuário ve um convite
+
+### Request
+
+```
+GET '/v1/invites/:token'
+```
+
+### Exemplo de resposta
+
+    HTTP/1.1 200 Success
+    Content-Type: application/json
+      {
+        "event_name": "CCXP 2",
+        "sender_name": "User",
+        "event_start_date": "2022-04-23 18:25:43 UTC",
+        "event_end_date": "2022-04-23 18:25:43 UTC"
+      }
+
 ## Usuário convida outro usuário para evento com ID
 
 ### Request
@@ -556,7 +575,7 @@ Body JSON
 ### Request
 
 ```
-PUT '/v1/invites/:id/accept'
+PUT '/v1/invites/:token/accept'
 ```
 
 ### Exemplo de resposta
@@ -568,7 +587,7 @@ PUT '/v1/invites/:id/accept'
 ### Request
 
 ```
-PUT '/v1/invites/:id/accept'
+PUT '/v1/invites/:token/refuse'
 ```
 
 ### Exemplo de resposta
@@ -580,7 +599,7 @@ PUT '/v1/invites/:id/accept'
 ### Request
 
 ```
-PUT '/v1/invites/:id/perhaps'
+PUT '/v1/invites/:token/perhaps'
 ```
 
 ### Exemplo de resposta
