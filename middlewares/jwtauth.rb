@@ -18,7 +18,7 @@ class JwtAuth
   end
 
   def status(err)
-    err.message == 'Nil JSON web token' ? 401 : 403
+    401 if err.message == 'Nil JSON web token'
   end
 
   def user_routes_in_path_info(env)

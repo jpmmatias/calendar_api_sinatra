@@ -5,8 +5,10 @@ require 'sinatra/json'
 require 'sinatra/activerecord'
 require './config/environment'
 require_relative 'middlewares/jwtauth'
+require_relative 'middlewares/eventexist'
 
 use JwtAuth
+use EventExist
 
 configure do
   enable :cross_origin

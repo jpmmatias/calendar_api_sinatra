@@ -28,7 +28,6 @@ helpers do
 
   def user_owner_of_the_event!
     halt response_body(403, { error: 'User not allowed' }) unless event.owner_id == request.env[:user]['id']
-    true
   end
 
   def user
