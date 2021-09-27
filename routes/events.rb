@@ -7,8 +7,6 @@ get '/v1/events' do
 end
 
 get '/v1/events/:id' do
-  user_allowed_to_see_event!
-
   serialized_event = EventSerializer.new(event).response
   response_body(200, serialized_event)
 end
@@ -48,9 +46,6 @@ end
 
 put '/v1/events/:id' do
   body = get_body(request)
-  return response_body(404, { error: 'Event not found' }) if event.nil?
-
-  user_owner_of_the_event!
 
   if event.update(body)
     this_event = EventSerializer.new(event).response
@@ -61,8 +56,6 @@ put '/v1/events/:id' do
 end
 
 delete '/v1/events/:id' do
-  user_owner_of_the_event!
-
   event.destroy
   status 204
 end
