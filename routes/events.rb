@@ -7,7 +7,7 @@ get '/v1/events' do
 end
 
 get '/v1/events/:id' do
-  event_exists?
+  event_exists!
   user_allowed_to_see_event!
 
   serialized_event = EventSerializer.new(event).response
@@ -49,8 +49,8 @@ end
 
 put '/v1/events/:id' do
   body = get_body(request)
-  event_exists?
-  user_owner_of_the_event?
+  event_exists!
+  user_owner_of_the_event!
 
   @event.update(body)
 
@@ -63,8 +63,8 @@ put '/v1/events/:id' do
 end
 
 delete '/v1/events/:id' do
-  event_exists?
-  user_owner_of_the_event?
+  event_exists!
+  user_owner_of_the_event!
 
   event.destroy
   status 204
