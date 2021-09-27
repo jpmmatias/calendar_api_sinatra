@@ -4,10 +4,8 @@ get '/v1/invites' do
 end
 
 get '/v1/invites/:token' do
-  invite = Invite.find_by(token: params['token'])
-
-  invite = InviteSerializer.new(invite).response
-  response_body(200, invite)
+  serialized_invite = InviteSerializer.new(invite).response
+  response_body(200, serialized_invite)
 end
 
 post '/v1/events/:event_id/invite' do
@@ -23,8 +21,6 @@ post '/v1/events/:event_id/invite' do
 end
 
 put '/v1/invites/:token/accept' do
-  invite = Invite.find_by(token: params[:token])
-
   return response_body(400, { error: 'Event day already passed' }) if invite.event_day_already_passed?
 
   invite.status = 1
@@ -33,8 +29,6 @@ put '/v1/invites/:token/accept' do
 end
 
 put '/v1/invites/:token/refuse' do
-  invite = Invite.find_by(token: params[:token])
-
   return response_body(400, { error: 'Event day already passed' }) if invite.event_day_already_passed?
 
   invite.status = 2
@@ -43,8 +37,6 @@ put '/v1/invites/:token/refuse' do
 end
 
 put '/v1/invites/:token/perhaps' do
-  invite = Invite.find_by(token: params[:token])
-
   return response_body(400, { error: 'Event day already passed' }) if invite.event_day_already_passed?
 
   invite.status = 3
@@ -53,8 +45,6 @@ put '/v1/invites/:token/perhaps' do
 end
 
 delete '/v1/invites/:token' do
-  invite = Invite.find_by(token: params[:token])
-
   invite.destroy
   status 204
 end

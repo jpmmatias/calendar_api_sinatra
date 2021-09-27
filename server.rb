@@ -4,19 +4,7 @@ require 'sinatra/namespace'
 require 'sinatra/json'
 require 'sinatra/activerecord'
 require './config/environment'
-require_relative 'middlewares/jwtauth'
-require_relative 'middlewares/event_exist'
-require_relative 'middlewares/user_allowed_to_see_event'
-require_relative 'middlewares/user_allowed_to_see_invite'
-require_relative 'middlewares/invite_exist'
-require_relative 'middlewares/user_owner_of_the_event'
-
-use JwtAuth
-use EventExist
-use UserAllowedToSeeEvent
-use UserAllowedToSeeInvite
-use InviteExist
-use UserOwnerOfTheEvent
+require_relative './middlewares/init'
 
 configure do
   enable :cross_origin

@@ -18,7 +18,12 @@ helpers do
     @event ||= Event.find_by(id: event_id)
   end
 
+  def invite
+    @invite ||= Invite.find_by(token: params['token'])
+  end
+
   private
+
 
   def event_id
     params['event_id'].nil? ? params['id'] : params['event_id']
