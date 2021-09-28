@@ -24,7 +24,6 @@ helpers do
 
   private
 
-
   def event_id
     params['event_id'].nil? ? params['id'] : params['event_id']
   end
