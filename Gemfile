@@ -8,6 +8,8 @@ gem 'jwt'
 gem 'puma'
 gem 'rack-contrib'
 gem 'rake'
+gem 'redis'
+gem 'sidekiq'
 gem 'sinatra'
 gem 'sinatra-activerecord', require: 'sinatra/activerecord'
 gem 'sinatra-contrib', require: false
