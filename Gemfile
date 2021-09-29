@@ -14,6 +14,7 @@ gem 'sinatra-contrib', require: false
 gem 'sinatra-cross_origin'
 gem 'thin'
 gem 'webrick'
+gem 'pg'
 
 group :development do
   gem 'pry'

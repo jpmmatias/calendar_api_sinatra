@@ -9,7 +9,7 @@ class User < ActiveRecord::Base
   validates :password, presence: true
 
   def confirmed_events
-    accepted_invites = Invite.where('receiver_id = ? and status = ?', @user_id.to_s, '1')
+    accepted_invites = Invite.where('receiver_id = ? and status = ?', @user_id , 1)
     accepted_invites.map { |invite| Event.find(invite.event_id) }
   end
 

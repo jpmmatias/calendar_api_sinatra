@@ -1,12 +1,15 @@
 default: &default
-  adapter: sqlite3
+  adapter: postgresql
+  encoding: unicode
+  username: postgres
+  password: password
+  host: db
   pool: 5
-  timeout: 5000
 
 development:
   <<: *default
-  database: db/development.sqlite3
+  database: api_dev
 
 test:
   <<: *default
-  database: db/test.sqlite3
+  database: api_test
