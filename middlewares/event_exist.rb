@@ -6,7 +6,7 @@ class EventExist
   def call(env)
     @env = env
 
-    return @app.call @env unless event_routes
+    return @app.call @env unless requesting_event_route?
 
     return [404, { 'Content-Type' => 'application/json' }, { error: 'Event not found' }.to_json] if this_event.nil?
 
@@ -15,7 +15,7 @@ class EventExist
 
   private
 
-  def event_routes
+  def requesting_event_route?
     path_info_splited[2] == 'events' && event_id_integer?
   end
 
