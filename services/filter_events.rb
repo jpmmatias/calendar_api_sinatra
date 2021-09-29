@@ -5,10 +5,10 @@ class FilterEvents
   end
 
   def call
-    return filtered_events_with_just_start_date if end_date.nil?
-    return filtered_events_with_just_end_date if start_date.nil?
+    return events_with_just_start_date if end_date.nil?
+    return events_with_just_end_date if start_date.nil?
 
-    filtered_events
+    events_between_selected_dates
   rescue StandardError => e
     e.message
   end
@@ -27,15 +27,15 @@ class FilterEvents
     raise StandardError, 'Parâmetros de filtros invalidos, tente novamente'
   end
 
-  def filtered_events_with_just_start_date
+  def events_with_just_start_date
     @events.select { |event| event.start_date >= start_date }
   end
 
-  def filtered_events_with_just_end_date
+  def events_with_just_end_date
     @events.select { |event| event.end_date <= end_date }
   end
 
-  def filtered_events
+  def events_between_selected_dates
     @events.select { |event| event.start_date >= start_date && event.end_date <= end_date }
   end
 end
