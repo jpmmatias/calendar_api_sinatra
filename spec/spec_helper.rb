@@ -20,7 +20,7 @@ RSpec.configure do |config|
   config.include UserHelpers
   config.before(:suite) do
     FactoryBot.find_definitions
-    DatabaseCleaner.strategy = :transaction
+    DatabaseCleaner.strategy = :truncation
     DatabaseCleaner.clean_with(:truncation)
   end
 

@@ -8,9 +8,6 @@ get '/v1/events' do
 end
 
 get '/v1/events/:id' do
-  event_exists?
-  user_allowed_to_see_event!
-
   serialized_event = EventSerializer.new(event).response
   response_body(200, serialized_event)
 end
@@ -50,23 +47,16 @@ end
 
 put '/v1/events/:id' do
   body = get_body(request)
-  event_exists?
-  user_owner_of_the_event!
 
-  @event.update(body)
-
-  if @event.save
-    event = EventSerializer.new(@event).response
-    response_body(200, event)
+  if event.update(body)
+    this_event = EventSerializer.new(event).response
+    response_body(200, this_event)
   else
     response_body(400, { error: 'Error when update event, please try again' })
   end
 end
 
 delete '/v1/events/:id' do
-  event_exists?
-  user_owner_of_the_event!
-
   event.destroy
   status 204
 end

@@ -4,9 +4,7 @@ require 'sinatra/namespace'
 require 'sinatra/json'
 require 'sinatra/activerecord'
 require './config/environment'
-require_relative 'middlewares/jwtauth'
-
-use JwtAuth
+require_relative './middlewares/init'
 
 configure do
   enable :cross_origin

@@ -328,7 +328,7 @@ describe 'Event API' do
       }
 
       header 'Authorization', "Bearer #{token(user)}"
-      put "/v1/events/#{rand(1..1000)}", event_changes.to_json, 'CONTENT_TYPE' => 'application/json'
+      put '/v1/events/324234', event_changes.to_json, 'CONTENT_TYPE' => 'application/json'
 
       expect(last_response.status).to eq(404)
       expect(last_response.content_type).to eq('application/json')
