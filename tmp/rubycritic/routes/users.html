@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Ruby Critic - Home</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- StyleSheets -->
+    <link href="../assets/vendor/stylesheets/bootstrap.min.css" media="screen, projection, print" rel="stylesheet" type="text/css">
+    <link href="../assets/vendor/stylesheets/font-awesome.min.css" media="screen, projection, print" rel="stylesheet" type="text/css">
+    <link href="../assets/vendor/stylesheets/prettify.custom_theme.css" media="screen, projection, print" rel="stylesheet" type="text/css">
+    <link href="../assets/stylesheets/application.css" media="screen, projection, print" rel="stylesheet" type="text/css">
+  </head>
+
+  <body>
+    <header class="navbar navbar-default navbar-fixed-top">
+      <a href="#menu-toggle" class="btn btn-default hidden-lg visible-sm-* hidden-md visible-xs-* pull-left" id="menu-toggle"><i class="fa fa-bars" aria-hidden="true"></i></a>
+      <a href="../overview.html"><img src="../assets/images/logo.png" alt="Ruby Critic Logo" title="Ruby Critic Logo" width="55"><span class="logo">RUBYCRITIC</span></a>
+      
+    </header>
+    <div id="wrapper">
+      <!-- Sidebar -->
+      <aside id="sidebar-wrapper">
+        <ul class="sidebar-nav">
+          <li class="sidebar-item">
+            <a href="../overview.html" class="project-nav-item overview-nav"><i class="fa fa-dashboard"></i>Overview</a>
+          </li>
+          <li class="sidebar-item">
+            <a href="../code_index.html" class="project-nav-item code-index-nav"><i class="fa fa-code"></i>Code</a>
+          </li>
+          <li class="sidebar-item">
+            <a href="../smells_index.html" class="project-nav-item smells-index-nav"><i class="fa fa-warning"></i>Smells</a>
+          </li>
+          <li class="sidebar-item">
+            <a href="../simple_cov_index.html" class="project-nav-item coverage-index-nav"><i class="fa fa-umbrella"></i>Coverage</a>
+          </li>
+        </ul>
+      </aside>
+      <!-- /#sidebar-wrapper -->
+      <div id="page-content-wrapper">
+        <div class="container-fluid">
+          <div class="row">
+  <!--Page Title -->
+  <div class="Page_Title">
+    <div class="file-time">
+      <span class="committed-at">
+        
+          Never committed
+        
+      </span>
+    </div>
+    <div>
+      <h3><small>routes /</small> users.rb</h3>
+    </div>
+  </div>
+  <!--End Page Title -->
+  <div class="Content_Wrapper">
+    <!-- code detail -->
+    <div class="code-top-detail clearfix row">
+      <div class="col-md-8">
+        <div class="row">
+          <div class="col-md-1">
+            <div class="rating b big">
+              B
+            </div>
+          </div>
+          <div class="code-statistics col-md-11">
+            <div class="col-md-3">
+              <div><span class="metric">61</span><small> lines of codes</small></div>
+              <div><span class="metric">4</span><small> methods</small></div>
+            </div>
+            <div class="col-md-3">
+              <div><span class="metric">18.6</span><small> complexity/method</small></div>
+              <div><span class="metric">0</span><small> churn</small></div>
+            </div>
+            <div class="col-md-3">
+              <div><span class="metric">74.32</span><small> complexity</small></div>
+              <div><span class="metric">0</span><small> duplications</small></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="code-tabs">
+          <ul class="nav nav-pills right-to-left">
+            <li><a href="#" id="toggle-code" class="toggle-button button">code</a></li>
+            <li class="active">
+              <a href="#" id="toggle-smells" class="toggle-button button">
+                8
+                smells
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <code class="prettyprint linenums lang-ruby file-code js-file-code">post &#39;/v1/users/new_account&#39; do
+  body = get_body(request)
+  new_user = User.new({
+                        name: body[&#39;name&#39;],
+                        email: body[&#39;email&#39;],
+                        password: body[&#39;password&#39;]
+                      })
+  if new_user.save
+    status 201
+  else
+    status 400
+  end
+
+rescue JSON::ParserError
+  status 400
+end
+
+post &#39;/v1/users/login&#39; do<ol class="nocode errors smells">  <li>    <div class="description">      <div class="heading">        <span>          <i class="fa fa-warning" aria-hidden="true"></i>          <a href="http://docs.seattlerb.org/flog/" target="_blank"><b>HighComplexity</b></a>        </span>      </div>      <span>post#/v1/users/login has a flog score of 28</span>          </div>  </li></ol>
+  body = get_body(request)
+  user = User.find_by(email: body[&#39;email&#39;])
+
+  if body[&#39;email&#39;].nil? || body[&#39;password&#39;].nil?
+    response_body(400, { error: &#39;Email or password cannot be blank. please try again&#39; })
+  end
+
+  return response_body(400, { error: &#39;Wrong email please try again&#39; }) if user.nil?
+
+  return response_body(200, token(user)) if user&amp;.authenticate(body[&#39;password&#39;])
+
+  response_body(400, { error: &#39;Wrong password, please try again&#39; })
+
+rescue JSON::ParserError
+  status 400
+end
+
+private
+
+def get_body(req)<ol class="nocode errors smells">  <li>    <div class="description">      <div class="heading">        <span>          <i class="fa fa-warning" aria-hidden="true"></i>          <a href="https://github.com/troessner/reek/blob/master/docs/Utility-Function.md" target="_blank"><b>UtilityFunction</b></a>        </span>      </div>      <span>get_body doesn't depend on instance state (maybe move it to another class?)</span>          </div>  </li></ol>
+  req.body.rewind<ol class="nocode errors smells">  <li>    <div class="description">      <div class="heading">        <span>          <i class="fa fa-warning" aria-hidden="true"></i>          <a href="https://github.com/troessner/reek/blob/master/docs/Duplicate-Method-Call.md" target="_blank"><b>DuplicateMethodCall</b></a>        </span>      </div>      <span>get_body calls 'req.body' 2 times</span>              <span>Locations:</span>                  <a href="users.html#L39" class="js-smell-location">0</a>                  <a href="users.html#L40" class="js-smell-location">1</a>                  </div>  </li></ol>
+  JSON.parse(req.body.read)<ol class="nocode errors smells">  <li>    <div class="description">      <div class="heading">        <span>          <i class="fa fa-warning" aria-hidden="true"></i>          <a href="https://github.com/troessner/reek/blob/master/docs/Duplicate-Method-Call.md" target="_blank"><b>DuplicateMethodCall</b></a>        </span>      </div>      <span>get_body calls 'req.body' 2 times</span>              <span>Locations:</span>                  <a href="users.html#L39" class="js-smell-location">0</a>                  <a href="users.html#L40" class="js-smell-location">1</a>                  </div>  </li></ol>
+end
+
+def token(user)
+  JWT.encode payload(user), ENV[&#39;JWT_SECRET&#39;], &#39;HS256&#39;
+end
+
+def payload(user)<ol class="nocode errors smells">  <li>    <div class="description">      <div class="heading">        <span>          <i class="fa fa-warning" aria-hidden="true"></i>          <a href="https://github.com/troessner/reek/blob/master/docs/Utility-Function.md" target="_blank"><b>UtilityFunction</b></a>        </span>      </div>      <span>payload doesn't depend on instance state (maybe move it to another class?)</span>          </div>  </li></ol>
+  {
+    exp: Time.now.to_i + 60 * 60,<ol class="nocode errors smells">  <li>    <div class="description">      <div class="heading">        <span>          <i class="fa fa-warning" aria-hidden="true"></i>          <a href="https://github.com/troessner/reek/blob/master/docs/Duplicate-Method-Call.md" target="_blank"><b>DuplicateMethodCall</b></a>        </span>      </div>      <span>payload calls 'Time.now' 2 times</span>              <span>Locations:</span>                  <a href="users.html#L49" class="js-smell-location">0</a>                  <a href="users.html#L50" class="js-smell-location">1</a>                  </div>  </li>  <li>    <div class="description">      <div class="heading">        <span>          <i class="fa fa-warning" aria-hidden="true"></i>          <a href="https://github.com/troessner/reek/blob/master/docs/Duplicate-Method-Call.md" target="_blank"><b>DuplicateMethodCall</b></a>        </span>      </div>      <span>payload calls 'Time.now.to_i' 2 times</span>              <span>Locations:</span>                  <a href="users.html#L49" class="js-smell-location">0</a>                  <a href="users.html#L50" class="js-smell-location">1</a>                  </div>  </li></ol>
+    iat: Time.now.to_i,<ol class="nocode errors smells">  <li>    <div class="description">      <div class="heading">        <span>          <i class="fa fa-warning" aria-hidden="true"></i>          <a href="https://github.com/troessner/reek/blob/master/docs/Duplicate-Method-Call.md" target="_blank"><b>DuplicateMethodCall</b></a>        </span>      </div>      <span>payload calls 'Time.now' 2 times</span>              <span>Locations:</span>                  <a href="users.html#L49" class="js-smell-location">0</a>                  <a href="users.html#L50" class="js-smell-location">1</a>                  </div>  </li>  <li>    <div class="description">      <div class="heading">        <span>          <i class="fa fa-warning" aria-hidden="true"></i>          <a href="https://github.com/troessner/reek/blob/master/docs/Duplicate-Method-Call.md" target="_blank"><b>DuplicateMethodCall</b></a>        </span>      </div>      <span>payload calls 'Time.now.to_i' 2 times</span>              <span>Locations:</span>                  <a href="users.html#L49" class="js-smell-location">0</a>                  <a href="users.html#L50" class="js-smell-location">1</a>                  </div>  </li></ol>
+    iss: ENV[&#39;JWT_ISSUER&#39;],
+    scopes: %w[events documents invites],
+    user: { email: user.email, name: user.name, id: user.id }
+  }
+end
+
+def response_body(status, body, include = nil)
+  return [status(status), body.to_json] if include.nil?<ol class="nocode errors smells">  <li>    <div class="description">      <div class="heading">        <span>          <i class="fa fa-warning" aria-hidden="true"></i>          <a href="https://github.com/troessner/reek/blob/master/docs/Duplicate-Method-Call.md" target="_blank"><b>DuplicateMethodCall</b></a>        </span>      </div>      <span>response_body calls 'status(status)' 2 times</span>              <span>Locations:</span>                  <a href="users.html#L58" class="js-smell-location">0</a>                  <a href="users.html#L60" class="js-smell-location">1</a>                  </div>  </li>  <li>    <div class="description">      <div class="heading">        <span>          <i class="fa fa-warning" aria-hidden="true"></i>          <a href="https://github.com/troessner/reek/blob/master/docs/Nil-Check.md" target="_blank"><b>NilCheck</b></a>        </span>      </div>      <span>response_body performs a nil-check</span>          </div>  </li></ol>
+
+  [status(status), body.as_json(include: include).to_json]<ol class="nocode errors smells">  <li>    <div class="description">      <div class="heading">        <span>          <i class="fa fa-warning" aria-hidden="true"></i>          <a href="https://github.com/troessner/reek/blob/master/docs/Duplicate-Method-Call.md" target="_blank"><b>DuplicateMethodCall</b></a>        </span>      </div>      <span>response_body calls 'status(status)' 2 times</span>              <span>Locations:</span>                  <a href="users.html#L58" class="js-smell-location">0</a>                  <a href="users.html#L60" class="js-smell-location">1</a>                  </div>  </li></ol>
+end
+</code>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- JavaScripts -->
+    <script src="../assets/vendor/javascripts/jquery.min.js"></script>
+    <script src="../assets/vendor/javascripts/jquery.tablesorter.min.js"></script>
+    <script src="../assets/vendor/javascripts/jquery.scrollTo.min.js"></script>
+    <script src="../assets/vendor/javascripts/jquery.timeago.js"></script>
+    <script src="../assets/vendor/javascripts/highcharts.src-4.0.1.js"></script>
+    <script src="../assets/vendor/javascripts/prettify.js"></script>
+    <script src="../assets/vendor/javascripts/bootstrap.min.js"></script>
+    <script src="../assets/javascripts/application.js"></script>
+    <script src="../assets/vendor/javascripts/jquery.filtertable.min.js"></script>
+  </body>
+</html>

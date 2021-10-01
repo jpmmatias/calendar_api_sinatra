@@ -1,8 +1,11 @@
 class CreateInvites
+  attr_accessor :event
+
   def initialize(params, body, user)
     @params = params
     @body = body
     @user = user
+    @event = Event.find_by(id: params['event_id'].to_i)
   end
 
   def call
@@ -71,10 +74,6 @@ class CreateInvites
 
   def multiple_emails
     raise StandardError, 'Send your guests' unless @body['users_emails'] || receiver
-  end
-
-  def event
-    @event ||= Event.find_by(id: params['event_id'].to_i)
   end
 
   def invite_already_made?

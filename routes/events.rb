@@ -34,7 +34,7 @@ end
 
 post '/v1/events/csv' do
   unless params[:file].nil?
-    csv = CSV.parse(params[:file][:tempfile].read.force_encoding('UTF-8'), headers: true)
+    csv = parse_csv(params)
     events = CreateEventsWithCSV.new(csv, user).call
     return response_body(201, events) if events.is_a?(Array)
 
@@ -58,4 +58,10 @@ end
 delete '/v1/events/:id' do
   event.destroy
   status 204
+end
+
+private
+
+def parse_csv(params)
+  CSV.parse(params[:file][:tempfile].read.force_encoding('UTF-8'), headers: true)
 end
