@@ -27,4 +27,12 @@ helpers do
   def event_id
     params['event_id'].nil? ? params['id'] : params['event_id']
   end
+
+  def was_provided_filters?
+    params['start_date'] || params['end_date'] ? true : false
+  end
+
+  def error_on_filtering?(results)
+    halt response_body(400, { error: 'Parâmetros de filtros invalidos, tente novamente' }) if results.is_a? String
+  end
 end
