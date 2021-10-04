@@ -13,3 +13,5 @@ services:
     image: postgres
     environment:
       POSTGRES_PASSWORD: password
+    volumes:
+      - .:/onboarding_jp
