@@ -27,10 +27,12 @@ describe 'Request Helpers' do
   let(:helper) { TestHelper.new }
   let(:user) { create(:user, email: 'email@gmail.com') }
 
-  it 'should return false if was provided search param' do
-    expect(helper.was_provided_filters?).to eq(true)
+  it 'should return false if was not provided search param' do
+    expect(helper.was_provided_filters?).to eq(false)
   end
   it 'error on filtering return an halt' do
-    expect(helper.error_on_filtering?('Error')).not_to eq(false)
+    expected_response = [400,
+                         { error: 'Parâmetros de filtros invalidos, tente novamente' }.to_json]
+    expect(helper.error_on_filtering?('Error')).to eq(expected_response)
   end
 end
