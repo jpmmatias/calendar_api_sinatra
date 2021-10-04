@@ -7,3 +7,20 @@ services:
       - '5000:5000'
     volumes:
       - .:/onboarding_jp
+    depends_on:
+      - sidekiq
+    env_file:
+      - .env
+  redis:
+    image: redis
+    env_file:
+      - .env
+  sidekiq:
+    build: .
+    command: sidekiq -r ./workers/init.rb
+    depends_on:
+      - redis
+    volumes:
+      - .:/onboarding_jp
+    env_file:
+      - .env

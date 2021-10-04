@@ -11,6 +11,8 @@ gem 'rake'
 gem 'redis'
 gem 'rubycritic', require: false
 gem 'sidekiq'
+gem 'sidekiq-scheduler'
+gem 'sidekiq-unique-jobs'
 gem 'sinatra'
 gem 'sinatra-activerecord', require: 'sinatra/activerecord'
 gem 'sinatra-contrib', require: false

@@ -35,10 +35,11 @@ end
 post '/v1/events/csv' do
   unless params[:file].nil?
     csv = parse_csv(params)
-    events = CreateEventsWithCSV.new(csv, user).call
-    return response_body(201, events) if events.is_a?(Array)
+    binding.pry
+    CreateMultipleEvents.perform_async(csv, user)
+    return response_body(201) if events.is_a?(Array)
 
-    return response_body(400, { error: events })
+    return response_body(400)
   end
 
   response_body(400, { error: 'Send a CSV File' })

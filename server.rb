@@ -4,9 +4,6 @@ require 'sinatra/namespace'
 require 'sinatra/json'
 require 'sinatra/activerecord'
 require './config/environment'
-require 'sidekiq'
-require 'sidekiq/web'
-require 'sidekiq/api'
 require_relative './middlewares/init'
 
 configure do
