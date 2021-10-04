@@ -1,4 +1,4 @@
-helpers do
+module RequestHelpers
   def get_body(req)
     req.body.rewind
     JSON.parse(req.body.read)
@@ -21,8 +21,6 @@ helpers do
   def invite
     @invite ||= Invite.find_by(token: params['token'])
   end
-
-  private
 
   def event_id
     params['event_id'].nil? ? params['id'] : params['event_id']
