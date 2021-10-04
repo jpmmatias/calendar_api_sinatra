@@ -1,7 +1,5 @@
 require './config/environment'
-require_relative 'lib/middlewares/jwtauth'
-
-use JwtAuth
+require_relative './lib/middlewares/init'
 
 configure do
   enable :cross_origin

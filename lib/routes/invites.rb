@@ -3,8 +3,12 @@ get '/v1/invites' do
   response_body(200, invites)
 end
 
+get '/v1/invites/:token' do
+  serialized_invite = InviteSerializer.new(invite).response
+  response_body(200, serialized_invite)
+end
+
 post '/v1/events/:event_id/invite' do
-  user_allowed_to_see_event?
   body = get_body(request)
 
   invites = CreateInvites.new(params, body, user).call
@@ -16,9 +20,7 @@ post '/v1/events/:event_id/invite' do
   response_body(400, { error: error })
 end
 
-put '/v1/invites/:id/accept' do
-  invite = Invite.find(params[:id])
-
+put '/v1/invites/:token/accept' do
   return response_body(400, { error: 'Event day already passed' }) if invite.event_day_already_passed?
 
   invite.status = 1
@@ -26,9 +28,7 @@ put '/v1/invites/:id/accept' do
   return status 200 if invite.save
 end
 
-put '/v1/invites/:id/refuse' do
-  invite = Invite.find(params[:id])
-
+put '/v1/invites/:token/refuse' do
   return response_body(400, { error: 'Event day already passed' }) if invite.event_day_already_passed?
 
   invite.status = 2
@@ -36,14 +36,17 @@ put '/v1/invites/:id/refuse' do
   status 200 if invite.save
 end
 
-put '/v1/invites/:id/perhaps' do
-  invite = Invite.find(params[:id])
-
+put '/v1/invites/:token/perhaps' do
   return response_body(400, { error: 'Event day already passed' }) if invite.event_day_already_passed?
 
   invite.status = 3
 
   status 200 if invite.save
+end
+
+delete '/v1/invites/:token' do
+  invite.destroy
+  status 204
 end
 
 private

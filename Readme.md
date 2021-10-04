@@ -150,6 +150,61 @@ GET '/v1/events'
     Content-Type: application/json
     [
       {
+        "name": "Nome do Evento",
+        "local": "São Paulo",
+        "owner": {
+          "id": 1,
+          "name": "User",
+          "email": "email@gmail.com"
+        },
+        "description": "evento",
+        "start_date": "2022-04-23T18:25:43.511Z",
+        "end_date": "2022-04-23T18:25:43.511Z",
+        "documents": [],
+        "participants": [
+          {
+            "id": 1,
+           "name": "User",
+            "email": "email@gmail.com"
+         }
+       ]
+     },
+      {
+       "name": "CCXP 2",
+        "local": "São Paulo",
+        "owner": {
+         "id": 1,
+          "name": "User",
+         "email": "email@gmail.com"
+       },
+       "description": "evento",
+        "start_date": "2022-04-23T18:25:43.511Z",
+       "end_date": "2022-04-23T18:25:43.511Z",
+       "documents": [],
+        "participants": [
+         {
+            "id": 1,
+            "name": "User",
+           "email": "email@gmail.com"
+         }
+       ]
+     }
+    ]
+
+## Filtrar evento do usuário
+
+### Request
+
+```
+GET '/v1/events?start_date=start_date=2024-01-01T15:30&end_date=2026-11-01T15:30'
+```
+
+### Exemplode de resposta
+
+    HTTP/1.1 200 OK
+    Content-Type: application/json
+    [
+      {
         "name": "mudou",
         "local": "São Paulo",
         "owner": {
@@ -505,6 +560,25 @@ GET '/v1/invites'
       }
     ]
 
+## Usuário ve um convite
+
+### Request
+
+```
+GET '/v1/invites/:token'
+```
+
+### Exemplo de resposta
+
+    HTTP/1.1 200 Success
+    Content-Type: application/json
+      {
+        "event_name": "CCXP 2",
+        "sender_name": "User",
+        "event_start_date": "2022-04-23 18:25:43 UTC",
+        "event_end_date": "2022-04-23 18:25:43 UTC"
+      }
+
 ## Usuário convida outro usuário para evento com ID
 
 ### Request
@@ -556,7 +630,7 @@ Body JSON
 ### Request
 
 ```
-PUT '/v1/invites/:id/accept'
+PUT '/v1/invites/:token/accept'
 ```
 
 ### Exemplo de resposta
@@ -568,7 +642,7 @@ PUT '/v1/invites/:id/accept'
 ### Request
 
 ```
-PUT '/v1/invites/:id/accept'
+PUT '/v1/invites/:token/refuse'
 ```
 
 ### Exemplo de resposta
@@ -580,7 +654,7 @@ PUT '/v1/invites/:id/accept'
 ### Request
 
 ```
-PUT '/v1/invites/:id/perhaps'
+PUT '/v1/invites/:token/perhaps'
 ```
 
 ### Exemplo de resposta

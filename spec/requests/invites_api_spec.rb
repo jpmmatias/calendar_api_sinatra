@@ -13,9 +13,9 @@ describe 'Invite API' do
       event1 = create(:event, owner_id: sender.id)
       event2 = create(:event, owner_id: sender.id)
       event3 = create(:event, owner_id: sender.id)
-      create(:invite, sender_id: sender.id, receiver_id: user.id, event_id: event1.id)
-      create(:invite, sender_id: sender.id, receiver_id: user.id, event_id: event2.id)
-      create(:invite, sender_id: sender.id, receiver_id: user.id, event_id: event3.id)
+      invite = create(:invite, sender_id: sender.id, receiver_id: user.id, event_id: event1.id)
+      invite2 = create(:invite, sender_id: sender.id, receiver_id: user.id, event_id: event2.id)
+      invite3 = create(:invite, sender_id: sender.id, receiver_id: user.id, event_id: event3.id)
 
       header 'Authorization', "Bearer #{token(user)}"
       get 'v1/invites'
@@ -25,16 +25,19 @@ describe 'Invite API' do
 
       parsed_body = JSON.parse(last_response.body)
 
+      expect(parsed_body[0]['token']).to eq(invite.token)
       expect(parsed_body[0]['event_name']).to eq(event1.name)
       expect(parsed_body[0]['event_start_date']).to eq(event1.start_date.to_s)
       expect(parsed_body[0]['event_end_date']).to eq(event1.end_date.to_s)
       expect(parsed_body[0]['sender_name']).to eq(sender.name)
 
+      expect(parsed_body[1]['token']).to eq(invite2.token)
       expect(parsed_body[1]['event_name']).to eq(event2.name)
       expect(parsed_body[1]['event_start_date']).to eq(event2.start_date.to_s)
       expect(parsed_body[1]['event_end_date']).to eq(event2.end_date.to_s)
       expect(parsed_body[1]['sender_name']).to eq(sender.name)
 
+      expect(parsed_body[2]['token']).to eq(invite3.token)
       expect(parsed_body[2]['event_name']).to eq(event3.name)
       expect(parsed_body[2]['event_start_date']).to eq(event3.start_date.to_s)
       expect(parsed_body[2]['event_end_date']).to eq(event3.end_date.to_s)
@@ -51,6 +54,48 @@ describe 'Invite API' do
       parsed_body = JSON.parse(last_response.body)
 
       expect(parsed_body).to eq([])
+    end
+  end
+
+  context 'GET /v1/invites/:token' do
+    it 'successufuly see an invite' do
+      sender = create(:user)
+      event = create(:event, owner_id: sender.id)
+      invite = create(:invite, sender_id: sender.id, receiver_id: user.id, event_id: event.id)
+
+      header 'Authorization', "Bearer #{token(user)}"
+      get "v1/invites/#{invite.token}"
+
+      expect(last_response.status).to eq 200
+      expect(last_response.content_type).to include('application/json')
+
+      parsed_body = JSON.parse(last_response.body)
+
+      expect(parsed_body['token']).to eq(invite.token)
+      expect(parsed_body['event_name']).to eq(event.name)
+      expect(parsed_body['event_start_date']).to eq(event.start_date.to_s)
+      expect(parsed_body['event_end_date']).to eq(event.end_date.to_s)
+      expect(parsed_body['sender_name']).to eq(sender.name)
+    end
+
+    it 'only sender and receiver can see invite' do
+      receiver = create(:user)
+      sender = create(:user)
+      event = create(:event, owner_id: sender.id)
+      invite = create(:invite, sender_id: sender.id, receiver_id: receiver.id, event_id: event.id)
+
+      header 'Authorization', "Bearer #{token(user)}"
+      get "v1/invites/#{invite.token}"
+
+      expect(last_response.status).to eq 403
+      expect(last_response.content_type).to include('application/json')
+    end
+
+    it 'non existent invite' do
+      header 'Authorization', "Bearer #{token(user)}"
+      get "v1/invites/#{rand(1.10000)}"
+
+      expect(last_response.status).to eq 404
     end
   end
 
@@ -257,13 +302,13 @@ describe 'Invite API' do
     end
   end
 
-  context 'PUT /v1/invites/:id/accept' do
+  context 'PUT /v1/invites/:token/accept' do
     it 'accept invite' do
       sender = create(:user)
       invite = create(:invite, receiver_id: user.id, sender_id: sender.id)
 
       header 'Authorization', "Bearer #{token(user)}"
-      put "/v1/invites/#{invite.id}/accept"
+      put "/v1/invites/#{invite.token}/accept"
 
       expect(last_response.status).to eq 200
       expect(last_response.content_type).to include('application/json')
@@ -311,7 +356,7 @@ describe 'Invite API' do
       invite = create(:invite, event_id: event.id, sender_id: sender.id, receiver_id: user.id)
 
       header 'Authorization', "Bearer #{token(user)}"
-      put "/v1/invites/#{invite.id}/accept"
+      put "/v1/invites/#{invite.token}/accept"
 
       expect(last_response.status).to eq 400
       expect(last_response.content_type).to include('application/json')
@@ -329,7 +374,7 @@ describe 'Invite API' do
       expect(invite.status).to eq('refused')
 
       header 'Authorization', "Bearer #{token(user)}"
-      put "/v1/invites/#{invite.id}/accept"
+      put "/v1/invites/#{invite.token}/accept"
 
       expect(last_response.status).to eq 200
       expect(last_response.content_type).to include('application/json')
@@ -337,15 +382,21 @@ describe 'Invite API' do
       expect(Invite.find(invite.id).status).to eq('accepted')
       expect(EventSerializer.new(invite.event).response[:participants].count).to eq(2)
     end
+    it 'non existent invite' do
+      header 'Authorization', "Bearer #{token(user)}"
+      put "v1/invites/#{rand(1.10000)}/accept"
+
+      expect(last_response.status).to eq 404
+    end
   end
 
-  context 'PUT /v1/invites/:id/refuse' do
+  context 'PUT /v1/invites/:token/refuse' do
     it 'refuse invite' do
       sender = create(:user)
       invite = create(:invite, receiver_id: user.id, sender_id: sender.id)
 
       header 'Authorization', "Bearer #{token(user)}"
-      put "/v1/invites/#{invite.id}/refuse"
+      put "/v1/invites/#{invite.token}/refuse"
 
       expect(last_response.status).to eq 200
       expect(last_response.content_type).to include('application/json')
@@ -359,7 +410,7 @@ describe 'Invite API' do
       invite = create(:invite, event_id: event.id, sender_id: sender.id, receiver_id: user.id)
 
       header 'Authorization', "Bearer #{token(user)}"
-      put "/v1/invites/#{invite.id}/refuse"
+      put "/v1/invites/#{invite.token}/refuse"
 
       expect(last_response.status).to eq 400
       expect(last_response.content_type).to include('application/json')
@@ -377,7 +428,7 @@ describe 'Invite API' do
       expect(invite.status).to eq('accepted')
 
       header 'Authorization', "Bearer #{token(user)}"
-      put "/v1/invites/#{invite.id}/refuse"
+      put "/v1/invites/#{invite.token}/refuse"
 
       expect(last_response.status).to eq 200
       expect(last_response.content_type).to include('application/json')
@@ -385,15 +436,21 @@ describe 'Invite API' do
       expect(Invite.find(invite.id).status).to eq('refused')
       expect(EventSerializer.new(invite.event).response[:participants].count).to eq(1)
     end
+    it 'non existent invite' do
+      header 'Authorization', "Bearer #{token(user)}"
+      get "v1/invites/#{rand(1.10000)}/refuse"
+
+      expect(last_response.status).to eq 404
+    end
   end
 
-  context 'PUT /v1/invites/:id/perhaps' do
+  context 'PUT /v1/invites/:token/perhaps' do
     it 'perhaps in the future accept invite (perhaps)' do
       sender = create(:user)
       invite = create(:invite, receiver_id: user.id, sender_id: sender.id)
 
       header 'Authorization', "Bearer #{token(user)}"
-      put "/v1/invites/#{invite.id}/perhaps"
+      put "/v1/invites/#{invite.token}/perhaps"
 
       expect(last_response.status).to eq 200
       expect(last_response.content_type).to include('application/json')
@@ -407,7 +464,7 @@ describe 'Invite API' do
       invite = create(:invite, event_id: event.id, sender_id: sender.id, receiver_id: user.id)
 
       header 'Authorization', "Bearer #{token(user)}"
-      put "/v1/invites/#{invite.id}/perhaps"
+      put "/v1/invites/#{invite.token}/perhaps"
 
       expect(last_response.status).to eq 400
       expect(last_response.content_type).to include('application/json')
@@ -425,13 +482,39 @@ describe 'Invite API' do
       expect(invite.status).to eq('accepted')
 
       header 'Authorization', "Bearer #{token(user)}"
-      put "/v1/invites/#{invite.id}/perhaps"
+      put "/v1/invites/#{invite.token}/perhaps"
 
       expect(last_response.status).to eq 200
       expect(last_response.content_type).to include('application/json')
 
       expect(Invite.find(invite.id).status).to eq('perhaps')
       expect(EventSerializer.new(invite.event).response[:participants].count).to eq(1)
+    end
+    it 'non existent invite' do
+      header 'Authorization', "Bearer #{token(user)}"
+      put "v1/invites/#{rand(1.10000)}/perhaps"
+
+      expect(last_response.status).to eq 404
+    end
+  end
+
+  context 'DELETE /v1/invites/:token' do
+    it 'successufuly delete an invite' do
+      receiver = create(:user)
+      invite = create(:invite, receiver_id: receiver.id, sender_id: user.id)
+
+      header 'Authorization', "Bearer #{token(user)}"
+      delete "/v1/invites/#{invite.token}"
+
+      expect(last_response.status).to eq 204
+      expect(Invite.all).to eq([])
+    end
+
+    it 'non existent invite' do
+      header 'Authorization', "Bearer #{token(user)}"
+      delete "v1/invites/#{rand(1.10000)}"
+
+      expect(last_response.status).to eq 404
     end
   end
 end

@@ -43,6 +43,121 @@ describe 'Event API' do
       parsed_body = JSON.parse(last_response.body)
       expect(parsed_body).to eq([])
     end
+
+    it 'can filter events by start_date and end_date' do
+      event1 = create(:event, owner_id: user.id, start_date: '2024-11-01T15:30', end_date: '2025-11-01T15:30')
+      event2 = create(:event, owner_id: user.id, start_date: '2024-11-01T15:30', end_date: '2025-11-01T15:30')
+      event3 = create(:event, owner_id: user.id, name: 'Filtrado', start_date: '2022-11-01T15:30',
+                              end_date: '2023-11-01T15:30')
+
+      header 'Authorization', "Bearer #{token(user)}"
+      get '/v1/events?start_date=2024-01-01T15:30&end_date=2026-11-01T15:30'
+
+      expect(last_response.status).to eq(200)
+      expect(last_response.content_type).to include('application/json')
+      parsed_body = JSON.parse(last_response.body)
+
+      expect(parsed_body.count).to eq(2)
+      expect(parsed_body[0]['name']).to eq(event1.name)
+      expect(parsed_body[0]['name']).not_to eq(event3.name)
+      expect(parsed_body[1]['name']).to eq(event2.name)
+      expect(parsed_body[1]['name']).not_to eq(event3.name)
+      expect(parsed_body[2]).to eq(nil)
+    end
+
+    it 'can filter and return but nothing fits the query' do
+      create(:event, owner_id: user.id, start_date: '2021-11-01T15:30', end_date: '2022-11-01T15:30')
+      create(:event, owner_id: user.id, start_date: '2021-11-01T15:30', end_date: '2021-11-01T15:30')
+      create(:event, owner_id: user.id, start_date: '2022-11-01T15:30',
+                     end_date: '2023-11-01T15:30')
+
+      header 'Authorization', "Bearer #{token(user)}"
+      get '/v1/events?start_date=2024-01-01T15:30&end_date=2026-11-01T15:30'
+
+      parsed_body = JSON.parse(last_response.body)
+
+      expect(last_response.status).to eq(200)
+      expect(parsed_body).to eq([])
+    end
+
+    it 'can filter by datetime but there were no events' do
+      header 'Authorization', "Bearer #{token(user)}"
+      get '/v1/events?start_date=2024-01-01T15:30&end_date=2026-11-01T15:30'
+
+      parsed_body = JSON.parse(last_response.body)
+
+      expect(last_response.status).to eq(200)
+      expect(parsed_body).to eq([])
+    end
+
+    it 'error param invalid' do
+      header 'Authorization', "Bearer #{token(user)}"
+      get '/v1/events?start_date=bskladjk&end_date=afjl3i2kjn4fm2'
+
+      expect(last_response.status).to eq(400)
+      expect(last_response.content_type).to include('application/json')
+      parsed_body = JSON.parse(last_response.body)
+
+      expect(parsed_body['error']).to eq('Parâmetros de filtros invalidos, tente novamente')
+    end
+
+    it 'just start_date is sended' do
+      event1 = create(:event, owner_id: user.id, start_date: '2024-11-01T15:30', end_date: '2025-11-01T15:30')
+      event2 = create(:event, owner_id: user.id, start_date: '2024-11-01T15:30', end_date: '2025-11-01T15:30')
+      event3 = create(:event, owner_id: user.id, name: 'Filtrado', start_date: '2022-11-01T15:30',
+                              end_date: '2023-11-01T15:30')
+
+      header 'Authorization', "Bearer #{token(user)}"
+      get '/v1/events?start_date=2024-01-01T15:30'
+
+      parsed_body = JSON.parse(last_response.body)
+
+      expect(last_response.status).to eq(200)
+      expect(parsed_body.count).to eq(2)
+      expect(parsed_body[0]['name']).to eq(event1.name)
+      expect(parsed_body[0]['name']).not_to eq(event3.name)
+      expect(parsed_body[1]['name']).to eq(event2.name)
+      expect(parsed_body[1]['name']).not_to eq(event3.name)
+      expect(parsed_body[2]).to eq(nil)
+    end
+    it 'just end_date is sended' do
+      event1 = create(:event, owner_id: user.id, start_date: '2024-11-01T15:30', end_date: '2025-11-01T15:30')
+      event2 = create(:event, owner_id: user.id, start_date: '2024-11-01T15:30', end_date: '2025-11-01T15:30')
+      event3 = create(:event, owner_id: user.id, name: 'Filtrado', start_date: '2022-11-01T15:30',
+                              end_date: '2023-11-01T15:30')
+
+      header 'Authorization', "Bearer #{token(user)}"
+      get '/v1/events?end_date=2026-11-01T15:30'
+
+      parsed_body = JSON.parse(last_response.body)
+
+      expect(last_response.status).to eq(200)
+      expect(parsed_body.count).to eq(3)
+      expect(parsed_body[0]['name']).to eq(event1.name)
+      expect(parsed_body[1]['name']).to eq(event2.name)
+      expect(parsed_body[2]['name']).to eq(event3.name)
+    end
+
+    it 'Can filter with UTC datetime' do
+      event1 = create(:event, owner_id: user.id, start_date: '2024-11-01T15:30', end_date: '2025-11-01T15:30')
+      event2 = create(:event, owner_id: user.id, start_date: '2024-11-01T15:30', end_date: '2025-11-01T15:30')
+      event3 = create(:event, owner_id: user.id, name: 'Filtrado', start_date: '2022-11-01T15:30',
+                              end_date: '2023-11-01T15:30')
+
+      header 'Authorization', "Bearer #{token(user)}"
+      get '/v1/events?start_date=2024-10-01+13:26:08&end_date=2026-10-01+13:26:08'
+
+      expect(last_response.status).to eq(200)
+      expect(last_response.content_type).to include('application/json')
+      parsed_body = JSON.parse(last_response.body)
+
+      expect(parsed_body.count).to eq(2)
+      expect(parsed_body[0]['name']).to eq(event1.name)
+      expect(parsed_body[0]['name']).not_to eq(event3.name)
+      expect(parsed_body[1]['name']).to eq(event2.name)
+      expect(parsed_body[1]['name']).not_to eq(event3.name)
+      expect(parsed_body[2]).to eq(nil)
+    end
   end
 
   context 'GET /v1/events/:id' do
@@ -234,7 +349,7 @@ describe 'Event API' do
       }
 
       header 'Authorization', "Bearer #{token(user)}"
-      put "/v1/events/#{rand(1..1000)}", event_changes.to_json, 'CONTENT_TYPE' => 'application/json'
+      put '/v1/events/324234', event_changes.to_json, 'CONTENT_TYPE' => 'application/json'
 
       expect(last_response.status).to eq(404)
       expect(last_response.content_type).to eq('application/json')
