@@ -13,11 +13,14 @@ services:
       - .env
   redis:
     image: redis
+    volumes:
+      - .:/redis/data
     env_file:
       - .env
+
   sidekiq:
     build: .
-    command: sidekiq -r ./workers/init.rb
+    command: bundle exec sidekiq -r ./config.ru
     depends_on:
       - redis
     volumes:

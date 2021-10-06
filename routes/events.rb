@@ -35,11 +35,9 @@ end
 post '/v1/events/csv' do
   unless params[:file].nil?
     csv = parse_csv(params)
-    binding.pry
-    CreateMultipleEvents.perform_async(csv, user)
-    return response_body(201) if events.is_a?(Array)
+    CreateMultipleEventsWorker.new.perform(csv, user)
+    return response_body(201)
 
-    return response_body(400)
   end
 
   response_body(400, { error: 'Send a CSV File' })

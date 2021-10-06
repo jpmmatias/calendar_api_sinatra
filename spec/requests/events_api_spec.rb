@@ -147,10 +147,7 @@ describe 'Event API' do
       3.times { create(:user) }
       header 'Authorization', "Bearer #{token(user)}"
       post '/v1/events/csv',
-           :file => Rack::Test::UploadedFile.new(
-             "#{Dir.pwd}/spec/fixtures/events_with_field_error.csv",
-             'text/csv'
-           ), 'CONTENT_TYPE' => 'text/csv'
+           :file => Rack::Test::UploadedFile.new("#{Dir.pwd}/spec/fixtures/events_with_field_error.csv", 'text/csv'), 'CONTENT_TYPE' => 'text/csv'
 
       expect(last_response.status).to eq 400
       expect(Event.all.count).to eq(0)
