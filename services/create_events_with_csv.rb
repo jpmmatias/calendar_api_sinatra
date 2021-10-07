@@ -1,5 +1,5 @@
 class CreateEventsWithCSV
-  def initialize(csv, user)
+  def initialize(csv)
     @csv = csv
     @user = user
   end
@@ -48,5 +48,10 @@ class CreateEventsWithCSV
 
   def non_existing_event(event_id)
     Event.find(event_id).nil?
+  end
+
+  def user
+    @user ||= User.find_by(name: 'Sistema') || User.create(name: 'Sistema', email: 'sistema@sistema.com',
+                                                           password: SecureRandom.hex)
   end
 end
