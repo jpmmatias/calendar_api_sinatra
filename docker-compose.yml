@@ -20,7 +20,7 @@ services:
 
   sidekiq:
     build: .
-    command: bundle exec sidekiq -r ./config.ru
+    command: bundle exec sidekiq -r ./workers/init.rb
     depends_on:
       - redis
     volumes:

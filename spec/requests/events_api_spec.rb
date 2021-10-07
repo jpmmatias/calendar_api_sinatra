@@ -139,39 +139,7 @@ describe 'Event API' do
              "#{Dir.pwd}/spec/fixtures/eventss.csv",
              'text/csv'
            ), 'CONTENT_TYPE' => 'text/csv'
-      expect(last_response.status).to eq 201
-      expect(Event.all.count).to eq(2)
-    end
-
-    it 'error on creating with CSV on event fields' do
-      3.times { create(:user) }
-      header 'Authorization', "Bearer #{token(user)}"
-      post '/v1/events/csv',
-           :file => Rack::Test::UploadedFile.new("#{Dir.pwd}/spec/fixtures/events_with_field_error.csv", 'text/csv'), 'CONTENT_TYPE' => 'text/csv'
-
-      expect(last_response.status).to eq 400
-      expect(Event.all.count).to eq(0)
-      expect(Invite.all.count).to eq(0)
-
-      parsed_body = JSON.parse(last_response.body)
-
-      expect(parsed_body['error']).to eq("Validation failed: Description can't be blank")
-    end
-
-    it 'create with CSV File error beause non existent user' do
-      2.times { create(:user) }
-      header 'Authorization', "Bearer #{token(user)}"
-      post '/v1/events/csv',
-           :file => Rack::Test::UploadedFile.new(
-             "#{Dir.pwd}/spec/fixtures/eventss.csv",
-             'text/csv'
-           ), 'CONTENT_TYPE' => 'text/csv'
-
-      expect(last_response.status).to eq 400
-
-      parsed_body = JSON.parse(last_response.body)
-
-      expect(parsed_body['error']).to eq('Error on users invitation, please try again')
+      expect(last_response.status).to eq 200
     end
   end
 

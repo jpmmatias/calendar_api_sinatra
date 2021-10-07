@@ -11,6 +11,7 @@ require 'rack/test'
 require 'database_cleaner/active_record'
 require 'shoulda-matchers'
 require_relative './helpers/user_helper'
+
 SimpleCov.start
 
 RSpec.configure do |config|

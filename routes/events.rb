@@ -34,10 +34,9 @@ end
 
 post '/v1/events/csv' do
   unless params[:file].nil?
-    csv = parse_csv(params)
-    CreateMultipleEventsWorker.new.perform(csv, user)
-    return response_body(201)
-
+    csv = params[:file][:tempfile].read.force_encoding('UTF-8')
+    CreateMultipleEventsWorker.perform_async(csv, user)
+    return status 200
   end
 
   response_body(400, { error: 'Send a CSV File' })
@@ -60,7 +59,3 @@ delete '/v1/events/:id' do
 end
 
 private
-
-def parse_csv(params)
-  CSV.parse(params[:file][:tempfile].read.force_encoding('UTF-8'), headers: true)
-end
