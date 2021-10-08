@@ -1,8 +1,9 @@
 require 'csv'
 get '/v1/events' do
   events = user.all_events
+  events = FilterEvents.new(params, events).call if was_provided_filters?
+  events = events.map { |event| EventSerializer.new(event).response } unless error_on_filtering?(events)
 
-  events = events.map { |event| EventSerializer.new(event).response }
   response_body(200, events)
 end
 

@@ -2,12 +2,14 @@ version: '3'
 services:
   api:
     build: .
-    command: bundle exec rackup --host 0.0.0.0 -p 5000
+    command: bash -c "bundle exec rackup --host 0.0.0.0 -p 5000"
     ports:
       - '5000:5000'
     volumes:
       - .:/onboarding_jp
     depends_on:
+      - db
+      - redis
       - sidekiq
     env_file:
       - .env
@@ -15,14 +17,25 @@ services:
     image: redis
     volumes:
       - .:/redis/data
+    depends_on:
+      - db
     env_file:
       - .env
 
   sidekiq:
     build: .
-    command: bundle exec sidekiq -r ./workers/init.rb
+    command: bundle exec sidekiq -r ./lib/workers/init.rb
     depends_on:
       - redis
+      - db
+    volumes:
+      - .:/onboarding_jp
+    env_file:
+      - .env
+  db:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: password
     volumes:
       - .:/onboarding_jp
     env_file:

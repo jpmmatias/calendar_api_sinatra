@@ -1,7 +1,7 @@
 require 'sidekiq/testing'
 require 'csv'
 require 'spec_helper'
-require_relative '../../workers/init'
+require_relative '../../lib/workers/init'
 Sidekiq::Testing.fake!
 
 RSpec.describe CreateMultipleEventsWorker, type: :worker do

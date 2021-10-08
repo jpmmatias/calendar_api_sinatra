@@ -1,10 +1,5 @@
-require 'sinatra'
-require 'sinatra/contrib'
-require 'sinatra/namespace'
-require 'sinatra/json'
-require 'sinatra/activerecord'
 require './config/environment'
-require_relative './middlewares/init'
+require_relative './lib/middlewares/init'
 
 configure do
   enable :cross_origin
@@ -26,9 +21,8 @@ options '*' do
   200
 end
 
-require_relative 'helpers/init'
-require_relative 'models/init'
-require_relative 'serializers/init'
-require_relative 'services/init'
-require_relative 'workers/init'
-require_relative 'routes/init'
+require_relative 'lib/helpers/init'
+require_relative 'lib/models/init'
+require_relative 'lib/serializers/init'
+require_relative 'lib/services/init'
+require_relative 'lib/routes/init'

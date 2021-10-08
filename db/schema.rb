@@ -12,6 +12,9 @@
 
 ActiveRecord::Schema.define(version: 2021_09_22_174237) do
 
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
   create_table "documents", force: :cascade do |t|
     t.integer "event_id"
     t.string "file_path", null: false

@@ -43,6 +43,7 @@ E talvez tenha que rodar rake tasks
 ```bash
 rake db:setup
 rake db:schema:load
+rake db:environment:set
 ```
 
 ### Usando Docker
@@ -142,6 +143,61 @@ A resposta é o token de autenticação para fazer requests
 
 ```
 GET '/v1/events'
+```
+
+### Exemplode de resposta
+
+    HTTP/1.1 200 OK
+    Content-Type: application/json
+    [
+      {
+        "name": "Nome do Evento",
+        "local": "São Paulo",
+        "owner": {
+          "id": 1,
+          "name": "User",
+          "email": "email@gmail.com"
+        },
+        "description": "evento",
+        "start_date": "2022-04-23T18:25:43.511Z",
+        "end_date": "2022-04-23T18:25:43.511Z",
+        "documents": [],
+        "participants": [
+          {
+            "id": 1,
+           "name": "User",
+            "email": "email@gmail.com"
+         }
+       ]
+     },
+      {
+       "name": "CCXP 2",
+        "local": "São Paulo",
+        "owner": {
+         "id": 1,
+          "name": "User",
+         "email": "email@gmail.com"
+       },
+       "description": "evento",
+        "start_date": "2022-04-23T18:25:43.511Z",
+       "end_date": "2022-04-23T18:25:43.511Z",
+       "documents": [],
+        "participants": [
+         {
+            "id": 1,
+            "name": "User",
+           "email": "email@gmail.com"
+         }
+       ]
+     }
+    ]
+
+## Filtrar evento do usuário
+
+### Request
+
+```
+GET '/v1/events?start_date=start_date=2024-01-01T15:30&end_date=2026-11-01T15:30'
 ```
 
 ### Exemplode de resposta
