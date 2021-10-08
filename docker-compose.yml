@@ -2,7 +2,7 @@ version: '3'
 services:
   api:
     build: .
-    command: bundle exec rackup --host 0.0.0.0 -p 5000
+    command: bash -c " rake db:setup rake db:schema:load rake db:seed bundle exec rackup --host 0.0.0.0 -p 5000"
     ports:
       - '5000:5000'
     volumes:
