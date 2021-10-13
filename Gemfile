@@ -15,8 +15,6 @@ gem 'sinatra-activerecord', require: 'sinatra/activerecord'
 gem 'sinatra-contrib', require: false
 gem 'sinatra-cross_origin'
 gem 'thin'
-gem 'puma'
-gem 'falcon'
 gem 'webrick'
 gem 'pg'
 
