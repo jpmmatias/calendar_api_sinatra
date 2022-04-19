@@ -1,6 +1,6 @@
-# Onboarding API Calendário
+# API Calendário
 
-API para gerenciamento de eventos feito no perido de onboarding em de agosto de 2021
+API para gerenciamento de eventos feito em de agosto de 2021
 
 Styles for lists of links typically used in navigation elements and asides.
 
@@ -664,6 +664,4 @@ PUT '/v1/invites/:token/perhaps'
 
 ---
 
-# Contato
 
-- [@joao.matias](https://git.campuscode.com.br/joao.matias)
